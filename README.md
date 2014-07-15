@@ -1,4 +1,5 @@
 JavaCupLib
 ==========
 
-A minimal fork of Java CUP parser generator so it can be used as a library
+A minimal fork of Java CUP parser generator so it can be used as a
+parser-generator library.
