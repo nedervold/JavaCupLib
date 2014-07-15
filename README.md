@@ -7,7 +7,7 @@ parser-generator library.
 
 ## Goal
 
-CUP is small and fast, but the code presents problems for reuse,
+CUP is small and fast, but the codebase presents problems for reuse,
 including these:
 
 * Many classes such as `Main` and `emit` act as global variables,
@@ -20,14 +20,15 @@ including these:
   text or encoded as arrays for the CUP runtime, neither of which is
   especially useful for reuse in other code.
 
-The goal of JavaCupLib is to *minimally* modify the original CUP code
-(refactoring globals, loosening access to allow overriding of behavior
-in subclasses, introducing interfaces to allow substituting different
-implementations) to allow reuse of the CUP logic by client code.
+The goal of JavaCupLib is to *minimally* refactor the original CUP
+code (refactoring globals, loosening access to allow overriding of
+behavior in subclasses, introducing interfaces to allow substituting
+different implementations) to allow reuse of the CUP logic by client
+code.
 
 ## Conformance to CUP
 
-The code is derived from the tarfile downloaded from
+The code is derived from the downloaded tarfile
 http://www2.cs.tum.edu/projects/cup/releases/java-cup-src-11b-20140703.tar.gz
 
 Aside from differences in timestamp and version information, the
