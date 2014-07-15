@@ -9,3 +9,6 @@ hs_err_pid*
 # Emacs cruft
 *~
 \#*
+
+# MacOS cruft
+.DS_Store
