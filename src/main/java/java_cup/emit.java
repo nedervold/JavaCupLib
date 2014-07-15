@@ -111,7 +111,7 @@ public class emit {
 	/*-----------------------------------------------------------*/
 
 	/** The prefix placed on names that pollute someone else's name space. */
-	public static String prefix = "CUP$";
+	public static final String prefix = "CUP$";
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
@@ -300,7 +300,7 @@ public class emit {
 	 * @param out
 	 *            stream to produce output on.
 	 */
-	private static void emit_package(PrintWriter out) {
+	public static void emit_package(PrintWriter out) {
 		/* generate a package spec if we have a name for one */
 		if (package_name != null) {
 			out.println("package " + package_name + ";");
@@ -394,8 +394,8 @@ public class emit {
 	 * @param start_prod
 	 *            the start production of the grammar.
 	 */
-	private static void emit_action_code(PrintWriter out,
-			production start_prod) throws internal_error {
+	private static void emit_action_code(PrintWriter out, production start_prod)
+			throws internal_error {
 		production prod;
 
 		long start_time = System.currentTimeMillis();
@@ -404,7 +404,7 @@ public class emit {
 		out.println();
 		out.println("/** Cup generated class to encapsulate user supplied action code.*/");
 		/* TUM changes; proposed by Henning Niss 20050628: added type arguement */
-		out.println("class " + pre("actions") + typeArgument() + " {");
+		out.println("class " + instance().pre("actions") + typeArgument() + " {");
 		/* user supplied code */
 		if (action_code != null) {
 			out.println();
@@ -420,7 +420,7 @@ public class emit {
 		out.println();
 		out.println("  /** Constructor */");
 		/* TUM changes; proposed by Henning Niss 20050628: added typeArgument */
-		out.println("  " + pre("actions") + "(" + parser_class_name
+		out.println("  " + instance().pre("actions") + "(" + parser_class_name
 				+ typeArgument() + " parser) {");
 		out.println("    this.parser = parser;");
 		out.println("  }");
@@ -433,19 +433,19 @@ public class emit {
 					+ (instancecounter * UPPERLIMIT) + " to "
 					+ ((instancecounter + 1) * UPPERLIMIT) + ". */");
 			out.println("  public final java_cup.runtime.Symbol "
-					+ pre("do_action_part")
+					+ instance().pre("do_action_part")
 					+ String.format("%08d", new Integer(instancecounter)) + "(");
-			out.println("    int                        " + pre("act_num,"));
-			out.println("    java_cup.runtime.lr_parser " + pre("parser,"));
-			out.println("    java.util.Stack            " + pre("stack,"));
-			out.println("    int                        " + pre("top)"));
+			out.println("    int                        " + instance().pre("act_num,"));
+			out.println("    java_cup.runtime.lr_parser " + instance().pre("parser,"));
+			out.println("    java.util.Stack            " + instance().pre("stack,"));
+			out.println("    int                        " + instance().pre("top)"));
 			out.println("    throws java.lang.Exception");
 			out.println("    {");
 			out.println("      /* Symbol object for return from actions */");
-			out.println("      java_cup.runtime.Symbol " + pre("result") + ";");
+			out.println("      java_cup.runtime.Symbol " + instance().pre("result") + ";");
 			out.println();
 			out.println("      /* select the action based on the action number */");
-			out.println("      switch (" + pre("act_num") + ")");
+			out.println("      switch (" + instance().pre("act_num") + ")");
 			out.println("        {");
 			// START Switch
 			/* emit action code for each production as a separate case */
@@ -473,11 +473,11 @@ public class emit {
 						result = "(" + prod.lhs().the_symbol().stack_type()
 								+ ") "
 								+ "((java_cup.runtime.Symbol) "
-								+ emit.pre("stack")
+								+ emit.instance().pre("stack")
 								+
 								// TUM 20050917
 								((lastResult == 1) ? ".peek()" : (".elementAt("
-										+ emit.pre("top") + "-"
+										+ emit.instance().pre("top") + "-"
 										+ (lastResult - 1) + ")")) + ").value";
 					}
 				}
@@ -532,11 +532,11 @@ public class emit {
 							+ prod.lhs().the_symbol().stack_type()
 							+ ") "
 							+ "((java_cup.runtime.Symbol) "
-							+ emit.pre("stack")
+							+ emit.instance().pre("stack")
 							+
 							// TUM 20050917
 							((index == 0) ? ".peek()" : (".elementAt("
-									+ emit.pre("top") + "-" + index + ")"))
+									+ emit.instance().pre("top") + "-" + index + ")"))
 							+ ").value;");
 					break;
 				}
@@ -556,13 +556,13 @@ public class emit {
 				 * Create the code that assigns the left and right values of the
 				 * new Symbol that the production is reducing to
 				 */
-				if (emit.lr_values()) {
+				if (emit.instance().lr_values()) {
 					int loffset;
 					String leftstring, rightstring;
 					// TUM 20050917
 					// int roffset = 0;
 					rightstring = "((java_cup.runtime.Symbol)"
-							+ emit.pre("stack") +
+							+ emit.instance().pre("stack") +
 							// TUM 20050917
 							// ".elementAt(" + emit.pre("top") + "-" + roffset +
 							// "))"+
@@ -574,22 +574,22 @@ public class emit {
 					else {
 						loffset = prod.rhs_length() - 1;
 						leftstring = "((java_cup.runtime.Symbol)"
-								+ emit.pre("stack")
+								+ emit.instance().pre("stack")
 								+
 								// TUM 20050917
 								((loffset == 0) ? (".peek()")
-										: (".elementAt(" + emit.pre("top")
+										: (".elementAt(" + emit.instance().pre("top")
 												+ "-" + loffset + ")")) +
 								// TUM 20060327 removed .left
 								")";
 					}
-					out.println("              " + pre("result")
+					out.println("              " + instance().pre("result")
 							+ " = parser.getSymbolFactory().newSymbol(" + "\""
 							+ prod.lhs().the_symbol().name() + "\","
 							+ prod.lhs().the_symbol().index() + ", "
 							+ leftstring + ", " + rightstring + ", RESULT);");
 				} else {
-					out.println("              " + pre("result")
+					out.println("              " + instance().pre("result")
 							+ " = parser.getSymbolFactory().newSymbol(" + "\""
 							+ prod.lhs().the_symbol().name() + "\","
 							+ prod.lhs().the_symbol().index() + ", RESULT);");
@@ -601,12 +601,12 @@ public class emit {
 				/* if this was the start production, do action for accept */
 				if (prod == start_prod) {
 					out.println("          /* ACCEPT */");
-					out.println("          " + pre("parser")
+					out.println("          " + instance().pre("parser")
 							+ ".done_parsing();");
 				}
 
 				/* code to return lhs symbol */
-				out.println("          return " + pre("result") + ";");
+				out.println("          return " + instance().pre("result") + ";");
 				out.println();
 			}
 
@@ -615,7 +615,7 @@ public class emit {
 			out.println("          default:");
 			out.println("            throw new Exception(");
 			out.println("               \"Invalid action number \"+"
-					+ pre("act_num") + "+\"found in "
+					+ instance().pre("act_num") + "+\"found in "
 					+ "internal parse table\");");
 			out.println();
 			out.println("        }");
@@ -626,22 +626,22 @@ public class emit {
 		out.println();
 		out.println("  /** Method splitting the generated action code into several parts. */");
 		out.println("  public final java_cup.runtime.Symbol "
-				+ pre("do_action") + "(");
-		out.println("    int                        " + pre("act_num,"));
-		out.println("    java_cup.runtime.lr_parser " + pre("parser,"));
-		out.println("    java.util.Stack            " + pre("stack,"));
-		out.println("    int                        " + pre("top)"));
+				+ instance().pre("do_action") + "(");
+		out.println("    int                        " + instance().pre("act_num,"));
+		out.println("    java_cup.runtime.lr_parser " + instance().pre("parser,"));
+		out.println("    java.util.Stack            " + instance().pre("stack,"));
+		out.println("    int                        " + instance().pre("top)"));
 		out.println("    throws java.lang.Exception");
 		out.println("    {");
 
 		if (production.number() < UPPERLIMIT) { // Make it simple for the
 												// optimizer to inline!
-			out.println("              return " + pre("do_action_part")
+			out.println("              return " + instance().pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
-			out.println("                               " + pre("act_num,"));
-			out.println("                               " + pre("parser,"));
-			out.println("                               " + pre("stack,"));
-			out.println("                               " + pre("top);"));
+			out.println("                               " + instance().pre("act_num,"));
+			out.println("                               " + instance().pre("parser,"));
+			out.println("                               " + instance().pre("stack,"));
+			out.println("                               " + instance().pre("top);"));
 			out.println("    }");
 
 			/* end of class */
@@ -654,7 +654,7 @@ public class emit {
 
 		/* switch top */
 		out.println("      /* select the action handler based on the action number */");
-		out.println("      switch (" + pre("act_num") + "/" + UPPERLIMIT + ")");
+		out.println("      switch (" + instance().pre("act_num") + "/" + UPPERLIMIT + ")");
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
@@ -666,12 +666,12 @@ public class emit {
 					+ ((instancecounter + 1) * UPPERLIMIT)
 					+ ". . . . . . . . . . . .*/");
 			out.println("          case " + instancecounter + ": ");
-			out.println("              return " + pre("do_action_part")
+			out.println("              return " + instance().pre("do_action_part")
 					+ String.format("%08d", new Integer(instancecounter)) + "(");
-			out.println("                               " + pre("act_num,"));
-			out.println("                               " + pre("parser,"));
-			out.println("                               " + pre("stack,"));
-			out.println("                               " + pre("top);"));
+			out.println("                               " + instance().pre("act_num,"));
+			out.println("                               " + instance().pre("parser,"));
+			out.println("                               " + instance().pre("stack,"));
+			out.println("                               " + instance().pre("top);"));
 		}
 
 		out.println("          /* . . . no valid action number: . . .*/");
@@ -1003,7 +1003,7 @@ public class emit {
 		/* user supplied imports */
 		for (int i = 0; i < import_list.size(); i++)
 			out.println("import " + import_list.elementAt(i) + ";");
-		if (locations())
+		if (instance().locations())
 			out.println("import java_cup.runtime.ComplexSymbolFactory.Location;");
 		out.println("import java_cup.runtime.XMLElement;");
 
@@ -1040,7 +1040,7 @@ public class emit {
 
 		/* instance of the action encapsulation class */
 		out.println("  /** Instance of action encapsulation class. */");
-		out.println("  protected " + pre("actions") + " action_obj;");
+		out.println("  protected " + instance().pre("actions") + " action_obj;");
 		out.println();
 
 		/* action object initializer */
@@ -1048,8 +1048,8 @@ public class emit {
 		out.println("  protected void init_actions()");
 		out.println("    {");
 		/* TUM changes; proposed by Henning Niss 20050628: added typeArgument */
-		out.println("      action_obj = new " + pre("actions") + typeArgument()
-				+ "(this);");
+		out.println("      action_obj = new " + instance().pre("actions")
+				+ typeArgument() + "(this);");
 		out.println("    }");
 		out.println();
 
@@ -1063,7 +1063,7 @@ public class emit {
 		out.println("    throws java.lang.Exception");
 		out.println("  {");
 		out.println("    /* call code in generated class */");
-		out.println("    return action_obj." + pre("do_action(")
+		out.println("    return action_obj." + instance().pre("do_action(")
 				+ "act_num, parser, stack, top);");
 		out.println("  }");
 		out.println("");
@@ -1143,7 +1143,7 @@ public class emit {
 		/* class header */
 		out.println();
 		out.println("/** Cup generated class to encapsulate user supplied action code.*/");
-		out.println("class " + pre("actions") + typeArgument() + " {");
+		out.println("class " + instance().pre("actions") + typeArgument() + " {");
 		/* user supplied code */
 		if (action_code != null) {
 			out.println();
@@ -1157,7 +1157,7 @@ public class emit {
 		/* constructor */
 		out.println();
 		out.println("  /** Constructor */");
-		out.println("  " + pre("actions") + "(" + parser_class_name
+		out.println("  " + instance().pre("actions") + "(" + parser_class_name
 				+ typeArgument() + " parser) {");
 		out.println("    this.parser = parser;");
 		out.println("  }");
@@ -1170,19 +1170,19 @@ public class emit {
 					+ (instancecounter * UPPERLIMIT) + " to "
 					+ ((instancecounter + 1) * UPPERLIMIT) + ". */");
 			out.println("  public final java_cup.runtime.Symbol "
-					+ pre("do_action_part")
+					+ instance().pre("do_action_part")
 					+ String.format("%08d", new Integer(instancecounter)) + "(");
-			out.println("    int                        " + pre("act_num,"));
-			out.println("    java_cup.runtime.lr_parser " + pre("parser,"));
-			out.println("    java.util.Stack            " + pre("stack,"));
-			out.println("    int                        " + pre("top)"));
+			out.println("    int                        " + instance().pre("act_num,"));
+			out.println("    java_cup.runtime.lr_parser " + instance().pre("parser,"));
+			out.println("    java.util.Stack            " + instance().pre("stack,"));
+			out.println("    int                        " + instance().pre("top)"));
 			out.println("    throws java.lang.Exception");
 			out.println("    {");
 			out.println("      /* Symbol object for return from actions */");
-			out.println("      java_cup.runtime.Symbol " + pre("result") + ";");
+			out.println("      java_cup.runtime.Symbol " + instance().pre("result") + ";");
 			out.println();
 			out.println("      /* select the action based on the action number */");
-			out.println("      switch (" + pre("act_num") + ")");
+			out.println("      switch (" + instance().pre("act_num") + ")");
 			out.println("        {");
 			// START Switch
 			/* emit action code for each production as a separate case */
@@ -1242,28 +1242,28 @@ public class emit {
 				 * Create the code that assigns the left and right values of the
 				 * new Symbol that the production is reducing to
 				 */
-				if (emit.lr_values()) {
+				if (emit.instance().lr_values()) {
 					int loffset;
 					String leftstring, rightstring;
 					rightstring = "((java_cup.runtime.Symbol)"
-							+ emit.pre("stack") + ".peek()" + ")";
+							+ emit.instance().pre("stack") + ".peek()" + ")";
 					if (prod.rhs_length() == 0)
 						leftstring = rightstring;
 					else {
 						loffset = prod.rhs_length() - 1;
 						leftstring = "((java_cup.runtime.Symbol)"
-								+ emit.pre("stack")
+								+ emit.instance().pre("stack")
 								+ ((loffset == 0) ? (".peek()")
-										: (".elementAt(" + emit.pre("top")
+										: (".elementAt(" + emit.instance().pre("top")
 												+ "-" + loffset + ")")) + ")";
 					}
-					out.println("              " + pre("result")
+					out.println("              " + instance().pre("result")
 							+ " = parser.getSymbolFactory().newSymbol(" + "\""
 							+ prod.lhs().the_symbol().name() + "\","
 							+ prod.lhs().the_symbol().index() + ", "
 							+ leftstring + ", " + rightstring + ", RESULT);");
 				} else {
-					out.println("              " + pre("result")
+					out.println("              " + instance().pre("result")
 							+ " = parser.getSymbolFactory().newSymbol(" + "\""
 							+ prod.lhs().the_symbol().name() + "\","
 							+ prod.lhs().the_symbol().index() + ", RESULT);");
@@ -1275,12 +1275,12 @@ public class emit {
 				/* if this was the start production, do action for accept */
 				if (prod == start_prod) {
 					out.println("          /* ACCEPT */");
-					out.println("          " + pre("parser")
+					out.println("          " + instance().pre("parser")
 							+ ".done_parsing();");
 				}
 
 				/* code to return lhs symbol */
-				out.println("          return " + pre("result") + ";");
+				out.println("          return " + instance().pre("result") + ";");
 				out.println();
 			}
 
@@ -1289,7 +1289,7 @@ public class emit {
 			out.println("          default:");
 			out.println("            throw new Exception(");
 			out.println("               \"Invalid action number \"+"
-					+ pre("act_num") + "+\"found in "
+					+ instance().pre("act_num") + "+\"found in "
 					+ "internal parse table\");");
 			out.println();
 			out.println("        }");
@@ -1300,22 +1300,22 @@ public class emit {
 		out.println();
 		out.println("  /** Method splitting the generated action code into several parts. */");
 		out.println("  public final java_cup.runtime.Symbol "
-				+ pre("do_action") + "(");
-		out.println("    int                        " + pre("act_num,"));
-		out.println("    java_cup.runtime.lr_parser " + pre("parser,"));
-		out.println("    java.util.Stack            " + pre("stack,"));
-		out.println("    int                        " + pre("top)"));
+				+ instance().pre("do_action") + "(");
+		out.println("    int                        " + instance().pre("act_num,"));
+		out.println("    java_cup.runtime.lr_parser " + instance().pre("parser,"));
+		out.println("    java.util.Stack            " + instance().pre("stack,"));
+		out.println("    int                        " + instance().pre("top)"));
 		out.println("    throws java.lang.Exception");
 		out.println("    {");
 
 		if (production.number() < UPPERLIMIT) { // Make it simple for the
 												// optimizer to inline!
-			out.println("              return " + pre("do_action_part")
+			out.println("              return " + instance().pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
-			out.println("                               " + pre("act_num,"));
-			out.println("                               " + pre("parser,"));
-			out.println("                               " + pre("stack,"));
-			out.println("                               " + pre("top);"));
+			out.println("                               " + instance().pre("act_num,"));
+			out.println("                               " + instance().pre("parser,"));
+			out.println("                               " + instance().pre("stack,"));
+			out.println("                               " + instance().pre("top);"));
 			out.println("    }");
 
 			/* end of class */
@@ -1328,7 +1328,7 @@ public class emit {
 
 		/* switch top */
 		out.println("      /* select the action handler based on the action number */");
-		out.println("      switch (" + pre("act_num") + "/" + UPPERLIMIT + ")");
+		out.println("      switch (" + instance().pre("act_num") + "/" + UPPERLIMIT + ")");
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
@@ -1340,12 +1340,12 @@ public class emit {
 					+ ((instancecounter + 1) * UPPERLIMIT)
 					+ ". . . . . . . . . . . .*/");
 			out.println("          case " + instancecounter + ": ");
-			out.println("              return " + pre("do_action_part")
+			out.println("              return " + instance().pre("do_action_part")
 					+ String.format("%08d", new Integer(instancecounter)) + "(");
-			out.println("                               " + pre("act_num,"));
-			out.println("                               " + pre("parser,"));
-			out.println("                               " + pre("stack,"));
-			out.println("                               " + pre("top);"));
+			out.println("                               " + instance().pre("act_num,"));
+			out.println("                               " + instance().pre("parser,"));
+			out.println("                               " + instance().pre("stack,"));
+			out.println("                               " + instance().pre("top);"));
 		}
 
 		out.println("          /* . . . no valid action number: . . .*/");

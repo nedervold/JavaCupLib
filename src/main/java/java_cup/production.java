@@ -395,36 +395,36 @@ public class production {
       String ret;
 
       /* Put in the left/right value labels */
-      if (emit.lr_values()){
-	if (!emit.locations())
+      if (emit.instance().lr_values()){
+	if (!emit.instance().locations())
         ret = "\t\tint " + labelname + "left = ((java_cup.runtime.Symbol)" + 
-	  emit.pre("stack") + 
+	  emit.instance().pre("stack") + 
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
 	    ").left;\n" +
 	  "\t\tint " + labelname + "right = ((java_cup.runtime.Symbol)" + 
-	  emit.pre("stack") +
+	  emit.instance().pre("stack") +
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
 	    ").right;\n";
 	else
         ret = "\t\tLocation " + labelname + "xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)" + 
-	  emit.pre("stack") + 
+	  emit.instance().pre("stack") + 
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
 	    ").xleft;\n" +
 	  "\t\tLocation " + labelname + "xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)" + 
-	  emit.pre("stack") +
+	  emit.instance().pre("stack") +
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
 	    ").xright;\n";}
       else ret = "";
 
       /* otherwise, just declare label. */
 	return ret + "\t\t" + stack_type + " " + labelname + " = (" + stack_type + 
-	  ")((" + "java_cup.runtime.Symbol) " + emit.pre("stack") + 
+	  ")((" + "java_cup.runtime.Symbol) " + emit.instance().pre("stack") + 
 	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
 	    ").value;\n";
 
     }
