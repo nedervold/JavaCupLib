@@ -1,0 +1,49 @@
+import java_cup.runtime.*;
+
+/* Preliminaries to set up and use the scanner.  */
+
+		
+
+parser code {:	public Yylex lexer;  :};
+
+init with {: 	        lexer = new Yylex(System.in); :};
+scan with {:		return lexer.yylex(); :};
+
+/* Terminals (tokens returned by the scanner). */
+terminal str_token   KLINK, MEDEKLINK, MENG;
+terminal int_token NUMBER;
+
+/* Non terminals */
+non terminal symbol	ini, opt;
+non terminal cell 	pattern;
+
+
+/* The grammar */
+ini::= pattern:s
+	{: for (int i=s.a_int-1;i>=0;i--)
+	   { System.out.println((s.a_int-i)+".- "+s.a_string[i]); 
+}
+	:}
+;
+pattern ::= opt KLINK:s1 pattern:s MEDEKLINK:s2 opt
+	{: s.insert("("+ s1.str_val+ "," + s2.str_val+ ")" );
+	   RESULT.a_string=s.a_string;
+	   RESULT.a_int=s.a_int;
+	:}
+	|
+	opt MEDEKLINK:s1 pattern:s KLINK:s2 opt 
+	{: s.insert("("+ s1.str_val+ "," + s2.str_val +")" ) ; 
+	   RESULT.a_string=s.a_string;
+	   RESULT.a_int=s.a_int;
+	:}
+	|
+	opt KLINK:s1 opt NUMBER opt MEDEKLINK:s2 opt
+	{: RESULT.insert("("+ s1.str_val+ "," + s2.str_val +")")  ; :}
+	|
+	opt MEDEKLINK:s1 opt NUMBER opt KLINK:s2 opt
+	{: RESULT.insert("("+ s1.str_val+ "," + s2.str_val+ ")") ; :}
+	;
+
+opt ::= 
+	| MENG
+	;

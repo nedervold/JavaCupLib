@@ -1,0 +1,41 @@
+import java_cup.runtime.*;
+
+/* Preliminaries to set up and use the scanner.  */
+parser code {:	public Yylex lexer; :};
+
+init with {: 	        lexer = new Yylex(System.in); :};
+scan with {:		return lexer.yylex(); :};
+
+/* Terminals (tokens returned by the scanner). */
+terminal str_token   NAME;
+terminal token LPAREN, RPAREN;
+
+/* Non terminals */
+non terminal symbol	ini, atom;
+non terminal int_token  list, sequence, cell;
+
+
+/* The grammar */
+
+ini ::= list:n
+	{: System.out.println("Maximun nested= " + n.int_val); :}
+	;
+
+list ::= LPAREN sequence:n RPAREN
+	{:RESULT.int_val = n.int_val;  :}
+	;
+	
+sequence ::= {: RESULT.int_val=1; :}
+	| 
+	sequence:n1 cell:n2
+	{: if (n1.int_val>n2.int_val)  RESULT.int_val=n1.int_val;
+	   else  RESULT.int_val= n2.int_val; :}
+	;
+
+cell ::= list:n {: RESULT.int_val=++n.int_val; :}
+	|
+	atom{: RESULT.int_val=1; :}
+	;
+
+atom ::= NAME
+	;
