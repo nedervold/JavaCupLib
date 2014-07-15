@@ -21,7 +21,7 @@ public class ScannerBuffer implements Scanner {
 	public List<Symbol> getBuffered() {
 		return Collections.unmodifiableList(buffer);
 	}
-	@Override
+
 	public Symbol next_token() throws Exception {
 		Symbol buffered = inner.next_token();
 		buffer.add(buffered);

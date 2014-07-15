@@ -67,7 +67,8 @@
 	  description="compiles the source code">
     <javac srcdir="src/main/java"
 	   destdir="target/classes"
-	   excludes="java_cup/anttask/*.java,java_cup/runtime/*.java"
+	   classpath="lib/java-cup-11b.jar"
+	   excludes="java_cup/anttask/*.java"
 	   includeantruntime="false" />
   </target>
 
