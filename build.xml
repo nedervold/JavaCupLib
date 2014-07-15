@@ -12,8 +12,25 @@
     <mkdir dir="${target}/test-classes"/>
   </target>
 
+
+  <target name="synth"
+	  description="synthesize the lexer and parser code" >
+    <!-- In the future, we'll synthesize them only when necessary; 
+	 for now, it's every time. -->
+    <!-- TODO Lexer -->
+
+    <!-- Synthesize the parser code -->
+    <java
+       jar="src/test/resources/JavaCupLib-std.jar"
+       dir="src/main/java/java_cup"
+       fork="true">
+      <arg value="-interface"/>
+      <arg value="../../../../cup/parser.cup"/>
+      </java>
+  </target>
+
   <target name="compile"
-	  depends="init"
+	  depends="init, synth"
 	  description="compiles the source code">
     <javac srcdir="src/main/java"
 	   destdir="target/classes"

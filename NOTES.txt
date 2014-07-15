@@ -18,3 +18,10 @@ To remove globals (statics):
  * Inline all the new calls.
 
 
+------------------------------------------------------------
+
+TODO:
+
+* The pascal specification has one conflict and needs to be run with
+  expect to succeed.  Allow passing flags into runJavaCup.  Perhaps
+  keep it as is, too, to demo a failing run.
