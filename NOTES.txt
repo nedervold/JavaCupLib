@@ -1,0 +1,9 @@
+To remove globals (statics):
+
+  * Added an instance() call.
+
+  * Changed protected to private, or public if necessary.  Since this
+    is a one-package project with little inheritance, protected
+    essentially means public.  I reduced access to private whenever
+    possible to see what's calling what.
+
