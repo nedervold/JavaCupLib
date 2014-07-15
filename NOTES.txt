@@ -1,3 +1,7 @@
+I see that parser.java calls into the implicit interface of emit, so
+for reproducibility's sake, we'll need to edit parser.cup and to
+regenerate parser.java.
+
 To remove globals (statics):
 
   * Added an instance() call.
@@ -6,4 +10,11 @@ To remove globals (statics):
     is a one-package project with little inheritance, protected
     essentially means public.  I reduced access to private whenever
     possible to see what's calling what.
+
+  * Renamed all the public static calls, so other classes are calling
+    the new name.  Duplicate each of them with the old name and
+    reimplement the new call to call the old one through instance().
+
+ * Inline all the new calls.
+
 
