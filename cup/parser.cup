@@ -336,7 +336,7 @@ code_parts ::=
 action_code_part ::= 
 	ACTION CODE CODE_STRING:user_code opt_semi
 	{:
-	  if (emit.instance().action_code!=null)
+	  if (emit.instance().action_code != null)
 	    ErrorManager.getManager().emit_warning("Redundant action code (skipping)");
 	  else /* save the user included code string */
 	    emit.instance().action_code = user_code;

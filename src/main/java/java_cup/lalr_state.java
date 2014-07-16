@@ -785,7 +785,7 @@ public class lalr_state {
 	message+="the second production.\n";
 
       /* count the conflict */
-      emit.num_conflicts++;
+      emit.instance().num_conflicts++;
       ErrorManager.getManager().emit_warning(message);
     }
 
@@ -829,7 +829,7 @@ public class lalr_state {
       "  Resolved in favor of shifting.\n";
 
       /* count the conflict */
-      emit.num_conflicts++;
+      emit.instance().num_conflicts++;
       ErrorManager.getManager().emit_warning(message);
     }
 

@@ -17,7 +17,8 @@ To remove globals (statics):
 
  * Inline all the new calls.
 
- * Encapsulate public static variables.
+ * Make public static variables non-static.  Manually add routing
+   through instance() as necessary.
 
 ------------------------------------------------------------
 

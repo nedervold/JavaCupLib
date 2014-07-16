@@ -90,7 +90,7 @@ public class parse_action_table {
 	      emit.not_reduced++;
 
 	      /* give a warning if they haven't been turned off */
-	      if (!emit.nowarn)
+	      if (!emit.instance().nowarn)
 		{
 
 		  ErrorManager.getManager().emit_warning("*** Production \"" + 

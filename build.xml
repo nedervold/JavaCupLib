@@ -67,7 +67,7 @@
 	  description="compiles the source code">
     <javac srcdir="src/main/java"
 	   destdir="target/classes"
-	   classpath="lib/java-cup-11b.jar"
+	   classpath="lib/JFlex.jar,lib/java-cup-11b.jar"
 	   excludes="java_cup/anttask/*.java"
 	   includeantruntime="false" />
   </target>
