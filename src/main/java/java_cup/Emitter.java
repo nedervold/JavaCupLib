@@ -1,5 +1,6 @@
 package java_cup;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.util.Stack;
 
@@ -16,6 +17,8 @@ public interface Emitter {
 	// Hm Added clear to clear all static fields
 	public abstract void clear();
 
+	public abstract void close_files();
+
 	/**
 	 * Emit a package spec if the user wants one.
 	 * 
@@ -23,6 +26,12 @@ public interface Emitter {
 	 *            stream to produce output on.
 	 */
 	public abstract void emit_package(PrintWriter out);
+
+	public void emit_parser(final parse_action_table action_table,
+			final parse_reduce_table reduce_table,
+			final lalr_state start_state, final boolean include_non_terms,
+			final boolean opt_compact_red, final boolean suppress_scanner,
+			final boolean sym_interface) throws internal_error;
 
 	public abstract long goto_table_time();
 
@@ -40,6 +49,8 @@ public interface Emitter {
 	public abstract boolean nowarn();
 
 	public abstract int num_conflicts();
+
+	public abstract void open_files(File dest_dir);
 
 	public abstract String package_name();
 

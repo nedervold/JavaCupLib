@@ -1,7 +1,3 @@
-I see that parser.java calls into the implicit interface of emit, so
-for reproducibility's sake, we'll need to edit parser.cup and to
-regenerate parser.java.
-
 To remove globals (statics):
 
   * Added an instance() call.
@@ -27,6 +23,24 @@ To remove globals (statics):
  * Refactor the access call into a variable (assuming it won't change
    in the middle of calculations).  This makes the code look much more
    like the original.
+
+------------------------------------------------------------
+
+Refactoring steps taken
+
+* Removed globals from emit, with the interface as Emitter, the
+  singleton access as EmitterAccess and the original implementation as
+  cup_emit.
+
+* Added an AbstractEmitter class to hold the variables and their
+  getter/setters.
+
+* Created a NullEmitter that does nothing.
+
+* Found that with a NullEmitter, the parser.java and sym.java files
+  are still created; this was happening in Main.  Moved Main's
+  open_files(), part of close_files() and emit_parser() into cup_emit.
+  Now setting a NullEmitter means no code files at all.
 
 ------------------------------------------------------------
 
