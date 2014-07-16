@@ -395,36 +395,36 @@ public class production {
       String ret;
 
       /* Put in the left/right value labels */
-      if (emit.instance().lr_values()){
-	if (!emit.instance().locations())
+      if (EmitterAccess.instance().lr_values()){
+	if (!EmitterAccess.instance().locations())
         ret = "\t\tint " + labelname + "left = ((java_cup.runtime.Symbol)" + 
-	  emit.instance().pre("stack") + 
+	  EmitterAccess.instance().pre("stack") + 
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + EmitterAccess.instance().pre("top") + "-" + offset + ")"))+
 	    ").left;\n" +
 	  "\t\tint " + labelname + "right = ((java_cup.runtime.Symbol)" + 
-	  emit.instance().pre("stack") +
+	  EmitterAccess.instance().pre("stack") +
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + EmitterAccess.instance().pre("top") + "-" + offset + ")"))+
 	    ").right;\n";
 	else
         ret = "\t\tLocation " + labelname + "xleft = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)" + 
-	  emit.instance().pre("stack") + 
+	  EmitterAccess.instance().pre("stack") + 
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + EmitterAccess.instance().pre("top") + "-" + offset + ")"))+
 	    ").xleft;\n" +
 	  "\t\tLocation " + labelname + "xright = ((java_cup.runtime.ComplexSymbolFactory.ComplexSymbol)" + 
-	  emit.instance().pre("stack") +
+	  EmitterAccess.instance().pre("stack") +
  	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + EmitterAccess.instance().pre("top") + "-" + offset + ")"))+
 	    ").xright;\n";}
       else ret = "";
 
       /* otherwise, just declare label. */
 	return ret + "\t\t" + stack_type + " " + labelname + " = (" + stack_type + 
-	  ")((" + "java_cup.runtime.Symbol) " + emit.instance().pre("stack") + 
+	  ")((" + "java_cup.runtime.Symbol) " + EmitterAccess.instance().pre("stack") + 
 	    // TUM 20050917
-	    ((offset==0)?".peek()":(".elementAt(" + emit.instance().pre("top") + "-" + offset + ")"))+
+	    ((offset==0)?".peek()":(".elementAt(" + EmitterAccess.instance().pre("top") + "-" + offset + ")"))+
 	    ").value;\n";
 
     }
@@ -455,7 +455,7 @@ public class production {
 	      part = (symbol_part)rhs[pos];
 	      String label;
 	      /* if it has a label, make declaration! */
-	      if ((label=part.label()) != null || emit.instance().is_xmlactions())
+	      if ((label=part.label()) != null || EmitterAccess.instance().is_xmlactions())
 		{
 	    	  if (label==null) label=part.the_symbol().name()+pos;
 		  declaration = declaration + 

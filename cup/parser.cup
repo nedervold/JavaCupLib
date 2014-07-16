@@ -288,7 +288,7 @@ package_spec ::=
 	multipart_id
 	{:
 	  /* save the package name */
-	  emit.instance().setPackage_name(multipart_name);
+	  EmitterHolder.instance().setPackage_name(multipart_name);
 
 	  /* reset the accumulated multipart name */
 	  multipart_name = new String();
@@ -314,7 +314,7 @@ import_spec ::=
 	import_id 
 	{: 
 	  /* save this import on the imports list */
-	  emit.instance().getImport_list().push(multipart_name);
+	  EmitterHolder.instance().getImport_list().push(multipart_name);
 
 	  /* reset the accumulated multipart name */
 	  multipart_name = new String();
@@ -336,10 +336,10 @@ code_parts ::=
 action_code_part ::= 
 	ACTION CODE CODE_STRING:user_code opt_semi
 	{:
-	  if (emit.instance().getAction_code() != null)
+	  if (EmitterHolder.instance().getAction_code() != null)
 	    ErrorManager.getManager().emit_warning("Redundant action code (skipping)");
 	  else /* save the user included code string */
-	    emit.instance().setAction_code(user_code);
+	    EmitterHolder.instance().setAction_code(user_code);
 	:}
 	;
 
@@ -348,10 +348,10 @@ action_code_part ::=
 parser_code_part ::= 
 	PARSER CODE CODE_STRING:user_code opt_semi
 	{:
-	  if (emit.instance().getParser_code()!=null)
+	  if (EmitterHolder.instance().getParser_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant parser code (skipping)");
 	  else /* save the user included code string */
-	    emit.instance().setParser_code(user_code);
+	    EmitterHolder.instance().setParser_code(user_code);
 	:}
 	;
 
@@ -360,10 +360,10 @@ parser_code_part ::=
 init_code ::= 
 	INIT WITH CODE_STRING:user_code opt_semi
 	{: 
-	  if (emit.instance().getInit_code()!=null)
+	  if (EmitterHolder.instance().getInit_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant init code (skipping)");
 	  else /* save the user code */
-	    emit.instance().setInit_code(user_code);
+	    EmitterHolder.instance().setInit_code(user_code);
 	:}
 	;
 
@@ -372,10 +372,10 @@ init_code ::=
 scan_code ::=
 	SCAN WITH CODE_STRING:user_code opt_semi
 	{: 
-	  if (emit.instance().getScan_code()!=null)
+	  if (EmitterHolder.instance().getScan_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant scan code (skipping)");
 	  else /* save the user code */
-	    emit.instance().setScan_code(user_code);
+	    EmitterHolder.instance().setScan_code(user_code);
 	:}
 	;
 
@@ -534,8 +534,8 @@ start_spec ::=
 	      new_rhs();
 	      add_rhs_part(add_lab(new symbol_part(start_nt), "start_val"));
 	      add_rhs_part(new symbol_part(terminal.EOF));
-	      if (!emit.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
-	      emit.instance().setStart_production(
+	      if (!EmitterHolder.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+	      EmitterHolder.instance().setStart_production(
 		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 	      new_rhs();
 	    }
@@ -621,14 +621,14 @@ rhs ::=
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
 	          add_rhs_part(new symbol_part(terminal.EOF));
-		  if (!emit.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+		  if (!EmitterHolder.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 		  if ((sym!=null) && (sym instanceof terminal)) {
-		    emit.instance().setStart_production(
+		    EmitterHolder.instance().setStart_production(
 		      new production(non_terminal.START_nt, rhs_parts, 
 				     rhs_pos, ((terminal)sym).precedence_num(),
 				     ((terminal)sym).precedence_side()));
 		  } else {
-		    emit.instance().setStart_production(
+		    EmitterHolder.instance().setStart_production(
 		      new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 		  }
 	          new_rhs();
@@ -657,8 +657,8 @@ rhs ::=
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
 	          add_rhs_part(new symbol_part(terminal.EOF));
-		  if (!emit.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
-	          emit.instance().setStart_production(
+		  if (!EmitterHolder.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+	          EmitterHolder.instance().setStart_production(
 		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 
 	          new_rhs();

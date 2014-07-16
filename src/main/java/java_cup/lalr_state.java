@@ -785,7 +785,7 @@ public class lalr_state {
 	message+="the second production.\n";
 
       /* count the conflict */
-      emit.instance().setNum_conflicts(emit.instance().getNum_conflicts() + 1);
+      EmitterAccess.instance().setNum_conflicts(EmitterAccess.instance().getNum_conflicts() + 1);
       ErrorManager.getManager().emit_warning(message);
     }
 
@@ -829,7 +829,7 @@ public class lalr_state {
       "  Resolved in favor of shifting.\n";
 
       /* count the conflict */
-      emit.instance().setNum_conflicts(emit.instance().getNum_conflicts() + 1);
+      EmitterAccess.instance().setNum_conflicts(EmitterAccess.instance().getNum_conflicts() + 1);
       ErrorManager.getManager().emit_warning(message);
     }
 

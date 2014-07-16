@@ -90,20 +90,13 @@ import java.util.Date;
  * time reports in main).
  */
 
-public class emit {
-
-	private static emit _instance = new emit();
-
-	public static emit instance() {
-		return _instance;
-	}
+public class cup_emit implements Emitter {
 
 	/*-----------------------------------------------------------*/
 	/*--- Constructor(s) ----------------------------------------*/
 	/*-----------------------------------------------------------*/
 
-	/** Only constructor is private so no instances can be created. */
-	private emit() {
+	protected cup_emit() {
 	}
 
 	/*-----------------------------------------------------------*/
@@ -219,27 +212,56 @@ public class emit {
 	private boolean _xmlactions;
 	private boolean _genericlabels;
 
-	/** whether or not to emit code for left and right values */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#lr_values()
+	 */
 	public boolean lr_values() {
 		return _lr_values;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#locations()
+	 */
 	public boolean locations() {
 		return _locations;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#set_lr_values(boolean)
+	 */
 	public void set_lr_values(boolean b) {
 		_lr_values = b;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#set_locations(boolean)
+	 */
 	public void set_locations(boolean b) {
 		_locations = b;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#set_genericlabels(boolean)
+	 */
 	public void set_genericlabels(boolean b) {
 		_genericlabels = b;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#set_xmlactions(boolean)
+	 */
 	public void set_xmlactions(boolean b) {
 		_xmlactions = b;
 		if (!b)
@@ -249,6 +271,11 @@ public class emit {
 	}
 
 	// Hm Added clear to clear all static fields
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#clear()
+	 */
 	public void clear() {
 		_genericlabels = false;
 		_xmlactions = false;
@@ -273,11 +300,10 @@ public class emit {
 	/*--- General Methods ---------------------------------------*/
 	/*-----------------------------------------------------------*/
 
-	/**
-	 * Build a string with the standard prefix.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param str
-	 *            string to prefix.
+	 * @see java_cup.Emitter#pre(java.lang.String)
 	 */
 	public String pre(String str) {
 		return prefix + parser_class_name + "$" + str;
@@ -294,11 +320,10 @@ public class emit {
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
-	/**
-	 * Emit a package spec if the user wants one.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param out
-	 *            stream to produce output on.
+	 * @see java_cup.Emitter#emit_package(java.io.PrintWriter)
 	 */
 	public void emit_package(PrintWriter out) {
 		/* generate a package spec if we have a name for one */
@@ -310,16 +335,10 @@ public class emit {
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
-	/**
-	 * Emit code for the symbol constant class, optionally including non terms,
-	 * if they have been requested.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param out
-	 *            stream to produce output on.
-	 * @param emit_non_terms
-	 *            do we emit constants for non terminals?
-	 * @param sym_interface
-	 *            should we emit an interface, rather than a class?
+	 * @see java_cup.Emitter#symbols(java.io.PrintWriter, boolean, boolean)
 	 */
 	public void symbols(PrintWriter out, boolean emit_non_terms,
 			boolean sym_interface) {
@@ -963,23 +982,12 @@ public class emit {
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
-	/**
-	 * Emit the parser subclass with embedded tables.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param out
-	 *            stream to produce output on.
-	 * @param action_table
-	 *            internal representation of the action table.
-	 * @param reduce_table
-	 *            internal representation of the reduce-goto table.
-	 * @param start_st
-	 *            start state of the parse machine.
-	 * @param start_prod
-	 *            start production of the grammar.
-	 * @param compact_reduces
-	 *            do we use most frequent reduce as default?
-	 * @param suppress_scanner
-	 *            should scanner be suppressed for compatibility?
+	 * @see java_cup.Emitter#parser(java.io.PrintWriter,
+	 * java_cup.parse_action_table, java_cup.parse_reduce_table, int,
+	 * java_cup.production, boolean, boolean)
 	 */
 	public void parser(PrintWriter out, parse_action_table action_table,
 			parse_reduce_table reduce_table, int start_st,
@@ -1361,174 +1369,389 @@ public class emit {
 		action_code_time = System.currentTimeMillis() - start_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#is_xmlactions()
+	 */
 	public boolean is_xmlactions() {
 		return _xmlactions;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getAction_code()
+	 */
 	public String getAction_code() {
 		return action_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setAction_code(java.lang.String)
+	 */
 	public void setAction_code(String action_code) {
 		this.action_code = action_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getParser_code()
+	 */
 	public String getParser_code() {
 		return parser_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setParser_code(java.lang.String)
+	 */
 	public void setParser_code(String parser_code) {
 		this.parser_code = parser_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getInit_code()
+	 */
 	public String getInit_code() {
 		return init_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setInit_code(java.lang.String)
+	 */
 	public void setInit_code(String init_code) {
 		this.init_code = init_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getScan_code()
+	 */
 	public String getScan_code() {
 		return scan_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setScan_code(java.lang.String)
+	 */
 	public void setScan_code(String scan_code) {
 		this.scan_code = scan_code;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getSymbols_time()
+	 */
 	public long getSymbols_time() {
 		return symbols_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setSymbols_time(long)
+	 */
 	public void setSymbols_time(long symbols_time) {
 		this.symbols_time = symbols_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getParser_time()
+	 */
 	public long getParser_time() {
 		return parser_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setParser_time(long)
+	 */
 	public void setParser_time(long parser_time) {
 		this.parser_time = parser_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getAction_code_time()
+	 */
 	public long getAction_code_time() {
 		return action_code_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setAction_code_time(long)
+	 */
 	public void setAction_code_time(long action_code_time) {
 		this.action_code_time = action_code_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getProduction_table_time()
+	 */
 	public long getProduction_table_time() {
 		return production_table_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setProduction_table_time(long)
+	 */
 	public void setProduction_table_time(long production_table_time) {
 		this.production_table_time = production_table_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getAction_table_time()
+	 */
 	public long getAction_table_time() {
 		return action_table_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setAction_table_time(long)
+	 */
 	public void setAction_table_time(long action_table_time) {
 		this.action_table_time = action_table_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getGoto_table_time()
+	 */
 	public long getGoto_table_time() {
 		return goto_table_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setGoto_table_time(long)
+	 */
 	public void setGoto_table_time(long goto_table_time) {
 		this.goto_table_time = goto_table_time;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getClass_type_argument()
+	 */
 	public String getClass_type_argument() {
 		return class_type_argument;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setClass_type_argument(java.lang.String)
+	 */
 	public void setClass_type_argument(String class_type_argument) {
 		this.class_type_argument = class_type_argument;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getImport_list()
+	 */
 	public Stack<String> getImport_list() {
 		return import_list;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setImport_list(java.util.Stack)
+	 */
 	public void setImport_list(Stack<String> import_list) {
 		this.import_list = import_list;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getNot_reduced()
+	 */
 	public int getNot_reduced() {
 		return not_reduced;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setNot_reduced(int)
+	 */
 	public void setNot_reduced(int not_reduced) {
 		this.not_reduced = not_reduced;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#isNowarn()
+	 */
 	public boolean isNowarn() {
 		return nowarn;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setNowarn(boolean)
+	 */
 	public void setNowarn(boolean nowarn) {
 		this.nowarn = nowarn;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getNum_conflicts()
+	 */
 	public int getNum_conflicts() {
 		return num_conflicts;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setNum_conflicts(int)
+	 */
 	public void setNum_conflicts(int num_conflicts) {
 		this.num_conflicts = num_conflicts;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getPackage_name()
+	 */
 	public String getPackage_name() {
 		return package_name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setPackage_name(java.lang.String)
+	 */
 	public void setPackage_name(String package_name) {
 		this.package_name = package_name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getParser_class_name()
+	 */
 	public String getParser_class_name() {
 		return parser_class_name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setParser_class_name(java.lang.String)
+	 */
 	public void setParser_class_name(String parser_class_name) {
 		this.parser_class_name = parser_class_name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getStart_production()
+	 */
 	public production getStart_production() {
 		return start_production;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setStart_production(java_cup.production)
+	 */
 	public void setStart_production(production start_production) {
 		this.start_production = start_production;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getSymbol_const_class_name()
+	 */
 	public String getSymbol_const_class_name() {
 		return symbol_const_class_name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setSymbol_const_class_name(java.lang.String)
+	 */
 	public void setSymbol_const_class_name(String symbol_const_class_name) {
 		this.symbol_const_class_name = symbol_const_class_name;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getUnused_non_term()
+	 */
 	public int getUnused_non_term() {
 		return unused_non_term;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setUnused_non_term(int)
+	 */
 	public void setUnused_non_term(int unused_non_term) {
 		this.unused_non_term = unused_non_term;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#getUnused_term()
+	 */
 	public int getUnused_term() {
 		return unused_term;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.Emitter#setUnused_term(int)
+	 */
 	public void setUnused_term(int unused_term) {
 		this.unused_term = unused_term;
 	}

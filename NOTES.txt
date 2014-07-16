@@ -20,6 +20,10 @@ To remove globals (statics):
  * Make public static variables non-static.  Once non-static,
    encapsulate the variables.
 
+ * Extract an interface so we can talk to that.
+
+ * Separate the access (instance()) from the data.
+
 ------------------------------------------------------------
 
 TODO:
