@@ -40,6 +40,6 @@ version of the original `java-cup-11b.jar` in
 I don't currently have any plans to keep this library in synch with
 CUP releases, but it should be doable by hand.  Unfortunately, while
 the refactorings are conceptually simple, they end up touching many
-lines in the code, and one should not expect merging of changes to
-work.
+lines in the code, and one should not expect automated merging of
+changes to work.  Human interaction will be required.
 
