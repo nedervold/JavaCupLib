@@ -911,7 +911,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("}");
 
 		/* put out the action code class */
-		if (!_xmlactions())
+		if (!xmlactions())
 			emit_action_code(out, start_prod);
 		else
 			emit_xmlaction_code(out, start_prod);

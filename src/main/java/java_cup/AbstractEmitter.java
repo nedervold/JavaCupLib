@@ -84,7 +84,7 @@ public abstract class AbstractEmitter implements Emitter {
 		super();
 	}
 
-	public boolean _xmlactions() {
+	public boolean xmlactions() {
 		return _xmlactions;
 	}
 

@@ -5,8 +5,6 @@ import java.util.Stack;
 
 public interface Emitter {
 
-	public abstract boolean _xmlactions();
-
 	public abstract String action_code();
 
 	public abstract long action_code_time();
@@ -160,5 +158,7 @@ public interface Emitter {
 	public abstract int unused_non_term();
 
 	public abstract int unused_term();
+
+	public abstract boolean xmlactions();
 
 }
