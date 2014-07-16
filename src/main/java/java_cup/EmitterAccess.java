@@ -8,6 +8,10 @@ public class EmitterAccess {
 		return _instance;
 	}
 
+	public static void setEmitter(final Emitter emitter) {
+		_instance = emitter;
+	}
+
 	public EmitterAccess() {
 		super();
 	}

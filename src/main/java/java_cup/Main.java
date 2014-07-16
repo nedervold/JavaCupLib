@@ -172,6 +172,7 @@ public class Main {
 	 */
 	public static void main(String argv[]) throws internal_error,
 			java.io.IOException, java.lang.Exception {
+		Emitter emit = EmitterAccess.instance();
 		boolean did_output = false;
 
 		start_time = System.currentTimeMillis();
@@ -183,7 +184,6 @@ public class Main {
 		terminal.clear();
 		production.clear();
 		action_production.clear();
-		Emitter emit = EmitterAccess.instance();
 		emit.clear();
 		non_terminal.clear();
 		parse_reduce_row.clear();
