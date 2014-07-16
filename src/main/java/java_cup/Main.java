@@ -344,7 +344,7 @@ public class Main {
 					usage("-package must have a name argument");
 
 				/* record the name */
-				emit.setPackage_name(argv[i]);
+				emit.set_package_name(argv[i]);
 			} else if (argv[i].equals("-destdir")) {
 				/* must have an arg */
 				if (++i >= len || argv[i].startsWith("-")
@@ -359,7 +359,7 @@ public class Main {
 					usage("-parser must have a name argument");
 
 				/* record the name */
-				emit.setParser_class_name(argv[i]);
+				emit.set_parser_class_name(argv[i]);
 			} else if (argv[i].equals("-symbols")) {
 				/* must have an arg */
 				if (++i >= len || argv[i].startsWith("-")
@@ -367,7 +367,7 @@ public class Main {
 					usage("-symbols must have a name argument");
 
 				/* record the name */
-				emit.setSymbol_const_class_name(argv[i]);
+				emit.set_symbol_const_class_name(argv[i]);
 			} else if (argv[i].equals("-nonterms")) {
 				include_non_terms = true;
 			} else if (argv[i].equals("-expect")) {
@@ -387,7 +387,7 @@ public class Main {
 			else if (argv[i].equals("-nosummary"))
 				no_summary = true;
 			else if (argv[i].equals("-nowarn"))
-				emit.setNowarn(true);
+				emit.set_nowarn(true);
 			else if (argv[i].equals("-dump_states"))
 				opt_dump_states = true;
 			else if (argv[i].equals("-dump_tables"))
@@ -429,7 +429,7 @@ public class Main {
 					usage("-symbols must have a name argument");
 
 				/* record the typearg */
-				emit.setClass_type_argument(argv[i]);
+				emit.set_class_type_argument(argv[i]);
 			}
 
 			/* CSA 24-Jul-1999; suggestion by Jean Vaucher */
@@ -475,7 +475,7 @@ public class Main {
 
 		/* parser class */
 		Emitter emit = EmitterAccess.instance();
-		out_name = emit.getParser_class_name() + ".java";
+		out_name = emit.parser_class_name() + ".java";
 		fil = new File(dest_dir, out_name);
 		try {
 			parser_class_file = new PrintWriter(new BufferedOutputStream(
@@ -486,7 +486,7 @@ public class Main {
 		}
 
 		/* symbol constants class */
-		out_name = emit.getSymbol_const_class_name() + ".java";
+		out_name = emit.symbol_const_class_name() + ".java";
 		fil = new File(dest_dir, out_name);
 		try {
 			symbol_class_file = new PrintWriter(new BufferedOutputStream(
@@ -566,8 +566,8 @@ public class Main {
 			/* is this one unused */
 			if (term.use_count() == 0) {
 				/* count it and warn if we are doing warnings */
-				emit.setUnused_term(emit.getUnused_term() + 1);
-				if (!emit.isNowarn()) {
+				emit.set_unused_term(emit.unused_term() + 1);
+				if (!emit.nowarn()) {
 					ErrorManager.getManager().emit_warning(
 							"Terminal \"" + term.name()
 									+ "\" was declared but never used");
@@ -582,8 +582,8 @@ public class Main {
 			/* is this one unused */
 			if (nt.use_count() == 0) {
 				/* count and warn if we are doing warnings */
-				emit.setUnused_term(emit.getUnused_term() + 1);
-				if (!emit.isNowarn()) {
+				emit.set_unused_term(emit.unused_term() + 1);
+				if (!emit.nowarn()) {
 					ErrorManager.getManager().emit_warning(
 							"Non terminal \"" + nt.name()
 									+ "\" was declared but never used");
@@ -638,7 +638,7 @@ public class Main {
 		if (opt_do_debug || print_progress)
 			System.err.println("  Building state machine...");
 		Emitter emit = EmitterAccess.instance();
-		start_state = lalr_state.build_machine(emit.getStart_production());
+		start_state = lalr_state.build_machine(emit.start_production());
 
 		machine_end = System.currentTimeMillis();
 
@@ -662,7 +662,7 @@ public class Main {
 		reduce_check_end = System.currentTimeMillis();
 
 		/* if we have more conflicts than we expected issue a message and die */
-		if (emit.getNum_conflicts() > expect_conflicts) {
+		if (emit.num_conflicts() > expect_conflicts) {
 			ErrorManager.getManager().emit_error(
 					"*** More conflicts encountered than expected "
 							+ "-- parser generation aborted");
@@ -698,7 +698,7 @@ public class Main {
 		symbol_class_file.println("/** CUP generated " + class_or_interface
 				+ " containing symbol constants. */");
 		symbol_class_file.println("public " + class_or_interface + " "
-				+ emit.getSymbol_const_class_name() + " {");
+				+ emit.symbol_const_class_name() + " {");
 
 		symbol_class_file.println("  /* terminals */");
 
@@ -734,9 +734,9 @@ public class Main {
 		symbol_class_file.println("}");
 		symbol_class_file.println();
 
-		emit.setSymbols_time(System.currentTimeMillis() - start_time);
+		emit.set_symbols_time(System.currentTimeMillis() - start_time);
 		emit.parser(parser_class_file, action_table, reduce_table,
-				start_state.index(), emit.getStart_production(), opt_compact_red,
+				start_state.index(), emit.start_production(), opt_compact_red,
 				suppress_scanner);
 	}
 
@@ -794,24 +794,24 @@ public class Main {
 
 		/* unused symbols */
 		Emitter emit = EmitterAccess.instance();
-		System.err.println("  " + emit.getUnused_term() + " terminal"
-				+ plural(emit.getUnused_term()) + " declared but not used.");
-		System.err.println("  " + emit.getUnused_non_term() + " non-terminal"
-				+ plural(emit.getUnused_term()) + " declared but not used.");
+		System.err.println("  " + emit.unused_term() + " terminal"
+				+ plural(emit.unused_term()) + " declared but not used.");
+		System.err.println("  " + emit.unused_non_term() + " non-terminal"
+				+ plural(emit.unused_term()) + " declared but not used.");
 
 		/* productions that didn't reduce */
-		System.err.println("  " + emit.getNot_reduced() + " production"
-				+ plural(emit.getNot_reduced()) + " never reduced.");
+		System.err.println("  " + emit.not_reduced() + " production"
+				+ plural(emit.not_reduced()) + " never reduced.");
 
 		/* conflicts */
-		System.err.println("  " + emit.getNum_conflicts() + " conflict"
-				+ plural(emit.getNum_conflicts()) + " detected" + " ("
+		System.err.println("  " + emit.num_conflicts() + " conflict"
+				+ plural(emit.num_conflicts()) + " detected" + " ("
 				+ expect_conflicts + " expected).");
 
 		/* code location */
 		if (output_produced)
-			System.err.println("  Code written to \"" + emit.getParser_class_name()
-					+ ".java\", and \"" + emit.getSymbol_const_class_name()
+			System.err.println("  Code written to \"" + emit.parser_class_name()
+					+ ".java\", and \"" + emit.symbol_const_class_name()
 					+ ".java\".");
 		else
 			System.err.println("  No code produced.");
@@ -864,24 +864,24 @@ public class Main {
 			System.err.println("      Code Output    "
 					+ timestr(emit_end - build_end, total_time));
 		Emitter emit = EmitterAccess.instance();
-		if (emit.getSymbols_time() != 0)
+		if (emit.symbols_time() != 0)
 			System.err.println("        Symbols      "
-					+ timestr(emit.getSymbols_time(), total_time));
-		if (emit.getParser_time() != 0)
+					+ timestr(emit.symbols_time(), total_time));
+		if (emit.parser_time() != 0)
 			System.err.println("        Parser class "
-					+ timestr(emit.getParser_time(), total_time));
-		if (emit.getAction_code_time() != 0)
+					+ timestr(emit.parser_time(), total_time));
+		if (emit.action_code_time() != 0)
 			System.err.println("          Actions    "
-					+ timestr(emit.getAction_code_time(), total_time));
-		if (emit.getProduction_table_time() != 0)
+					+ timestr(emit.action_code_time(), total_time));
+		if (emit.production_table_time() != 0)
 			System.err.println("          Prod table "
-					+ timestr(emit.getProduction_table_time(), total_time));
-		if (emit.getAction_table_time() != 0)
+					+ timestr(emit.production_table_time(), total_time));
+		if (emit.action_table_time() != 0)
 			System.err.println("          Action tab "
-					+ timestr(emit.getAction_table_time(), total_time));
-		if (emit.getGoto_table_time() != 0)
+					+ timestr(emit.action_table_time(), total_time));
+		if (emit.goto_table_time() != 0)
 			System.err.println("          Reduce tab "
-					+ timestr(emit.getGoto_table_time(), total_time));
+					+ timestr(emit.goto_table_time(), total_time));
 
 		System.err.println("      Dump Output    "
 				+ timestr(dump_end - emit_end, total_time));

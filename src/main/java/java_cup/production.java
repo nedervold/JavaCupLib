@@ -457,7 +457,7 @@ public class production {
 	      String label;
 	      /* if it has a label, make declaration! */
 	      Emitter emit = EmitterAccess.instance();
-		if ((label=part.label()) != null || emit.is_xmlactions())
+		if ((label=part.label()) != null || emit._xmlactions())
 		{
 	    	  if (label==null) label=part.the_symbol().name()+pos;
 		  declaration = declaration + 

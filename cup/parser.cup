@@ -289,7 +289,7 @@ package_spec ::=
 	{:
 	  Emitter emit = EmitterAccess.instance();
 	  /* save the package name */
-	  emit.setPackage_name(multipart_name);
+	  emit.set_package_name(multipart_name);
 
 	  /* reset the accumulated multipart name */
 	  multipart_name = new String();
@@ -316,7 +316,7 @@ import_spec ::=
 	{: 
 	  Emitter emit = EmitterAccess.instance();
 	  /* save this import on the imports list */
-	  emit.getImport_list().push(multipart_name);
+	  emit.import_list().push(multipart_name);
 
 	  /* reset the accumulated multipart name */
 	  multipart_name = new String();
@@ -339,10 +339,10 @@ action_code_part ::=
 	ACTION CODE CODE_STRING:user_code opt_semi
 	{:
 	  Emitter emit = EmitterAccess.instance();
-	  if (emit.getAction_code() != null)
+	  if (emit.action_code() != null)
 	    ErrorManager.getManager().emit_warning("Redundant action code (skipping)");
 	  else /* save the user included code string */
-	    emit.setAction_code(user_code);
+	    emit.set_action_code(user_code);
 	:}
 	;
 
@@ -352,10 +352,10 @@ parser_code_part ::=
 	PARSER CODE CODE_STRING:user_code opt_semi
 	{:
 	  Emitter emit = EmitterAccess.instance();
-	  if (emit.getParser_code()!=null)
+	  if (emit.parser_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant parser code (skipping)");
 	  else /* save the user included code string */
-	    emit.setParser_code(user_code);
+	    emit.set_parser_code(user_code);
 	:}
 	;
 
@@ -365,10 +365,10 @@ init_code ::=
 	INIT WITH CODE_STRING:user_code opt_semi
 	{: 
 	  Emitter emit = EmitterAccess.instance();
-	  if (emit.getInit_code()!=null)
+	  if (emit.init_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant init code (skipping)");
 	  else /* save the user code */
-	    emit.setInit_code(user_code);
+	    emit.set_init_code(user_code);
 	:}
 	;
 
@@ -378,10 +378,10 @@ scan_code ::=
 	SCAN WITH CODE_STRING:user_code opt_semi
 	{: 
 	  Emitter emit = EmitterAccess.instance();
-	  if (emit.getScan_code()!=null)
+	  if (emit.scan_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant scan code (skipping)");
 	  else /* save the user code */
-	    emit.setScan_code(user_code);
+	    emit.set_scan_code(user_code);
 	:}
 	;
 
@@ -541,8 +541,8 @@ start_spec ::=
 	      new_rhs();
 	      add_rhs_part(add_lab(new symbol_part(start_nt), "start_val"));
 	      add_rhs_part(new symbol_part(terminal.EOF));
-	      if (!emit.is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
-	      emit.setStart_production(
+	      if (!emit._xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+	      emit.set_start_production(
 		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 	      new_rhs();
 	    }
@@ -629,14 +629,14 @@ rhs ::=
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
 	          add_rhs_part(new symbol_part(terminal.EOF));
-		  if (!emit.is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+		  if (!emit._xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 		  if ((sym!=null) && (sym instanceof terminal)) {
-		    emit.setStart_production(
+		    emit.set_start_production(
 		      new production(non_terminal.START_nt, rhs_parts, 
 				     rhs_pos, ((terminal)sym).precedence_num(),
 				     ((terminal)sym).precedence_side()));
 		  } else {
-		    emit.setStart_production(
+		    emit.set_start_production(
 		      new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 		  }
 	          new_rhs();
@@ -666,8 +666,8 @@ rhs ::=
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
 	          add_rhs_part(new symbol_part(terminal.EOF));
-		  if (!emit.is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
-	          emit.setStart_production(
+		  if (!emit._xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+	          emit.set_start_production(
 		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 
 	          new_rhs();

@@ -1124,7 +1124,7 @@ public class cup_emit implements Emitter {
 		out.println("}");
 
 		/* put out the action code class */
-		if (!is_xmlactions())
+		if (!_xmlactions())
 			emit_action_code(out, start_prod);
 		else
 			emit_xmlaction_code(out, start_prod);
@@ -1374,7 +1374,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#is_xmlactions()
 	 */
-	public boolean is_xmlactions() {
+	public boolean _xmlactions() {
 		return _xmlactions;
 	}
 
@@ -1383,7 +1383,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getAction_code()
 	 */
-	public String getAction_code() {
+	public String action_code() {
 		return action_code;
 	}
 
@@ -1392,7 +1392,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setAction_code(java.lang.String)
 	 */
-	public void setAction_code(String action_code) {
+	public void set_action_code(String action_code) {
 		this.action_code = action_code;
 	}
 
@@ -1401,7 +1401,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getParser_code()
 	 */
-	public String getParser_code() {
+	public String parser_code() {
 		return parser_code;
 	}
 
@@ -1410,7 +1410,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setParser_code(java.lang.String)
 	 */
-	public void setParser_code(String parser_code) {
+	public void set_parser_code(String parser_code) {
 		this.parser_code = parser_code;
 	}
 
@@ -1419,7 +1419,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getInit_code()
 	 */
-	public String getInit_code() {
+	public String init_code() {
 		return init_code;
 	}
 
@@ -1428,7 +1428,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setInit_code(java.lang.String)
 	 */
-	public void setInit_code(String init_code) {
+	public void set_init_code(String init_code) {
 		this.init_code = init_code;
 	}
 
@@ -1437,7 +1437,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getScan_code()
 	 */
-	public String getScan_code() {
+	public String scan_code() {
 		return scan_code;
 	}
 
@@ -1446,7 +1446,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setScan_code(java.lang.String)
 	 */
-	public void setScan_code(String scan_code) {
+	public void set_scan_code(String scan_code) {
 		this.scan_code = scan_code;
 	}
 
@@ -1455,7 +1455,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getSymbols_time()
 	 */
-	public long getSymbols_time() {
+	public long symbols_time() {
 		return symbols_time;
 	}
 
@@ -1464,7 +1464,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setSymbols_time(long)
 	 */
-	public void setSymbols_time(long symbols_time) {
+	public void set_symbols_time(long symbols_time) {
 		this.symbols_time = symbols_time;
 	}
 
@@ -1473,7 +1473,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getParser_time()
 	 */
-	public long getParser_time() {
+	public long parser_time() {
 		return parser_time;
 	}
 
@@ -1482,7 +1482,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setParser_time(long)
 	 */
-	public void setParser_time(long parser_time) {
+	public void set_parser_time(long parser_time) {
 		this.parser_time = parser_time;
 	}
 
@@ -1491,7 +1491,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getAction_code_time()
 	 */
-	public long getAction_code_time() {
+	public long action_code_time() {
 		return action_code_time;
 	}
 
@@ -1500,7 +1500,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setAction_code_time(long)
 	 */
-	public void setAction_code_time(long action_code_time) {
+	public void set_action_code_time(long action_code_time) {
 		this.action_code_time = action_code_time;
 	}
 
@@ -1509,7 +1509,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getProduction_table_time()
 	 */
-	public long getProduction_table_time() {
+	public long production_table_time() {
 		return production_table_time;
 	}
 
@@ -1518,7 +1518,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setProduction_table_time(long)
 	 */
-	public void setProduction_table_time(long production_table_time) {
+	public void set_production_table_time(long production_table_time) {
 		this.production_table_time = production_table_time;
 	}
 
@@ -1527,7 +1527,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getAction_table_time()
 	 */
-	public long getAction_table_time() {
+	public long action_table_time() {
 		return action_table_time;
 	}
 
@@ -1536,7 +1536,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setAction_table_time(long)
 	 */
-	public void setAction_table_time(long action_table_time) {
+	public void set_action_table_time(long action_table_time) {
 		this.action_table_time = action_table_time;
 	}
 
@@ -1545,7 +1545,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getGoto_table_time()
 	 */
-	public long getGoto_table_time() {
+	public long goto_table_time() {
 		return goto_table_time;
 	}
 
@@ -1554,7 +1554,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setGoto_table_time(long)
 	 */
-	public void setGoto_table_time(long goto_table_time) {
+	public void set_goto_table_time(long goto_table_time) {
 		this.goto_table_time = goto_table_time;
 	}
 
@@ -1563,7 +1563,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getClass_type_argument()
 	 */
-	public String getClass_type_argument() {
+	public String class_type_argument() {
 		return class_type_argument;
 	}
 
@@ -1572,7 +1572,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setClass_type_argument(java.lang.String)
 	 */
-	public void setClass_type_argument(String class_type_argument) {
+	public void set_class_type_argument(String class_type_argument) {
 		this.class_type_argument = class_type_argument;
 	}
 
@@ -1581,7 +1581,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getImport_list()
 	 */
-	public Stack<String> getImport_list() {
+	public Stack<String> import_list() {
 		return import_list;
 	}
 
@@ -1590,7 +1590,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setImport_list(java.util.Stack)
 	 */
-	public void setImport_list(Stack<String> import_list) {
+	public void set_import_list(Stack<String> import_list) {
 		this.import_list = import_list;
 	}
 
@@ -1599,7 +1599,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getNot_reduced()
 	 */
-	public int getNot_reduced() {
+	public int not_reduced() {
 		return not_reduced;
 	}
 
@@ -1608,7 +1608,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setNot_reduced(int)
 	 */
-	public void setNot_reduced(int not_reduced) {
+	public void set_not_reduced(int not_reduced) {
 		this.not_reduced = not_reduced;
 	}
 
@@ -1617,7 +1617,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#isNowarn()
 	 */
-	public boolean isNowarn() {
+	public boolean nowarn() {
 		return nowarn;
 	}
 
@@ -1626,7 +1626,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setNowarn(boolean)
 	 */
-	public void setNowarn(boolean nowarn) {
+	public void set_nowarn(boolean nowarn) {
 		this.nowarn = nowarn;
 	}
 
@@ -1635,7 +1635,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getNum_conflicts()
 	 */
-	public int getNum_conflicts() {
+	public int num_conflicts() {
 		return num_conflicts;
 	}
 
@@ -1644,7 +1644,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setNum_conflicts(int)
 	 */
-	public void setNum_conflicts(int num_conflicts) {
+	public void set_num_conflicts(int num_conflicts) {
 		this.num_conflicts = num_conflicts;
 	}
 
@@ -1653,7 +1653,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getPackage_name()
 	 */
-	public String getPackage_name() {
+	public String package_name() {
 		return package_name;
 	}
 
@@ -1662,7 +1662,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setPackage_name(java.lang.String)
 	 */
-	public void setPackage_name(String package_name) {
+	public void set_package_name(String package_name) {
 		this.package_name = package_name;
 	}
 
@@ -1671,7 +1671,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getParser_class_name()
 	 */
-	public String getParser_class_name() {
+	public String parser_class_name() {
 		return parser_class_name;
 	}
 
@@ -1680,7 +1680,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setParser_class_name(java.lang.String)
 	 */
-	public void setParser_class_name(String parser_class_name) {
+	public void set_parser_class_name(String parser_class_name) {
 		this.parser_class_name = parser_class_name;
 	}
 
@@ -1689,7 +1689,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getStart_production()
 	 */
-	public production getStart_production() {
+	public production start_production() {
 		return start_production;
 	}
 
@@ -1698,7 +1698,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setStart_production(java_cup.production)
 	 */
-	public void setStart_production(production start_production) {
+	public void set_start_production(production start_production) {
 		this.start_production = start_production;
 	}
 
@@ -1707,7 +1707,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getSymbol_const_class_name()
 	 */
-	public String getSymbol_const_class_name() {
+	public String symbol_const_class_name() {
 		return symbol_const_class_name;
 	}
 
@@ -1716,7 +1716,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setSymbol_const_class_name(java.lang.String)
 	 */
-	public void setSymbol_const_class_name(String symbol_const_class_name) {
+	public void set_symbol_const_class_name(String symbol_const_class_name) {
 		this.symbol_const_class_name = symbol_const_class_name;
 	}
 
@@ -1725,7 +1725,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getUnused_non_term()
 	 */
-	public int getUnused_non_term() {
+	public int unused_non_term() {
 		return unused_non_term;
 	}
 
@@ -1734,7 +1734,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setUnused_non_term(int)
 	 */
-	public void setUnused_non_term(int unused_non_term) {
+	public void set_unused_non_term(int unused_non_term) {
 		this.unused_non_term = unused_non_term;
 	}
 
@@ -1743,7 +1743,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#getUnused_term()
 	 */
-	public int getUnused_term() {
+	public int unused_term() {
 		return unused_term;
 	}
 
@@ -1752,7 +1752,7 @@ public class cup_emit implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#setUnused_term(int)
 	 */
-	public void setUnused_term(int unused_term) {
+	public void set_unused_term(int unused_term) {
 		this.unused_term = unused_term;
 	}
 

@@ -91,7 +91,7 @@ public class parse_action_table {
 
 	      /* give a warning if they haven't been turned off */
 	      Emitter emit = EmitterAccess.instance();
-		if (!emit.isNowarn())
+		if (!emit.nowarn())
 		{
 
 		  ErrorManager.getManager().emit_warning("*** Production \"" + 
