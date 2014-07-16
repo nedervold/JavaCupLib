@@ -116,17 +116,17 @@ public class emit {
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Package that the resulting code goes into (null is used for unnamed). */
-	public String package_name = null;
+	private String package_name = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Name of the generated class for symbol constants. */
-	public String symbol_const_class_name = "sym";
+	private String symbol_const_class_name = "sym";
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Name of the generated parser class. */
-	public String parser_class_name = "parser";
+	private String parser_class_name = "parser";
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
@@ -134,89 +134,89 @@ public class emit {
 	 * TUM changes; proposed by Henning Niss 20050628: Type arguments for class
 	 * declaration
 	 */
-	public String class_type_argument = null;
+	private String class_type_argument = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** User declarations for direct inclusion in user action class. */
-	public String action_code = null;
+	private String action_code = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** User declarations for direct inclusion in parser class. */
-	public String parser_code = null;
+	private String parser_code = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** User code for user_init() which is called during parser initialization. */
-	public String init_code = null;
+	private String init_code = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** User code for scan() which is called to get the next Symbol. */
-	public String scan_code = null;
+	private String scan_code = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** The start production of the grammar. */
-	public production start_production = null;
+	private production start_production = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** List of imports (Strings containing class names) to go with actions. */
-	public Stack<String> import_list = new Stack<String>();
+	private Stack<String> import_list = new Stack<String>();
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Number of conflict found while building tables. */
-	public int num_conflicts = 0;
+	private int num_conflicts = 0;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Do we skip warnings? */
-	public boolean nowarn = false;
+	private boolean nowarn = false;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Count of the number on non-reduced productions found. */
-	public int not_reduced = 0;
+	private int not_reduced = 0;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Count of unused terminals. */
-	public int unused_term = 0;
+	private int unused_term = 0;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Count of unused non terminals. */
-	public int unused_non_term = 0;
+	private int unused_non_term = 0;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/* Timing values used to produce timing report in main. */
 
 	/** Time to produce symbol constant class. */
-	public long symbols_time = 0;
+	private long symbols_time = 0;
 
 	/** Time to produce parser class. */
-	public long parser_time = 0;
+	private long parser_time = 0;
 
 	/** Time to produce action code class. */
-	public long action_code_time = 0;
+	private long action_code_time = 0;
 
 	/** Time to produce the production table. */
-	public long production_table_time = 0;
+	private long production_table_time = 0;
 
 	/** Time to produce the action table. */
-	public long action_table_time = 0;
+	private long action_table_time = 0;
 
 	/** Time to produce the reduce-goto table. */
-	public long goto_table_time = 0;
+	private long goto_table_time = 0;
 
 	/* frankf 6/18/96 */
 	private boolean _lr_values;
 	private boolean _locations;
-	public boolean _xmlactions;
+	private boolean _xmlactions;
 	private boolean _genericlabels;
 
 	/** whether or not to emit code for left and right values */
@@ -1116,7 +1116,7 @@ public class emit {
 		out.println("}");
 
 		/* put out the action code class */
-		if (!_xmlactions)
+		if (!is_xmlactions())
 			emit_action_code(out, start_prod);
 		else
 			emit_xmlaction_code(out, start_prod);
@@ -1359,6 +1359,178 @@ public class emit {
 		out.println();
 
 		action_code_time = System.currentTimeMillis() - start_time;
+	}
+
+	public boolean is_xmlactions() {
+		return _xmlactions;
+	}
+
+	public String getAction_code() {
+		return action_code;
+	}
+
+	public void setAction_code(String action_code) {
+		this.action_code = action_code;
+	}
+
+	public String getParser_code() {
+		return parser_code;
+	}
+
+	public void setParser_code(String parser_code) {
+		this.parser_code = parser_code;
+	}
+
+	public String getInit_code() {
+		return init_code;
+	}
+
+	public void setInit_code(String init_code) {
+		this.init_code = init_code;
+	}
+
+	public String getScan_code() {
+		return scan_code;
+	}
+
+	public void setScan_code(String scan_code) {
+		this.scan_code = scan_code;
+	}
+
+	public long getSymbols_time() {
+		return symbols_time;
+	}
+
+	public void setSymbols_time(long symbols_time) {
+		this.symbols_time = symbols_time;
+	}
+
+	public long getParser_time() {
+		return parser_time;
+	}
+
+	public void setParser_time(long parser_time) {
+		this.parser_time = parser_time;
+	}
+
+	public long getAction_code_time() {
+		return action_code_time;
+	}
+
+	public void setAction_code_time(long action_code_time) {
+		this.action_code_time = action_code_time;
+	}
+
+	public long getProduction_table_time() {
+		return production_table_time;
+	}
+
+	public void setProduction_table_time(long production_table_time) {
+		this.production_table_time = production_table_time;
+	}
+
+	public long getAction_table_time() {
+		return action_table_time;
+	}
+
+	public void setAction_table_time(long action_table_time) {
+		this.action_table_time = action_table_time;
+	}
+
+	public long getGoto_table_time() {
+		return goto_table_time;
+	}
+
+	public void setGoto_table_time(long goto_table_time) {
+		this.goto_table_time = goto_table_time;
+	}
+
+	public String getClass_type_argument() {
+		return class_type_argument;
+	}
+
+	public void setClass_type_argument(String class_type_argument) {
+		this.class_type_argument = class_type_argument;
+	}
+
+	public Stack<String> getImport_list() {
+		return import_list;
+	}
+
+	public void setImport_list(Stack<String> import_list) {
+		this.import_list = import_list;
+	}
+
+	public int getNot_reduced() {
+		return not_reduced;
+	}
+
+	public void setNot_reduced(int not_reduced) {
+		this.not_reduced = not_reduced;
+	}
+
+	public boolean isNowarn() {
+		return nowarn;
+	}
+
+	public void setNowarn(boolean nowarn) {
+		this.nowarn = nowarn;
+	}
+
+	public int getNum_conflicts() {
+		return num_conflicts;
+	}
+
+	public void setNum_conflicts(int num_conflicts) {
+		this.num_conflicts = num_conflicts;
+	}
+
+	public String getPackage_name() {
+		return package_name;
+	}
+
+	public void setPackage_name(String package_name) {
+		this.package_name = package_name;
+	}
+
+	public String getParser_class_name() {
+		return parser_class_name;
+	}
+
+	public void setParser_class_name(String parser_class_name) {
+		this.parser_class_name = parser_class_name;
+	}
+
+	public production getStart_production() {
+		return start_production;
+	}
+
+	public void setStart_production(production start_production) {
+		this.start_production = start_production;
+	}
+
+	public String getSymbol_const_class_name() {
+		return symbol_const_class_name;
+	}
+
+	public void setSymbol_const_class_name(String symbol_const_class_name) {
+		this.symbol_const_class_name = symbol_const_class_name;
+	}
+
+	public int getUnused_non_term() {
+		return unused_non_term;
+	}
+
+	public void setUnused_non_term(int unused_non_term) {
+		this.unused_non_term = unused_non_term;
+	}
+
+	public int getUnused_term() {
+		return unused_term;
+	}
+
+	public void setUnused_term(int unused_term) {
+		this.unused_term = unused_term;
 	}
 
 	/*-----------------------------------------------------------*/

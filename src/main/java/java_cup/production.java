@@ -455,7 +455,7 @@ public class production {
 	      part = (symbol_part)rhs[pos];
 	      String label;
 	      /* if it has a label, make declaration! */
-	      if ((label=part.label()) != null || emit.instance()._xmlactions)
+	      if ((label=part.label()) != null || emit.instance().is_xmlactions())
 		{
 	    	  if (label==null) label=part.the_symbol().name()+pos;
 		  declaration = declaration + 
