@@ -287,8 +287,9 @@ package_spec ::=
 	PACKAGE
 	multipart_id
 	{:
+	  Emitter emit = EmitterAccess.instance();
 	  /* save the package name */
-	  EmitterHolder.instance().setPackage_name(multipart_name);
+	  emit.setPackage_name(multipart_name);
 
 	  /* reset the accumulated multipart name */
 	  multipart_name = new String();
@@ -313,8 +314,9 @@ import_spec ::=
 	IMPORT 
 	import_id 
 	{: 
+	  Emitter emit = EmitterAccess.instance();
 	  /* save this import on the imports list */
-	  EmitterHolder.instance().getImport_list().push(multipart_name);
+	  emit.getImport_list().push(multipart_name);
 
 	  /* reset the accumulated multipart name */
 	  multipart_name = new String();
@@ -336,10 +338,11 @@ code_parts ::=
 action_code_part ::= 
 	ACTION CODE CODE_STRING:user_code opt_semi
 	{:
-	  if (EmitterHolder.instance().getAction_code() != null)
+	  Emitter emit = EmitterAccess.instance();
+	  if (emit.getAction_code() != null)
 	    ErrorManager.getManager().emit_warning("Redundant action code (skipping)");
 	  else /* save the user included code string */
-	    EmitterHolder.instance().setAction_code(user_code);
+	    emit.setAction_code(user_code);
 	:}
 	;
 
@@ -348,10 +351,11 @@ action_code_part ::=
 parser_code_part ::= 
 	PARSER CODE CODE_STRING:user_code opt_semi
 	{:
-	  if (EmitterHolder.instance().getParser_code()!=null)
+	  Emitter emit = EmitterAccess.instance();
+	  if (emit.getParser_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant parser code (skipping)");
 	  else /* save the user included code string */
-	    EmitterHolder.instance().setParser_code(user_code);
+	    emit.setParser_code(user_code);
 	:}
 	;
 
@@ -360,10 +364,11 @@ parser_code_part ::=
 init_code ::= 
 	INIT WITH CODE_STRING:user_code opt_semi
 	{: 
-	  if (EmitterHolder.instance().getInit_code()!=null)
+	  Emitter emit = EmitterAccess.instance();
+	  if (emit.getInit_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant init code (skipping)");
 	  else /* save the user code */
-	    EmitterHolder.instance().setInit_code(user_code);
+	    emit.setInit_code(user_code);
 	:}
 	;
 
@@ -372,10 +377,11 @@ init_code ::=
 scan_code ::=
 	SCAN WITH CODE_STRING:user_code opt_semi
 	{: 
-	  if (EmitterHolder.instance().getScan_code()!=null)
+	  Emitter emit = EmitterAccess.instance();
+	  if (emit.getScan_code()!=null)
 	    ErrorManager.getManager().emit_warning("Redundant scan code (skipping)");
 	  else /* save the user code */
-	    EmitterHolder.instance().setScan_code(user_code);
+	    emit.setScan_code(user_code);
 	:}
 	;
 
@@ -527,6 +533,7 @@ start_spec ::=
 	    }
           else
 	    {
+	      Emitter emit = EmitterAccess.instance();
 	      /* remember the non-terminal for later */
 	      start_nt = nt;
 
@@ -534,8 +541,8 @@ start_spec ::=
 	      new_rhs();
 	      add_rhs_part(add_lab(new symbol_part(start_nt), "start_val"));
 	      add_rhs_part(new symbol_part(terminal.EOF));
-	      if (!EmitterHolder.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
-	      EmitterHolder.instance().setStart_production(
+	      if (!emit.is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+	      emit.setStart_production(
 		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 	      new_rhs();
 	    }
@@ -587,6 +594,7 @@ rhs_list ::= rhs_list BAR rhs | rhs;
 rhs ::= 
 	prod_part_list PERCENT_PREC term_id:term_name 
 	{:
+	  Emitter emit = EmitterAccess.instance();
 	  java_cup.symbol sym = null;
 	  if (lhs_nt != null) 
 	    {
@@ -621,14 +629,14 @@ rhs ::=
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
 	          add_rhs_part(new symbol_part(terminal.EOF));
-		  if (!EmitterHolder.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+		  if (!emit.is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 		  if ((sym!=null) && (sym instanceof terminal)) {
-		    EmitterHolder.instance().setStart_production(
+		    emit.setStart_production(
 		      new production(non_terminal.START_nt, rhs_parts, 
 				     rhs_pos, ((terminal)sym).precedence_num(),
 				     ((terminal)sym).precedence_side()));
 		  } else {
-		    EmitterHolder.instance().setStart_production(
+		    emit.setStart_production(
 		      new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 		  }
 	          new_rhs();
@@ -651,14 +659,15 @@ rhs ::=
 		 and build a special start production for it. */
               if (start_nt == null)
 		{
+		  Emitter emit = EmitterAccess.instance();
 		  start_nt = lhs_nt;
 
 	          /* build a special start production */
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
 	          add_rhs_part(new symbol_part(terminal.EOF));
-		  if (!EmitterHolder.instance().is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
-	          EmitterHolder.instance().setStart_production(
+		  if (!emit.is_xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
+	          emit.setStart_production(
 		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
 
 	          new_rhs();

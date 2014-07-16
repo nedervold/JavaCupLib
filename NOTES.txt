@@ -24,6 +24,10 @@ To remove globals (statics):
 
  * Separate the access (instance()) from the data.
 
+ * Refactor the access call into a variable (assuming it won't change
+   in the middle of calculations).  This makes the code look much more
+   like the original.
+
 ------------------------------------------------------------
 
 TODO:
