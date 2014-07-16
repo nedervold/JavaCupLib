@@ -12,26 +12,14 @@ public interface Emitter {
 
 	public abstract long action_table_time();
 
-	public abstract String class_type_argument();
-
 	// Hm Added clear to clear all static fields
 	public abstract void clear();
 
-	public abstract void close_files();
-
-	/**
-	 * Emit a package spec if the user wants one.
-	 * 
-	 * @param out
-	 *            stream to produce output on.
-	 */
-	public abstract void emit_package(PrintWriter out);
-
-	public void emit_parser(final parse_action_table action_table,
-			final parse_reduce_table reduce_table,
-			final lalr_state start_state, final boolean include_non_terms,
-			final boolean opt_compact_red, final boolean suppress_scanner,
-			final boolean sym_interface) throws internal_error;
+	public void emit_parser(File dest_dir, parse_action_table action_table,
+			parse_reduce_table reduce_table, lalr_state start_state,
+			boolean include_non_terms, boolean opt_compact_red,
+			boolean suppress_scanner, boolean sym_interface)
+			throws internal_error;
 
 	public abstract long goto_table_time();
 
@@ -49,33 +37,6 @@ public interface Emitter {
 	public abstract boolean nowarn();
 
 	public abstract int num_conflicts();
-
-	public abstract void open_files(File dest_dir);
-
-	public abstract String package_name();
-
-	/**
-	 * Emit the parser subclass with embedded tables.
-	 * 
-	 * @param out
-	 *            stream to produce output on.
-	 * @param action_table
-	 *            internal representation of the action table.
-	 * @param reduce_table
-	 *            internal representation of the reduce-goto table.
-	 * @param start_st
-	 *            start state of the parse machine.
-	 * @param start_prod
-	 *            start production of the grammar.
-	 * @param compact_reduces
-	 *            do we use most frequent reduce as default?
-	 * @param suppress_scanner
-	 *            should scanner be suppressed for compatibility?
-	 */
-	public abstract void parser(PrintWriter out,
-			parse_action_table action_table, parse_reduce_table reduce_table,
-			int start_st, production start_prod, boolean compact_reduces,
-			boolean suppress_scanner) throws internal_error;
 
 	public abstract String parser_class_name();
 
@@ -99,23 +60,15 @@ public interface Emitter {
 
 	public abstract void set_action_code_time(long action_code_time);
 
-	public abstract void set_action_table_time(long action_table_time);
-
 	public abstract void set_class_type_argument(String class_type_argument);
 
 	public abstract void set_genericlabels(boolean b);
-
-	public abstract void set_goto_table_time(long goto_table_time);
-
-	public abstract void set_import_list(Stack<String> import_list);
 
 	public abstract void set_init_code(String init_code);
 
 	public abstract void set_locations(boolean b);
 
 	public abstract void set_lr_values(boolean b);
-
-	public abstract void set_not_reduced(int not_reduced);
 
 	public abstract void set_nowarn(boolean nowarn);
 
@@ -127,10 +80,6 @@ public interface Emitter {
 
 	public abstract void set_parser_code(String parser_code);
 
-	public abstract void set_parser_time(long parser_time);
-
-	public abstract void set_production_table_time(long production_table_time);
-
 	public abstract void set_scan_code(String scan_code);
 
 	public abstract void set_start_production(production start_production);
@@ -140,7 +89,7 @@ public interface Emitter {
 
 	public abstract void set_symbols_time(long symbols_time);
 
-	public abstract void set_unused_non_term(int unused_non_term);
+	public abstract void set_unused_non_term(int unused_term);
 
 	public abstract void set_unused_term(int unused_term);
 
@@ -149,20 +98,6 @@ public interface Emitter {
 	public abstract production start_production();
 
 	public abstract String symbol_const_class_name();
-
-	/**
-	 * Emit code for the symbol constant class, optionally including non terms,
-	 * if they have been requested.
-	 * 
-	 * @param out
-	 *            stream to produce output on.
-	 * @param emit_non_terms
-	 *            do we emit constants for non terminals?
-	 * @param sym_interface
-	 *            should we emit an interface, rather than a class?
-	 */
-	public abstract void symbols(PrintWriter out, boolean emit_non_terms,
-			boolean sym_interface);
 
 	public abstract long symbols_time();
 

@@ -100,10 +100,6 @@ public abstract class AbstractEmitter implements Emitter {
 		return action_table_time;
 	}
 
-	public String class_type_argument() {
-		return class_type_argument;
-	}
-
 	public long goto_table_time() {
 		return goto_table_time;
 	}
@@ -136,10 +132,6 @@ public abstract class AbstractEmitter implements Emitter {
 		return num_conflicts;
 	}
 
-	public String package_name() {
-		return package_name;
-	}
-
 	public String parser_class_name() {
 		return parser_class_name;
 	}
@@ -168,20 +160,8 @@ public abstract class AbstractEmitter implements Emitter {
 		this.action_code_time = action_code_time;
 	}
 
-	public void set_action_table_time(final long action_table_time) {
-		this.action_table_time = action_table_time;
-	}
-
 	public void set_class_type_argument(final String class_type_argument) {
 		this.class_type_argument = class_type_argument;
-	}
-
-	public void set_goto_table_time(final long goto_table_time) {
-		this.goto_table_time = goto_table_time;
-	}
-
-	public void set_import_list(final Stack<String> import_list) {
-		this.import_list = import_list;
 	}
 
 	public void set_init_code(final String init_code) {
@@ -194,10 +174,6 @@ public abstract class AbstractEmitter implements Emitter {
 
 	public void set_lr_values(final boolean b) {
 		_lr_values = b;
-	}
-
-	public void set_not_reduced(final int not_reduced) {
-		this.not_reduced = not_reduced;
 	}
 
 	public void set_nowarn(final boolean nowarn) {
@@ -218,14 +194,6 @@ public abstract class AbstractEmitter implements Emitter {
 
 	public void set_parser_code(final String parser_code) {
 		this.parser_code = parser_code;
-	}
-
-	public void set_parser_time(final long parser_time) {
-		this.parser_time = parser_time;
-	}
-
-	public void set_production_table_time(final long production_table_time) {
-		this.production_table_time = production_table_time;
 	}
 
 	public void set_scan_code(final String scan_code) {

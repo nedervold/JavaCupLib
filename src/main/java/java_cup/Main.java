@@ -238,8 +238,9 @@ public class Main {
 			} else { // everything's okay, emit parser.
 				if (print_progress)
 					System.err.println("Writing parser...");
-				open_files();
-				emit_parser();
+				emit.emit_parser(dest_dir, action_table, reduce_table,
+						start_state, include_non_terms, opt_compact_red,
+						suppress_scanner, sym_interface);
 				did_output = true;
 			}
 		}
@@ -259,7 +260,8 @@ public class Main {
 		/* close input/output files */
 		if (print_progress)
 			System.err.println("Closing files...");
-		close_files();
+		if (input_file != null)
+			input_file.close();
 
 		/* produce a summary if desired */
 		if (!no_summary)
@@ -460,24 +462,6 @@ public class Main {
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
-	/** Open various files used by the system. */
-	protected static void open_files() {
-		Emitter emit = EmitterAccess.instance();
-		emit.open_files(dest_dir);
-	}
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/** Close various files used by the system. */
-	protected static void close_files() throws java.io.IOException {
-		if (input_file != null)
-			input_file.close();
-		Emitter emit = EmitterAccess.instance();
-		emit.close_files();
-	}
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
 	/**
 	 * Parse the grammar specification from standard input. This produces sets
 	 * of terminal, non-terminals, and productions which can be accessed via
@@ -549,7 +533,7 @@ public class Main {
 			/* is this one unused */
 			if (nt.use_count() == 0) {
 				/* count and warn if we are doing warnings */
-				emit.set_unused_term(emit.unused_term() + 1);
+				emit.set_unused_non_term(emit.unused_non_term() + 1);
 				if (!emit.nowarn()) {
 					ErrorManager.getManager().emit_warning(
 							"Non terminal \"" + nt.name()
@@ -636,16 +620,6 @@ public class Main {
 			// indicate the problem.
 			// we'll die on return, after clean up.
 		}
-	}
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/** Call the emit routines necessary to write out the generated parser. */
-	protected static void emit_parser() throws internal_error {
-		Emitter emit = EmitterAccess.instance();
-		emit.emit_parser(action_table, reduce_table, start_state,
-				include_non_terms, opt_compact_red, suppress_scanner,
-				sym_interface);
 	}
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
