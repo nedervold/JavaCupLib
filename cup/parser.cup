@@ -803,7 +803,7 @@ new_term_id ::=
 	      }
 	      /* build a production_part and put it in the table */ 
 	      symbols.put(term_id, 
-	        new symbol_part(new terminal(term_id, multipart_name)));
+	        new symbol_part(terminal.createTerminal(term_id, multipart_name)));
 	    }
 	:}
 	;
@@ -827,7 +827,7 @@ new_non_term_id ::=
 	      }
 	      /* build the non terminal object */
               non_terminal this_nt = 
-		new non_terminal(non_term_id, multipart_name);
+		non_terminal.createNonTerminal(non_term_id, multipart_name);
 
 	      /* put it in the non_terms table */
 	      non_terms.put(non_term_id, this_nt);

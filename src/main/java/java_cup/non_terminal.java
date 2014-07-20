@@ -22,33 +22,37 @@ public class non_terminal extends symbol {
    * @param nm  the name of the non terminal.
    * @param tp  the type string for the non terminal.
    */
-  public non_terminal(String nm, String tp) 
+  private non_terminal(String nm, String tp) 
     {
       /* super class does most of the work */
       super(nm, tp);
+      /* assign a unique index */
+      _index = next_index;
+   }
 
-      /* add to set of all non terminals and check for duplicates */
-      Object conflict = _all.put(nm,this);
+private static void register(non_terminal nt) {
+	/* add to set of all non terminals and check for duplicates */
+      Object conflict = _all.put(nt.name(), nt);
       if (conflict != null)
 	// can't throw an exception here because these are used in static
 	// initializers, so we crash instead
 	// was: 
 	// throw new internal_error("Duplicate non-terminal ("+nm+") created");
-	(new internal_error("Duplicate non-terminal ("+nm+") created")).crash();
+	(new internal_error("Duplicate non-terminal ("+nt.name()+") created")).crash();
 
       /* assign a unique index */
-      _index = next_index++;
+      next_index++;
 
       /* add to by_index set */
-      _all_by_index.put(new Integer(_index), this);
-    }
+      _all_by_index.put(new Integer(nt.index()), nt);
+}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Constructor with default type. 
    * @param nm  the name of the non terminal.
    */
-  public non_terminal(String nm) 
+  private non_terminal(String nm) 
     {
       this(nm, null);
     }
@@ -113,7 +117,7 @@ public class non_terminal extends symbol {
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** special non-terminal for start symbol */
-  public static final non_terminal START_nt = new non_terminal("$START");
+  public static final non_terminal START_nt = createNonTerminal("$START");
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -145,7 +149,7 @@ public class non_terminal extends symbol {
      */
     static non_terminal create_new(String prefix, String type) throws internal_error{
         if (prefix==null) prefix = "NT$";
-        return new non_terminal(prefix + next_nt++,type);
+        return createNonTerminal(prefix + next_nt++, type);
     }
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -236,7 +240,19 @@ public class non_terminal extends symbol {
   /*--- (Access to) Instance Variables ------------------------*/
   /*-----------------------------------------------------------*/
 
-  /** Table of all productions with this non terminal on the LHS. */
+  public static non_terminal createNonTerminal(String nm, String tp) {
+	non_terminal nt = new non_terminal(nm, tp);
+    register(nt);
+    return nt;
+}
+
+public static non_terminal createNonTerminal(String nm) {
+	non_terminal nt = new non_terminal(nm);
+	register(nt);
+	return nt;
+}
+
+/** Table of all productions with this non terminal on the LHS. */
   protected Hashtable _productions = new Hashtable(11);
 
   /** Access to productions with this non terminal on the LHS. */

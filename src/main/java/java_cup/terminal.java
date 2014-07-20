@@ -1,6 +1,7 @@
 package java_cup;
 
 import java_cup.assoc;
+
 import java.util.Hashtable;
 import java.util.Enumeration;
 
@@ -23,37 +24,42 @@ public class terminal extends symbol {
    * @param nm the name of the terminal.
    * @param tp the type of the terminal.
    */
-  public terminal(String nm, String tp, int precedence_side, int precedence_num) 
+  private terminal(String nm, String tp, int precedence_side, int precedence_num) 
     {
       /* superclass does most of the work */
       super(nm, tp);
 
-      /* add to set of all terminals and check for duplicates */
-      Object conflict = _all.put(nm,this);
+      /* assign a unique index */
+      _index = next_index;
+
+      /* set the precedence */
+      _precedence_num = precedence_num;
+      _precedence_side = precedence_side;
+    }
+
+private static void register(terminal t) {
+	/* add to set of all terminals and check for duplicates */
+      Object conflict = _all.put(t.name(),t);
       if (conflict != null)
 	// can't throw an execption here because this is used in static 
 	// initializers, so we do a crash instead
 	// was:
 	// throw new internal_error("Duplicate terminal (" + nm + ") created");
-	(new internal_error("Duplicate terminal (" + nm + ") created")).crash();
+	(new internal_error("Duplicate terminal (" + t.name() + ") created")).crash();
 
       /* assign a unique index */
-      _index = next_index++;
-
-      /* set the precedence */
-      _precedence_num = precedence_num;
-      _precedence_side = precedence_side;
+      next_index++;
 
       /* add to by_index set */
-      _all_by_index.put(new Integer(_index), this);
-    }
+      _all_by_index.put(new Integer(t.index()), t);
+}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Constructor for non-precedented terminal
     */ 
 
-  public terminal(String nm, String tp) 
+  private terminal(String nm, String tp) 
     {
       this(nm, tp, assoc.no_prec, -1);
     }
@@ -63,7 +69,7 @@ public class terminal extends symbol {
   /** Constructor with default type. 
    * @param nm the name of the terminal.
    */
-  public terminal(String nm) 
+  private terminal(String nm) 
     {
       this(nm, null);
     }
@@ -89,8 +95,8 @@ public class terminal extends symbol {
       _all.clear();
       _all_by_index.clear();
       next_index=0;
-      EOF = new terminal("EOF");
-      error = new terminal ("error");
+      EOF = createTerminal("EOF");
+      error = createTerminal("error");
   }
   
   /** Access to all terminals. */
@@ -126,18 +132,37 @@ public class terminal extends symbol {
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
  
-  /** Static counter to assign unique index. */
+  public static terminal createTerminal(String nm, String tp,
+		int precedence_side, int precedence_num) {
+	terminal result = new terminal(nm, tp, precedence_side, precedence_num);
+	register(result);
+	return result;
+}
+
+public static terminal createTerminal(String nm, String tp) {
+	terminal result = new terminal(nm, tp);
+	register(result);
+	return result;
+}
+
+public static terminal createTerminal(String nm) {
+	terminal result =  new terminal(nm);
+	register(result);
+	return result;
+}
+
+/** Static counter to assign unique index. */
   protected static int next_index = 0;
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Special terminal for end of input. */
-  public static terminal EOF = new terminal("EOF");
+  public static terminal EOF = createTerminal("EOF");
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** special terminal used for error recovery */
-  public static terminal error = new terminal("error");
+  public static terminal error = createTerminal("error");
 
   /*-----------------------------------------------------------*/
   /*--- General Methods ---------------------------------------*/

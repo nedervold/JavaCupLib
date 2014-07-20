@@ -57,25 +57,14 @@ public class lalr_state {
   /** Constructor for building a state from a set of items.
    * @param itms the set of items that makes up this state.
    */
-  public lalr_state(lalr_item_set itms) throws internal_error
+  private lalr_state(lalr_item_set itms) throws internal_error
    {
-     /* don't allow null or duplicate item sets */
-     if (itms == null)
-       throw new internal_error(
-	 "Attempt to construct an LALR state from a null item set");
-
-     if (find_state(itms) != null)
-       throw new internal_error(
-	 "Attempt to construct a duplicate LALR state");
 
      /* assign a unique index */
-      _index = next_index++;
+      _index = next_index;
 
      /* store the items */
      _items = itms;
-
-     /* add to the global collection, keyed with its item set */
-     _all.put(_items,this);
    }
 
   /*-----------------------------------------------------------*/
@@ -310,7 +299,7 @@ public class lalr_state {
       start_items.compute_closure();
 
       /* build a state out of that item set and put it in our work set */
-      start_state = new lalr_state(start_items);
+      start_state = createLalrState(start_items);
       work_stack.push(start_state);
 
       /* enter the state using the kernel as the key */
@@ -373,7 +362,7 @@ public class lalr_state {
 	          new_items.compute_closure();
 
 		  /* build the new state */
-		  new_st = new lalr_state(new_items);
+		  new_st = createLalrState(new_items);
 
 		  /* add the new state to our work set */
 		  work_stack.push(new_st);
@@ -421,7 +410,28 @@ public class lalr_state {
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
-  /** Propagate lookahead sets out of this state. This recursively 
+	public static lalr_state createLalrState(lalr_item_set itms)
+			throws internal_error {
+		/* don't allow null or duplicate item sets */
+		if (itms == null)
+			throw new internal_error(
+					"Attempt to construct an LALR state from a null item set");
+
+		if (find_state(itms) != null)
+			throw new internal_error(
+					"Attempt to construct a duplicate LALR state");
+		lalr_state result = new lalr_state(itms);
+
+		/* assign a unique index */
+		next_index++;
+
+		/* add to the global collection, keyed with its item set */
+		_all.put(itms, result);
+
+		return result;
+	}
+
+/** Propagate lookahead sets out of this state. This recursively 
    *  propagates to all items that have propagation links from some item 
    *  in this state. 
    */
