@@ -88,9 +88,12 @@
 /*================================================================*/ 
 
 package java_cup;
-import java_cup.runtime.*;
 import java.util.Hashtable;
 import java.util.Stack;
+
+import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.Symbol;
+
 /*----------------------------------------------------------------*/ 
 
 action code {:
@@ -130,7 +133,7 @@ action code {:
 
   /** string to build up multiple part names */
   protected String multipart_name = new String();
-  protected Stack multipart_names = new Stack();
+  protected Stack<String> multipart_names = new Stack<String>();
   /** append a new name segment to the accumulated multipart name */
 
 //  TUM CHANGES
@@ -146,10 +149,10 @@ action code {:
 // TUM CHANGES
 
   /** table of declared symbols -- contains production parts indexed by name */
-  protected Hashtable symbols = new Hashtable();
+  protected Hashtable<String, production_part> symbols = new Hashtable<String, production_part>();
 
   /** table of just non terminals -- contains non_terminals indexed by name */
-  protected Hashtable non_terms = new Hashtable();
+  protected Hashtable<String, non_terminal> non_terms = new Hashtable<String, non_terminal>();
 
   /** declared start non_terminal */
   protected non_terminal start_nt = null;

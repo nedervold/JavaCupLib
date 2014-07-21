@@ -43,7 +43,11 @@ Refactoring steps taken
   Now setting a NullEmitter means no code files at all.
 
 * Removing globals from terminal, non_terminal, production (and
-  action_production).
+  action_production), and lalr_state by moving into Factories.
+
+* Added generic arguments to old-style collections.
+
+
 
 ------------------------------------------------------------
 
