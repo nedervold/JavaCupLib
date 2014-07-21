@@ -79,7 +79,7 @@ public class parse_action_table {
 	}
 
       /* now go across every production and make sure we hit it */
-      for (Enumeration p = production.all(); p.hasMoreElements(); )
+      for (Enumeration p = ProductionFactory.all(); p.hasMoreElements(); )
 	{
 	  prod = (production)p.nextElement();
 

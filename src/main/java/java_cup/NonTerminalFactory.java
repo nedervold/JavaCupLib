@@ -121,7 +121,7 @@ public abstract class NonTerminalFactory  {
 	}
 	
 	  /* do one last pass over the productions to finalize all of them */
-	  for (e=production.all(); e.hasMoreElements(); )
+	  for (e=ProductionFactory.all(); e.hasMoreElements(); )
 	{
 	  prod = (production)e.nextElement();
 	  prod.set_nullable(prod.check_nullable());

@@ -235,7 +235,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  }");
 
 		out.println();
-		for (int instancecounter = 0; instancecounter <= production.number()
+		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			out.println("  /** Method " + instancecounter
 					+ " with the actual generated action code for actions "
@@ -259,9 +259,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			// START Switch
 			/* emit action code for each production as a separate case */
 			int proditeration = instancecounter * UPPERLIMIT;
-			prod = production.find(proditeration);
+			prod = ProductionFactory.find(proditeration);
 			for (; proditeration < Math.min((instancecounter + 1) * UPPERLIMIT,
-					production.number()); prod = (production) production
+					ProductionFactory.number()); prod = (production) ProductionFactory
 					.find(++proditeration)) {
 				/* case label */
 				out.println("          /*. . . . . . . . . . . . . . . . . . . .*/");
@@ -442,7 +442,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("    throws java.lang.Exception");
 		out.println("    {");
 
-		if (production.number() < UPPERLIMIT) { // Make it simple for the
+		if (ProductionFactory.number() < UPPERLIMIT) { // Make it simple for the
 												// optimizer to inline!
 			out.println("              return " + pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
@@ -466,7 +466,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
-		for (int instancecounter = 0; instancecounter <= production.number()
+		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			/* case label */
 			out.println("          /*. . . . . . . . "
@@ -513,15 +513,15 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		long start_time = System.currentTimeMillis();
 
 		/* collect up the productions in order */
-		all_prods = new production[production.number()];
-		for (Enumeration p = production.all(); p.hasMoreElements();) {
+		all_prods = new production[ProductionFactory.number()];
+		for (Enumeration p = ProductionFactory.all(); p.hasMoreElements();) {
 			prod = (production) p.nextElement();
 			all_prods[prod.index()] = prod;
 		}
 
 		// make short[][]
-		short[][] prod_table = new short[production.number()][2];
-		for (int i = 0; i < production.number(); i++) {
+		short[][] prod_table = new short[ProductionFactory.number()][2];
+		for (int i = 0; i < ProductionFactory.number(); i++) {
 			prod = all_prods[i];
 			// { lhs symbol , rhs size }
 			prod_table[i][0] = (short) prod.lhs().the_symbol().index();
@@ -958,7 +958,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  }");
 
 		out.println();
-		for (int instancecounter = 0; instancecounter <= production.number()
+		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			out.println("  /** Method " + instancecounter
 					+ " with the actual generated action code for actions "
@@ -982,9 +982,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			// START Switch
 			/* emit action code for each production as a separate case */
 			int proditeration = instancecounter * UPPERLIMIT;
-			prod = production.find(proditeration);
+			prod = ProductionFactory.find(proditeration);
 			for (; proditeration < Math.min((instancecounter + 1) * UPPERLIMIT,
-					production.number()); prod = (production) production
+					ProductionFactory.number()); prod = (production) ProductionFactory
 					.find(++proditeration)) {
 				/* case label */
 				out.println("          /*. . . . . . . . . . . . . . . . . . . .*/");
@@ -1024,7 +1024,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 				// determine the variant:
 				int variant = 0;
 				for (int i = 0; i < proditeration; i++)
-					if (production.find(i).lhs().equals(prod.lhs()))
+					if (ProductionFactory.find(i).lhs().equals(prod.lhs()))
 						variant++;
 
 				out.println("                RESULT = new XMLElement.NonTerminal(\""
@@ -1103,7 +1103,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("    throws java.lang.Exception");
 		out.println("    {");
 
-		if (production.number() < UPPERLIMIT) { // Make it simple for the
+		if (ProductionFactory.number() < UPPERLIMIT) { // Make it simple for the
 												// optimizer to inline!
 			out.println("              return " + pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
@@ -1127,7 +1127,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
-		for (int instancecounter = 0; instancecounter <= production.number()
+		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			/* case label */
 			out.println("          /*. . . . . . . . "

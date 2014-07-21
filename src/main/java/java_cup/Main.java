@@ -183,8 +183,7 @@ public class Main {
 		 * calls
 		 */
 		TerminalFactory.clear();
-		production.clear();
-		action_production.clear();
+		ProductionFactory.clear();
 		emit.clear();
 		NonTerminalFactory.clear();
 		parse_reduce_row.clear();
@@ -670,8 +669,8 @@ public class Main {
 				+ plural(TerminalFactory.number()) + ", ");
 		System.err.print(NonTerminalFactory.number() + " non-terminal"
 				+ plural(NonTerminalFactory.number()) + ", and ");
-		System.err.println(production.number() + " production"
-				+ plural(production.number()) + " declared, ");
+		System.err.println(ProductionFactory.number() + " production"
+				+ plural(ProductionFactory.number()) + " declared, ");
 		System.err.println("  producing " + lalr_state.number()
 				+ " unique parse states.");
 
@@ -843,8 +842,8 @@ public class Main {
 		System.err.println();
 
 		System.err.println("===== Productions =====");
-		for (int pidx = 0; pidx < production.number(); pidx++) {
-			production prod = production.find(pidx);
+		for (int pidx = 0; pidx < ProductionFactory.number(); pidx++) {
+			production prod = ProductionFactory.find(pidx);
 			System.err.print("[" + pidx + "] " + prod.lhs().the_symbol().name()
 					+ " ::= ");
 			for (int i = 0; i < prod.rhs_length(); i++)

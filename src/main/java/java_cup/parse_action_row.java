@@ -79,10 +79,10 @@ public class parse_action_row {
 
       /* if we haven't allocated the count table, do so now */
       if (reduction_count == null) 
-	reduction_count = new int[production.number()];
+	reduction_count = new int[ProductionFactory.number()];
 
       /* clear the reduction count table and maximums */
-      for (i = 0; i < production.number(); i++)
+      for (i = 0; i < ProductionFactory.number(); i++)
 	reduction_count[i] = 0;
       max_prod = -1;
       max_red = 0;
