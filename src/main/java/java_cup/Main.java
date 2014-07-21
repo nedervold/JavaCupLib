@@ -188,7 +188,7 @@ public class Main {
 		NonTerminalFactory.clear();
 		parse_reduce_row.clear();
 		parse_action_row.clear();
-		lalr_state.clear();
+		LalrStateFactory.clear();
 
 		/* process user options and arguments */
 		parse_args(argv);
@@ -589,7 +589,7 @@ public class Main {
 		if (opt_do_debug || print_progress)
 			System.err.println("  Building state machine...");
 		Emitter emit = EmitterAccess.instance();
-		start_state = lalr_state.build_machine(emit.start_production());
+		start_state = LalrStateFactory.build_machine(emit.start_production());
 
 		machine_end = System.currentTimeMillis();
 
@@ -598,7 +598,7 @@ public class Main {
 			System.err.println("  Filling in tables...");
 		action_table = new parse_action_table();
 		reduce_table = new parse_reduce_table();
-		for (Enumeration st = lalr_state.all(); st.hasMoreElements();) {
+		for (Enumeration st = LalrStateFactory.all(); st.hasMoreElements();) {
 			lalr_state lst = (lalr_state) st.nextElement();
 			lst.build_table_entries(action_table, reduce_table);
 		}
@@ -671,7 +671,7 @@ public class Main {
 				+ plural(NonTerminalFactory.number()) + ", and ");
 		System.err.println(ProductionFactory.number() + " production"
 				+ plural(ProductionFactory.number()) + " declared, ");
-		System.err.println("  producing " + lalr_state.number()
+		System.err.println("  producing " + LalrStateFactory.number()
 				+ " unique parse states.");
 
 		/* unused symbols */
@@ -864,16 +864,16 @@ public class Main {
 	 * recognition state machine.
 	 */
 	public static void dump_machine() {
-		lalr_state ordered[] = new lalr_state[lalr_state.number()];
+		lalr_state ordered[] = new lalr_state[LalrStateFactory.number()];
 
 		/* put the states in sorted order for a nicer display */
-		for (Enumeration s = lalr_state.all(); s.hasMoreElements();) {
+		for (Enumeration s = LalrStateFactory.all(); s.hasMoreElements();) {
 			lalr_state st = (lalr_state) s.nextElement();
 			ordered[st.index()] = st;
 		}
 
 		System.err.println("===== Viable Prefix Recognizer =====");
-		for (int i = 0; i < lalr_state.number(); i++) {
+		for (int i = 0; i < LalrStateFactory.number(); i++) {
 			if (ordered[i] == start_state)
 				System.err.print("START ");
 			System.err.println(ordered[i]);

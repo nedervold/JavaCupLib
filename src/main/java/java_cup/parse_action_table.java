@@ -26,7 +26,7 @@ public class parse_action_table {
   public parse_action_table()
     {
       /* determine how many states we are working with */
-      _num_states = lalr_state.number();
+      _num_states = LalrStateFactory.number();
 
       /* allocate the array and fill it in with empty rows */
       under_state = new parse_action_row[_num_states];
