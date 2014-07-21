@@ -36,7 +36,7 @@ public class lalr_item_set {
     throws internal_error
     {
       not_null(other);
-      _all = (Hashtable)other._all.clone();
+      _all = (Hashtable<lalr_item, lalr_item>)other._all.clone();
     }
 
   /*-----------------------------------------------------------*/
@@ -46,10 +46,10 @@ public class lalr_item_set {
   /** A hash table to implement the set.  We store the items using themselves
    *  as keys. 
    */
-  protected Hashtable _all = new Hashtable(11);
+  protected Hashtable<lalr_item, lalr_item> _all = new Hashtable<lalr_item, lalr_item>(11);
 
   /** Access to all elements of the set. */
-  public Enumeration all() {return _all.elements();}
+  public Enumeration<lalr_item> all() {return _all.elements();}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -88,8 +88,8 @@ public class lalr_item_set {
       not_null(other);
 
       /* walk down our set and make sure every element is in the other */
-      for (Enumeration e = all(); e.hasMoreElements(); )
-	if (!other.contains((lalr_item)e.nextElement()))
+      for (Enumeration<lalr_item> e = all(); e.hasMoreElements(); )
+	if (!other.contains(e.nextElement()))
 	  return false;
 
       /* they were all there */
@@ -331,7 +331,7 @@ public class lalr_item_set {
   public int hashCode()
     {
       int result = 0;
-      Enumeration e;
+      Enumeration<lalr_item> e;
       int cnt;
 
       /* only compute a new one if we don't have it cached */
@@ -342,7 +342,7 @@ public class lalr_item_set {
 	  //   that means equal sets will have inequal hashcodes, which
 	  //   we're not allowed (by contract) to do.  So hash them all.
           for (e = all(), cnt=0 ; e.hasMoreElements() /*&& cnt<5*/; cnt++)
-	    result ^= ((lalr_item)e.nextElement()).hashCode();
+	    result ^= (e.nextElement()).hashCode();
 
 	  hashcode_cache = new Integer(result);
 	}

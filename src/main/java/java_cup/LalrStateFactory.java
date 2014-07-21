@@ -7,10 +7,10 @@ import java.util.Stack;
 public class LalrStateFactory {
 
 	/** Collection of all states. */
-	protected static Hashtable _all = new Hashtable();
+	protected static Hashtable<lalr_item_set, lalr_state> _all = new Hashtable<lalr_item_set, lalr_state>();
 
 	/** Collection of all states. */
-	public static Enumeration all() {
+	public static Enumeration<lalr_state> all() {
 		return _all.elements();
 	}
 
@@ -30,7 +30,7 @@ public class LalrStateFactory {
 	 * set of items -- which uniquely define the state). This table stores state
 	 * objects using (a copy of) their kernel item sets as keys.
 	 */
-	protected static Hashtable _all_kernels = new Hashtable();
+	protected static Hashtable<lalr_item_set, lalr_state> _all_kernels = new Hashtable<lalr_item_set, lalr_state>();
 
 	/**
 	 * Find and return state with a given a kernel item set (or null if not
@@ -68,8 +68,8 @@ public class LalrStateFactory {
 
 		System.out.println("lalr_state [" + st.index() + "] {");
 		itms = st.items();
-		for (Enumeration e = itms.all(); e.hasMoreElements();) {
-			itm = (lalr_item) e.nextElement();
+		for (Enumeration<lalr_item> e = itms.all(); e.hasMoreElements();) {
+			itm =  e.nextElement();
 			System.out.print("  [");
 			System.out.print(itm.the_production().lhs().the_symbol().name());
 			System.out.print(" ::= ");
