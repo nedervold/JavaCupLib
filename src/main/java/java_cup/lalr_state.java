@@ -116,12 +116,11 @@ public class lalr_state {
    *  propagates to all items that have propagation links from some item 
    *  in this state. 
    */
-  protected void propagate_lookaheads() throws internal_error
-    {
-      /* recursively propagate out from each item in the state */
-      for (Enumeration itm = items().all(); itm.hasMoreElements(); )
-	((lalr_item)itm.nextElement()).propagate_lookaheads(null);
-    }
+	protected void propagate_lookaheads() throws internal_error {
+		/* recursively propagate out from each item in the state */
+		for (Enumeration<lalr_item> itm = items().all(); itm.hasMoreElements();)
+			((lalr_item) itm.nextElement()).propagate_lookaheads(null);
+	}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -163,7 +162,7 @@ public class lalr_state {
       our_red_row = reduce_table.under_state[index()];
 
       /* consider each item in our state */
-      for (Enumeration i = items().all(); i.hasMoreElements(); )
+      for (Enumeration<lalr_item> i = items().all(); i.hasMoreElements(); )
 	{
 	  itm = (lalr_item)i.nextElement();
 	 
@@ -397,12 +396,10 @@ public class lalr_state {
     throws internal_error
     {
       lalr_item    itm, compare;
-      symbol       shift_sym;
-
       boolean      after_itm;
 
       /* consider each element */
-      for (Enumeration itms = items().all(); itms.hasMoreElements(); )
+      for (Enumeration<lalr_item> itms = items().all(); itms.hasMoreElements(); )
 	{
 	  itm = (lalr_item)itms.nextElement();
 
@@ -415,7 +412,7 @@ public class lalr_state {
 	      after_itm = false;
 
 	      /* compare this item against all others looking for conflicts */
-	      for (Enumeration comps = items().all(); comps.hasMoreElements(); )
+	      for (Enumeration<lalr_item> comps = items().all(); comps.hasMoreElements(); )
 		{
 		  compare = (lalr_item)comps.nextElement();
 
@@ -501,7 +498,7 @@ public class lalr_state {
       "  between " + red_itm.to_simple_string()+"\n";
 
       /* find and report on all items that shift under our conflict symbol */
-      for (Enumeration itms = items().all(); itms.hasMoreElements(); )
+      for (Enumeration<lalr_item> itms = items().all(); itms.hasMoreElements(); )
 	{
 	  itm = (lalr_item)itms.nextElement();
 

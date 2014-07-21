@@ -27,7 +27,7 @@ public abstract class NonTerminalFactory  {
 	/** Table of all non-terminals -- elements are stored using name strings 
 	   *  as the key 
 	   */
-	protected static Hashtable _all = new Hashtable();
+	protected static Hashtable<String, non_terminal> _all = new Hashtable<String, non_terminal>();
 
 	public static void clear() {
 	      _all.clear();
@@ -37,7 +37,7 @@ public abstract class NonTerminalFactory  {
 	  }
 
 	/** Access to all non-terminals. */
-	public static Enumeration all() {return _all.elements();}
+	public static Enumeration<non_terminal> all() {return _all.elements();}
 
 	/** lookup a non terminal by name string */
 	public static non_terminal find(String with_name) {
@@ -48,13 +48,11 @@ public abstract class NonTerminalFactory  {
 	}
 
 	/** Table of all non terminals indexed by their index number. */
-	protected static Hashtable _all_by_index = new Hashtable();
+	protected static Hashtable<Integer, non_terminal> _all_by_index = new Hashtable<Integer, non_terminal>();
 
 	/** Lookup a non terminal by index. */
 	public static non_terminal find(int indx) {
-	  Integer the_indx = new Integer(indx);
-	
-	  return (non_terminal)_all_by_index.get(the_indx);
+	  return _all_by_index.get(indx);
 	}
 
 	/** Total number of non-terminals. */
@@ -94,7 +92,6 @@ public abstract class NonTerminalFactory  {
 	public static void compute_nullability() throws internal_error {
 	  boolean      change = true;
 	  non_terminal nt;
-	  Enumeration  e;
 	  production   prod;
 	
 	  /* repeat this process until there is no change */
@@ -104,9 +101,9 @@ public abstract class NonTerminalFactory  {
 	  change = false;
 	
 	  /* consider each non-terminal */
-	  for (e=all(); e.hasMoreElements(); )
+	  for (Enumeration<non_terminal> e=all(); e.hasMoreElements(); )
 	    {
-	      nt = (non_terminal)e.nextElement();
+	      nt = e.nextElement();
 	
 	      /* only look at things that aren't already marked nullable */
 	      if (!nt.nullable())
@@ -121,7 +118,7 @@ public abstract class NonTerminalFactory  {
 	}
 	
 	  /* do one last pass over the productions to finalize all of them */
-	  for (e=ProductionFactory.all(); e.hasMoreElements(); )
+	  for (Enumeration<production> e=ProductionFactory.all(); e.hasMoreElements(); )
 	{
 	  prod = (production)e.nextElement();
 	  prod.set_nullable(prod.check_nullable());
@@ -133,8 +130,8 @@ public abstract class NonTerminalFactory  {
 	   */
 	public static void compute_first_sets() throws internal_error {
 	  boolean      change = true;
-	  Enumeration  n;
-	  Enumeration  p;
+	  Enumeration<non_terminal>  n;
+	  Enumeration<production>  p;
 	  non_terminal nt;
 	  production   prod;
 	  terminal_set prod_first;

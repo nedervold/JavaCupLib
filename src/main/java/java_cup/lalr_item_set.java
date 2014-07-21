@@ -32,12 +32,11 @@ public class lalr_item_set {
   /** Constructor for cloning from another set. 
    * @param other indicates set we should copy from.
    */
-  public lalr_item_set(lalr_item_set other) 
-    throws internal_error
-    {
-      not_null(other);
-      _all = (Hashtable<lalr_item, lalr_item>)other._all.clone();
-    }
+	@SuppressWarnings("unchecked")
+	public lalr_item_set(lalr_item_set other) throws internal_error {
+		not_null(other);
+		_all = (Hashtable<lalr_item, lalr_item>) other._all.clone();
+	}
 
   /*-----------------------------------------------------------*/
   /*--- (Access to) Instance Variables ------------------------*/
@@ -167,7 +166,7 @@ public class lalr_item_set {
       not_null(other);
 
       /* walk down the other set and do the adds individually */
-      for (Enumeration e = other.all(); e.hasMoreElements(); )
+      for (Enumeration<lalr_item> e = other.all(); e.hasMoreElements(); )
 	add((lalr_item)e.nextElement());
     }
 
@@ -181,7 +180,7 @@ public class lalr_item_set {
       not_null(other);
 
       /* walk down the other set and do the removes individually */
-      for (Enumeration e = other.all(); e.hasMoreElements(); )
+      for (Enumeration<lalr_item> e = other.all(); e.hasMoreElements(); )
 	remove((lalr_item)e.nextElement());
     }
 
@@ -190,7 +189,7 @@ public class lalr_item_set {
   /** Remove and return one item from the set (done in hash order). */
   public lalr_item get_one() throws internal_error
     {
-      Enumeration the_set;
+      Enumeration<lalr_item> the_set;
       lalr_item result;
 
       the_set = all();
@@ -242,7 +241,7 @@ public class lalr_item_set {
       lalr_item     itm, new_itm, add_itm;
       non_terminal  nt;
       terminal_set  new_lookaheads;
-      Enumeration   p;
+      Enumeration<production>   p;
       production    prod;
       boolean       need_prop;
 
@@ -358,7 +357,7 @@ public class lalr_item_set {
       StringBuffer result = new StringBuffer();
 
       result.append("{\n");
-      for (Enumeration e=all(); e.hasMoreElements(); ) 
+      for (Enumeration<lalr_item> e=all(); e.hasMoreElements(); ) 
  	{
  	  result.append("  " + (lalr_item)e.nextElement() + "\n");
  	}

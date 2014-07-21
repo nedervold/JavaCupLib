@@ -100,9 +100,9 @@ public class LalrStateFactory {
 	 */
 	protected static void propagate_all_lookaheads() throws internal_error {
 		/* iterate across all states */
-		for (Enumeration st = all(); st.hasMoreElements();) {
+		for (Enumeration<lalr_state> st = all(); st.hasMoreElements();) {
 			/* propagate lookaheads out of that state */
-			((lalr_state) st.nextElement()).propagate_lookaheads();
+			(st.nextElement()).propagate_lookaheads();
 		}
 	}
 
@@ -158,12 +158,14 @@ public class LalrStateFactory {
 		lalr_item_set new_items;
 		lalr_item_set linked_items;
 		lalr_item_set kernel;
-		Stack work_stack = new Stack();
+		Stack<lalr_state> work_stack = new Stack<lalr_state> ();
 		lalr_state st, new_st;
 		symbol_set outgoing;
 		lalr_item itm, new_itm, existing, fix_itm;
 		symbol sym, sym2;
-		Enumeration i, s, fix;
+		Enumeration<lalr_item> i;
+		Enumeration<symbol> s;
+		Enumeration<lalr_item> fix;
 
 		/* sanity check */
 		if (start_prod == null)

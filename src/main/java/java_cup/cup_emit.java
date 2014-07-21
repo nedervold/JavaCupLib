@@ -159,7 +159,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  /* terminals */");
 
 		/* walk over the terminals *//* later might sort these */
-		for (Enumeration e = TerminalFactory.all(); e.hasMoreElements();) {
+		for (Enumeration<terminal> e = TerminalFactory.all(); e.hasMoreElements();) {
 			term = (terminal) e.nextElement();
 
 			/* output a constant decl for the terminal */
@@ -173,7 +173,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			out.println("  /* non terminals */");
 
 			/* walk over the non terminals *//* later might sort these */
-			for (Enumeration e = NonTerminalFactory.all(); e.hasMoreElements();) {
+			for (Enumeration<non_terminal> e = NonTerminalFactory.all(); e.hasMoreElements();) {
 				nt = (non_terminal) e.nextElement();
 
 				// ****
@@ -514,7 +514,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* collect up the productions in order */
 		all_prods = new production[ProductionFactory.number()];
-		for (Enumeration p = ProductionFactory.all(); p.hasMoreElements();) {
+		for (Enumeration<production> p = ProductionFactory.all(); p.hasMoreElements();) {
 			prod = (production) p.nextElement();
 			all_prods[prod.index()] = prod;
 		}
@@ -657,7 +657,6 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 */
 	private void do_reduce_table(PrintWriter out, parse_reduce_table red_tab) {
 		lalr_state goto_st;
-		parse_action act;
 
 		long start_time = System.currentTimeMillis();
 
@@ -1242,7 +1241,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println("  /* terminals */");
 
 			/* walk over the terminals *//* later might sort these */
-			for (Enumeration e = TerminalFactory.all(); e.hasMoreElements();) {
+			for (Enumeration<terminal> e = TerminalFactory.all(); e.hasMoreElements();) {
 				term = (terminal) e.nextElement();
 
 				/* output a constant decl for the terminal */
@@ -1256,7 +1255,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 				symbol_class_file.println("  /* non terminals */");
 
 				/* walk over the non terminals *//* later might sort these */
-				for (Enumeration e = NonTerminalFactory.all(); e.hasMoreElements();) {
+				for (Enumeration<non_terminal> e = NonTerminalFactory.all(); e.hasMoreElements();) {
 					nt = (non_terminal) e.nextElement();
 
 					// ****

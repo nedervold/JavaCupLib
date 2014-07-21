@@ -92,10 +92,10 @@ public class non_terminal extends symbol {
   /*-----------------------------------------------------------*/
 
   /** Table of all productions with this non terminal on the LHS. */
-  protected Hashtable _productions = new Hashtable(11);
+  protected Hashtable<production, production> _productions = new Hashtable<production, production>(11);
 
   /** Access to productions with this non terminal on the LHS. */
-  public Enumeration productions() {return _productions.elements();}
+  public Enumeration<production> productions() {return _productions.elements();}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -145,17 +145,16 @@ public class non_terminal extends symbol {
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Test to see if this non terminal currently looks nullable. */
-  protected boolean looks_nullable() throws internal_error
-    {
-      /* look and see if any of the productions now look nullable */
-      for (Enumeration e = productions(); e.hasMoreElements(); )
-	/* if the production can go to empty, we are nullable */
-	if (((production)e.nextElement()).check_nullable())
-	  return true;
+	protected boolean looks_nullable() throws internal_error {
+		/* look and see if any of the productions now look nullable */
+		for (Enumeration<production> e = productions(); e.hasMoreElements();)
+			/* if the production can go to empty, we are nullable */
+			if (((production) e.nextElement()).check_nullable())
+				return true;
 
-      /* none of the productions can go to empty, so we are not nullable */
-      return false;
-    }
+		/* none of the productions can go to empty, so we are not nullable */
+		return false;
+	}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 

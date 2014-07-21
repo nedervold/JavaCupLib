@@ -503,7 +503,7 @@ public class Main {
 
 		/* check for unused terminals */
 		Emitter emit = EmitterAccess.instance();
-		for (Enumeration t = TerminalFactory.all(); t.hasMoreElements();) {
+		for (Enumeration<terminal> t = TerminalFactory.all(); t.hasMoreElements();) {
 			term = (terminal) t.nextElement();
 
 			/* don't issue a message for EOF */
@@ -527,7 +527,7 @@ public class Main {
 		}
 
 		/* check for unused non terminals */
-		for (Enumeration n = NonTerminalFactory.all(); n.hasMoreElements();) {
+		for (Enumeration<non_terminal> n = NonTerminalFactory.all(); n.hasMoreElements();) {
 			nt = (non_terminal) n.nextElement();
 
 			/* is this one unused */
@@ -598,7 +598,7 @@ public class Main {
 			System.err.println("  Filling in tables...");
 		action_table = new parse_action_table();
 		reduce_table = new parse_reduce_table();
-		for (Enumeration st = LalrStateFactory.all(); st.hasMoreElements();) {
+		for (Enumeration<lalr_state> st = LalrStateFactory.all(); st.hasMoreElements();) {
 			lalr_state lst = (lalr_state) st.nextElement();
 			lst.build_table_entries(action_table, reduce_table);
 		}
@@ -867,7 +867,7 @@ public class Main {
 		lalr_state ordered[] = new lalr_state[LalrStateFactory.number()];
 
 		/* put the states in sorted order for a nicer display */
-		for (Enumeration s = LalrStateFactory.all(); s.hasMoreElements();) {
+		for (Enumeration<lalr_state> s = LalrStateFactory.all(); s.hasMoreElements();) {
 			lalr_state st = (lalr_state) s.nextElement();
 			ordered[st.index()] = st;
 		}

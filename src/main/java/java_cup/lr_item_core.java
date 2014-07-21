@@ -32,7 +32,6 @@ public class lr_item_core {
    */
   public lr_item_core(production prod, int pos) throws internal_error
     {
-      symbol          after_dot = null;
       production_part part;
 
       if (prod == null)

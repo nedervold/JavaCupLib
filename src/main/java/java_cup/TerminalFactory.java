@@ -27,7 +27,7 @@ public abstract class TerminalFactory {
 	/**
 	 * Table of all terminals. Elements are stored using name strings as the key
 	 */
-	protected static Hashtable _all = new Hashtable();
+	protected static Hashtable<String, terminal> _all = new Hashtable<String, terminal>();
 
 	public static void clear() {
 		_all.clear();
@@ -38,7 +38,7 @@ public abstract class TerminalFactory {
 	}
 
 	/** Access to all terminals. */
-	public static Enumeration all() {
+	public static Enumeration<terminal> all() {
 		return _all.elements();
 	}
 
@@ -47,17 +47,15 @@ public abstract class TerminalFactory {
 		if (with_name == null)
 			return null;
 		else
-			return (terminal) _all.get(with_name);
+			return _all.get(with_name);
 	}
 
 	/** Table of all terminals indexed by their index number. */
-	protected static Hashtable _all_by_index = new Hashtable();
+	protected static Hashtable<Integer, terminal> _all_by_index = new Hashtable<Integer, terminal>();
 
 	/** Lookup a terminal by index. */
 	public static terminal find(int indx) {
-		Integer the_indx = new Integer(indx);
-
-		return (terminal) _all_by_index.get(the_indx);
+		return _all_by_index.get(indx);
 	}
 
 	/** Total number of terminals. */
