@@ -57,7 +57,7 @@ public class parse_action_table {
    *  Issue a warning message (to System.err) for each production that
    *  is never reduced.
    */
-  public void check_reductions(ProductionFactory productionFactory, Emitter emit)
+  public void check_reductions(IErrorManager errorManager, ProductionFactory productionFactory, Emitter emit)
     throws internal_error
     {
       parse_action act;
@@ -93,7 +93,7 @@ public class parse_action_table {
 		if (!emit.nowarn())
 		{
 
-		  ErrorManagerAccess.getManager().emit_warning("*** Production \"" + 
+		  errorManager.emit_warning("*** Production \"" + 
 				  prod.to_simple_string() + "\" never reduced");
 		}
 	    }

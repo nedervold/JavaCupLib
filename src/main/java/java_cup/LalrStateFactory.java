@@ -151,7 +151,7 @@ public class LalrStateFactory {
 	 * @see java_cup.lalr_item_set#compute_closure
 	 * @see java_cup.lalr_state#propagate_all_lookaheads
 	 */
-	public lalr_state build_machine(TerminalFactory terminalFactory, production start_prod)
+	public lalr_state build_machine(IErrorManager errorManager, TerminalFactory terminalFactory, production start_prod)
 			throws internal_error {
 		lalr_state start_state;
 		lalr_item_set start_items;
@@ -173,15 +173,15 @@ public class LalrStateFactory {
 					"Attempt to build viable prefix recognizer using a null production");
 
 		/* build item with dot at front of start production and EOF lookahead */
-		start_items = new lalr_item_set();
+		start_items = new lalr_item_set(errorManager);
 
-		itm = new lalr_item(terminalFactory, start_prod);
+		itm = new lalr_item(errorManager, terminalFactory, start_prod);
 		itm.lookahead().add(terminalFactory.EOF);
 
 		start_items.add(itm);
 
 		/* create copy the item set to form the kernel */
-		kernel = new lalr_item_set(start_items);
+		kernel = new lalr_item_set(errorManager, start_items);
 
 		/* create the closure from that item set */
 		start_items.compute_closure(terminalFactory);
@@ -199,7 +199,7 @@ public class LalrStateFactory {
 			st = (lalr_state) work_stack.pop();
 
 			/* gather up all the symbols that appear before dots */
-			outgoing = new symbol_set();
+			outgoing = new symbol_set(errorManager);
 			for (i = st.items().all(); i.hasMoreElements();) {
 				itm = (lalr_item) i.nextElement();
 
@@ -214,13 +214,13 @@ public class LalrStateFactory {
 				sym = (symbol) s.nextElement();
 
 				/* will be keeping the set of items with propagate links */
-				linked_items = new lalr_item_set();
+				linked_items = new lalr_item_set(errorManager);
 
 				/*
 				 * gather up shifted versions of all the items that have this
 				 * symbol before the dot
 				 */
-				new_items = new lalr_item_set();
+				new_items = new lalr_item_set(errorManager);
 				for (i = st.items().all(); i.hasMoreElements();) {
 					itm = (lalr_item) i.nextElement();
 
@@ -228,7 +228,7 @@ public class LalrStateFactory {
 					sym2 = itm.symbol_after_dot();
 					if (sym.equals(sym2)) {
 						/* add to the kernel of the new state */
-						new_items.add(itm.shift());
+						new_items.add(itm.shift(errorManager));
 
 						/* remember that itm has propagate link to it */
 						linked_items.add(itm);
@@ -236,7 +236,7 @@ public class LalrStateFactory {
 				}
 
 				/* use new items as state kernel */
-				kernel = new lalr_item_set(new_items);
+				kernel = new lalr_item_set(errorManager,new_items);
 
 				/* have we seen this one already? */
 				new_st = (lalr_state) _all_kernels.get(kernel);

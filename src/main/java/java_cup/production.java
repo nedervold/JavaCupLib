@@ -58,8 +58,13 @@ public class production {
 	 * all actions at the end where they can be handled as part of a reduce by
 	 * the parser.
 	 */
-	protected production(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, ProductionFactory productionFactory, Emitter emit, final non_terminal lhs_sym, production_part rhs_parts[],
-			int rhs_l, String action_str) throws internal_error {
+	protected production(IErrorManager errorManager,
+			TerminalFactory terminalFactory,
+			NonTerminalFactory nonTerminalFactory,
+			ProductionFactory productionFactory, Emitter emit,
+			final non_terminal lhs_sym, production_part rhs_parts[], int rhs_l,
+			String action_str) throws internal_error {
+		this.errorManager = errorManager;
 		_first_set = new terminal_set(terminalFactory);
 		int i;
 		action_part tail_action;
@@ -189,6 +194,7 @@ public class production {
 		_rhs_assoc = prec_side;
 	}
 
+	private final IErrorManager errorManager;
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** A collection of parts for the right hand side. */
@@ -239,10 +245,10 @@ public class production {
 		return _index;
 	}
 
-	protected void setIndex(int i){
+	protected void setIndex(int i) {
 		_index = i;
 	}
-	
+
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Count of number of reductions using this production. */
@@ -313,8 +319,8 @@ public class production {
 	 *            the stack type of label?
 	 * @author frankf
 	 */
-	protected String make_declaration(Emitter emit, String labelname, String stack_type,
-			int offset) {
+	protected String make_declaration(Emitter emit, String labelname,
+			String stack_type, int offset) {
 		String ret;
 
 		/* Put in the left/right value labels */
@@ -392,8 +398,8 @@ public class production {
 	 * @param lhs_type
 	 *            the object type associated with the LHS symbol.
 	 */
-	protected String declare_labels(Emitter emit, production_part rhs[], int rhs_len,
-			String final_action) {
+	protected String declare_labels(Emitter emit, production_part rhs[],
+			int rhs_len, String final_action) {
 		String declaration = "";
 
 		symbol_part part;
@@ -527,7 +533,10 @@ public class production {
 	 * they should be perfectly valid in this code string, since it was
 	 * originally a code string in the parent, not on its own. frank 6/20/96
 	 */
-	protected void remove_embedded_actions(NonTerminalFactory nonTerminalFactory, ProductionFactory productionFactory, Emitter emit) throws internal_error {
+	protected void remove_embedded_actions(
+			NonTerminalFactory nonTerminalFactory,
+			ProductionFactory productionFactory, Emitter emit)
+			throws internal_error {
 		non_terminal new_nt;
 		String declare_str;
 		int lastLocation = -1;
@@ -542,8 +551,12 @@ public class production {
 				new_nt.is_embedded_action = true; /* 24-Mar-1998, CSA */
 
 				/* create a new production with just the action */
-				productionFactory.createActionProduction(this,
-						new_nt, null, 0, declare_str
+				productionFactory.createActionProduction(
+						this,
+						new_nt,
+						null,
+						0,
+						declare_str
 								+ ((action_part) rhs(act_loc)).code_string(),
 						(lastLocation == -1) ? -1 : (act_loc - lastLocation));
 
@@ -698,7 +711,7 @@ public class production {
 			 * crash on internal error since we can't throw it from here
 			 * (because superclass does not throw anything.
 			 */
-			e.crash();
+			e.crash(errorManager);
 			result = null;
 		}
 

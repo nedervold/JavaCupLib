@@ -165,10 +165,10 @@ public class Main {
 	private static IErrorManager errorManager = ErrorManagerAccess.getManager();
 	private static LalrStateFactory lalrStateFactory = new LalrStateFactory();
 	private static Emitter emit = new cup_emit();
-	private static TerminalFactory terminalFactory = new TerminalFactory();
-	private static NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(terminalFactory);
+	private static TerminalFactory terminalFactory = new TerminalFactory(errorManager);
+	private static NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(errorManager, terminalFactory);
 	static { nonTerminalFactory.START_nt(); }
-	private static ProductionFactory productionFactory = new ProductionFactory(terminalFactory, nonTerminalFactory, emit);
+	private static ProductionFactory productionFactory = new ProductionFactory(errorManager, terminalFactory, nonTerminalFactory, emit);
 	
 	/*-----------------------------------------------------------*/
 	/*--- Main Program ------------------------------------------*/
@@ -224,7 +224,7 @@ public class Main {
 		parse_end = System.currentTimeMillis();
 
 		/* don't proceed unless we are error free */
-		if (ErrorManagerAccess.getManager().getErrorCount() == 0) {
+		if (errorManager.getErrorCount() == 0) {
 			/* check for unused bits */
 			if (print_progress)
 				System.err.println("Checking specification...");
@@ -240,7 +240,7 @@ public class Main {
 			build_end = System.currentTimeMillis();
 
 			/* output the generated code, if # of conflicts permits */
-			if (ErrorManagerAccess.getManager().getErrorCount() != 0) {
+			if (errorManager.getErrorCount() != 0) {
 				// conflicts! don't emit code, don't dump tables.
 				opt_dump_tables = false;
 			} else { // everything's okay, emit parser.
@@ -279,7 +279,7 @@ public class Main {
 		 * If there were errors during the run, exit with non-zero status
 		 * (makefile-friendliness). --CSA
 		 */
-		if (ErrorManagerAccess.getManager().getErrorCount() != 0)
+		if (errorManager.getErrorCount() != 0)
 			System.exit(100);
 	}
 
@@ -491,7 +491,7 @@ public class Main {
 			 * something threw an exception. catch it and emit a message so we
 			 * have a line number to work with, then re-throw it
 			 */
-			ErrorManagerAccess.getManager().emit_error(
+			errorManager.emit_error(
 					"Internal error: Unexpected exception");
 			throw e;
 		}
@@ -535,7 +535,7 @@ public class Main {
 				/* count it and warn if we are doing warnings */
 				emit.set_unused_term(emit.unused_term() + 1);
 				if (!emit.nowarn()) {
-					ErrorManagerAccess.getManager().emit_warning(
+					errorManager.emit_warning(
 							"Terminal \"" + term.name()
 									+ "\" was declared but never used");
 				}
@@ -551,7 +551,7 @@ public class Main {
 				/* count and warn if we are doing warnings */
 				emit.set_unused_non_term(emit.unused_non_term() + 1);
 				if (!emit.nowarn()) {
-					ErrorManagerAccess.getManager().emit_warning(
+					errorManager.emit_warning(
 							"Non terminal \"" + nt.name()
 									+ "\" was declared but never used");
 				}
@@ -604,7 +604,7 @@ public class Main {
 		/* build the LR viable prefix recognition machine */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Building state machine...");
-		start_state = lalrStateFactory.build_machine(terminalFactory, emit.start_production());
+		start_state = lalrStateFactory.build_machine(errorManager, terminalFactory, emit.start_production());
 
 		machine_end = System.currentTimeMillis();
 
@@ -615,7 +615,7 @@ public class Main {
 		reduce_table = new parse_reduce_table(nonTerminalFactory, lalrStateFactory.number());
 		for (Enumeration<lalr_state> st = lalrStateFactory.all(); st.hasMoreElements();) {
 			lalr_state lst = (lalr_state) st.nextElement();
-			lst.build_table_entries(terminalFactory, emit, action_table, reduce_table);
+			lst.build_table_entries(errorManager, terminalFactory, emit, action_table, reduce_table);
 		}
 
 		table_end = System.currentTimeMillis();
@@ -623,13 +623,13 @@ public class Main {
 		/* check and warn for non-reduced productions */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Checking for non-reduced productions...");
-		action_table.check_reductions(productionFactory, emit);
+		action_table.check_reductions(errorManager, productionFactory, emit);
 
 		reduce_check_end = System.currentTimeMillis();
 
 		/* if we have more conflicts than we expected issue a message and die */
 		if (emit.num_conflicts() > expect_conflicts) {
-			ErrorManagerAccess.getManager().emit_error(
+			errorManager.emit_error(
 					"*** More conflicts encountered than expected "
 							+ "-- parser generation aborted");
 			// indicate the problem.
@@ -673,11 +673,11 @@ public class Main {
 				+ " Parser Generation Summary -------");
 
 		/* error and warning count */
-		System.err.println("  " + ErrorManagerAccess.getManager().getErrorCount()
-				+ " error" + plural(ErrorManagerAccess.getManager().getErrorCount())
-				+ " and " + ErrorManagerAccess.getManager().getWarningCount()
+		System.err.println("  " + errorManager.getErrorCount()
+				+ " error" + plural(errorManager.getErrorCount())
+				+ " and " + errorManager.getWarningCount()
 				+ " warning"
-				+ plural(ErrorManagerAccess.getManager().getWarningCount()));
+				+ plural(errorManager.getWarningCount()));
 
 		/* basic stats */
 		System.err.print("  " + terminalFactory.number() + " terminal"

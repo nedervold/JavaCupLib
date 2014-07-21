@@ -75,7 +75,7 @@ public class ProductionFactory {
 	public production createProduction(non_terminal lhs_sym,
 			production_part[] rhs_parts, int rhs_l, String action_str)
 			throws internal_error {
-		production result = new production( terminalFactory, nonTerminalFactory, this, emit, lhs_sym, rhs_parts, rhs_l,
+		production result = new production(errorManager, terminalFactory, nonTerminalFactory, this, emit, lhs_sym, rhs_parts, rhs_l,
 				action_str);
 
 		register(lhs_sym, result);
@@ -98,7 +98,7 @@ public class ProductionFactory {
 			non_terminal lhs_sym, production_part[] rhs_parts, int rhs_len,
 			String action_str, int indexOfIntermediateResult)
 			throws internal_error {
-		action_production result = new action_production(terminalFactory, nonTerminalFactory, this, emit, base, lhs_sym, rhs_parts, rhs_len,
+		action_production result = new action_production(errorManager, terminalFactory, nonTerminalFactory, this, emit, base, lhs_sym, rhs_parts, rhs_len,
 				action_str, indexOfIntermediateResult);
 
 		register(lhs_sym, result);
@@ -117,12 +117,14 @@ public class ProductionFactory {
 		lhs_sym.add_production(prod);
 	}
 
+	private final IErrorManager errorManager;
 	private final Emitter emit;
 	private final TerminalFactory terminalFactory;
 	private final NonTerminalFactory nonTerminalFactory;
 	
-	public ProductionFactory(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, Emitter emit) {
+	public ProductionFactory(IErrorManager errorManager, TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, Emitter emit) {
 		super();
+		this.errorManager = errorManager;
 		this.emit = emit;
 		this.terminalFactory = terminalFactory;
 		this.nonTerminalFactory = nonTerminalFactory;

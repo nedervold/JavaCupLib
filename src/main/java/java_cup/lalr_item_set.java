@@ -25,15 +25,19 @@ public class lalr_item_set {
   /*-----------------------------------------------------------*/
 
   /** Constructor for an empty set. */
-  public lalr_item_set() { }
+  public lalr_item_set(IErrorManager errorManager) {
+	  this.errorManager = errorManager;
+  }
 
+ private final IErrorManager errorManager;
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Constructor for cloning from another set. 
    * @param other indicates set we should copy from.
    */
 	@SuppressWarnings("unchecked")
-	public lalr_item_set(lalr_item_set other) throws internal_error {
+	public lalr_item_set(IErrorManager errorManager, lalr_item_set other) throws internal_error {
+		this(errorManager);
 		not_null(other);
 		_all = (Hashtable<lalr_item, lalr_item>) other._all.clone();
 	}
@@ -251,7 +255,7 @@ public class lalr_item_set {
       hashcode_cache = null;
 
       /* each current element needs to be considered */
-      consider = new lalr_item_set(this);
+      consider = new lalr_item_set(errorManager, this);
 
       /* repeat this until there is nothing else to consider */
       while (consider.size() > 0)
@@ -275,7 +279,7 @@ public class lalr_item_set {
 		  prod = (production)p.nextElement();
 
 		  /* create new item with dot at start and that lookahead */
-		  new_itm = new lalr_item(terminalFactory, prod, 
+		  new_itm = new lalr_item(errorManager, terminalFactory, prod, 
 					     new terminal_set(new_lookaheads));
 
 		  /* add/merge item into the set */
@@ -298,20 +302,20 @@ public class lalr_item_set {
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Equality comparison. */
-  public boolean equals(lalr_item_set other)
-    {
-      if (other == null || other.size() != size()) return false;
+	public boolean equals(lalr_item_set other) {
+		if (other == null || other.size() != size())
+			return false;
 
-      /* once we know they are the same size, then improper subset does test */
-      try {
-        return is_subset_of(other);
-      } catch (internal_error e) {
-	/* can't throw error from here (because superclass doesn't) so crash */
-	e.crash();
-	return false;
-      }
+		/* once we know they are the same size, then improper subset does test */
+		try {
+			return is_subset_of(other);
+		} catch (internal_error e) {
+			/* can't throw error from here (because superclass doesn't) so crash */
+			e.crash(errorManager);
+			return false;
+		}
 
-    }
+	}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 

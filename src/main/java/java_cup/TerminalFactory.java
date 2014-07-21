@@ -5,6 +5,13 @@ import java.util.Hashtable;
 
 public  class TerminalFactory {
 
+	public TerminalFactory(IErrorManager errorManager){
+		this.errorManager = errorManager;
+		
+	}
+	
+	private final IErrorManager errorManager;
+	
 	private void register(terminal t) {
 		/* add to set of all terminals and check for duplicates */
 		Object conflict = _all.put(t.name(), t);
@@ -15,7 +22,7 @@ public  class TerminalFactory {
 			// throw new internal_error("Duplicate terminal (" + nm +
 			// ") created");
 			(new internal_error("Duplicate terminal (" + t.name() + ") created"))
-					.crash();
+					.crash(errorManager);
 
 		/* assign a unique index */
 		next_index++;

@@ -5,11 +5,13 @@ import java.util.Hashtable;
 
 public  class NonTerminalFactory {
 
-	public NonTerminalFactory(TerminalFactory terminalFactory) {
+	public NonTerminalFactory(IErrorManager errorManager, TerminalFactory terminalFactory) {
 		super();
+		this.errorManager = errorManager;
 		this.terminalFactory = terminalFactory;
 	}
 
+	private final IErrorManager errorManager;
 	private final TerminalFactory terminalFactory;
 
 	private void register(non_terminal nt) {
@@ -22,7 +24,7 @@ public  class NonTerminalFactory {
 			// throw new
 			// internal_error("Duplicate non-terminal ("+nm+") created");
 			(new internal_error("Duplicate non-terminal (" + nt.name()
-					+ ") created")).crash();
+					+ ") created")).crash(errorManager);
 
 		/* assign a unique index */
 		next_index++;

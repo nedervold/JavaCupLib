@@ -18,7 +18,9 @@ public class symbol_set {
   /*-----------------------------------------------------------*/
 
   /** Constructor for an empty set. */
-  public symbol_set() { }
+  public symbol_set(IErrorManager errorManager) { 
+	  this.errorManager = errorManager;
+  }
 
 	/**
 	 * Constructor for cloning from another set.
@@ -27,7 +29,8 @@ public class symbol_set {
 	 *            the set we are cloning from.
 	 */
 	@SuppressWarnings("unchecked")
-	public symbol_set(symbol_set other) throws internal_error {
+	public symbol_set(IErrorManager errorManager, symbol_set other) throws internal_error {
+		this(errorManager);
 		not_null(other);
 		_all = (Hashtable<String, symbol>) other._all.clone();
 	}
@@ -45,6 +48,8 @@ public class symbol_set {
 
   /** size of the set */
   public int size() {return _all.size();}
+  
+  final IErrorManager errorManager;
 
   /*-----------------------------------------------------------*/
   /*--- (Access to) Instance Variables ------------------------*/
@@ -171,7 +176,7 @@ public class symbol_set {
         return is_subset_of(other);
       } catch (internal_error e) {
 	/* can't throw the error (because super class doesn't), so we crash */
-	e.crash();
+	e.crash(errorManager);
 	return false;
       }
     }

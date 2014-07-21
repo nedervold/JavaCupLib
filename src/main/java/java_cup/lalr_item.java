@@ -39,10 +39,10 @@ public class lalr_item extends lr_item_core {
    * @param pos  the position of the "dot" within the production.
    * @param look the set of lookahead symbols.
    */
-  public lalr_item(TerminalFactory terminalFactory, production prod, int pos, terminal_set look) 
+  public lalr_item(IErrorManager errorManager, TerminalFactory terminalFactory, production prod, int pos, terminal_set look) 
     throws internal_error
     {
-      super(prod, pos);
+      super(errorManager, prod, pos);
       _lookahead = look;
       _propagate_items = new Stack<lalr_item>();
       this.terminalFactory = terminalFactory;
@@ -55,9 +55,9 @@ public class lalr_item extends lr_item_core {
    * @param prod the production for the item.
    * @param look the set of lookahead symbols.
    */
-  public lalr_item(TerminalFactory terminalFactory,production prod, terminal_set look) throws internal_error
+  public lalr_item(IErrorManager errorManager,TerminalFactory terminalFactory,production prod, terminal_set look) throws internal_error
     {
-      this(terminalFactory, prod,0,look);
+      this(errorManager, terminalFactory, prod,0,look);
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -65,9 +65,9 @@ public class lalr_item extends lr_item_core {
   /** Constructor with default position and empty lookahead set. 
    * @param prod the production for the item.
    */
-  public lalr_item(TerminalFactory terminalFactory, production prod) throws internal_error
+  public lalr_item(IErrorManager errorManager,TerminalFactory terminalFactory, production prod) throws internal_error
     {
-      this(terminalFactory, prod,0,new terminal_set(terminalFactory));
+      this(errorManager, terminalFactory, prod,0,new terminal_set(terminalFactory));
     }
 
   /*-----------------------------------------------------------*/
@@ -147,7 +147,7 @@ public class lalr_item extends lr_item_core {
   /** Produce the new lalr_item that results from shifting the dot one position
    *  to the right. 
    */
-  public lalr_item shift() throws internal_error
+  public lalr_item shift(IErrorManager errorManager) throws internal_error
     {
       lalr_item result;
 
@@ -156,7 +156,7 @@ public class lalr_item extends lr_item_core {
 	throw new internal_error("Attempt to shift past end of an lalr_item");
 
       /* create the new item w/ the dot shifted by one */
-      result = new lalr_item(terminalFactory, the_production(), dot_pos()+1, 
+      result = new lalr_item(errorManager, terminalFactory, the_production(), dot_pos()+1, 
 					    new terminal_set(lookahead()));
 
       /* change in our lookahead needs to be propagated to this item */

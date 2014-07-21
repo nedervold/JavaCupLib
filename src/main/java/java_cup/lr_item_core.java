@@ -30,8 +30,9 @@ public class lr_item_core {
    * @param prod production this item uses.
    * @param pos  position of the "dot" within the item.
    */
-  public lr_item_core(production prod, int pos) throws internal_error
+  public lr_item_core(IErrorManager errorManager, production prod, int pos) throws internal_error
     {
+	  this.errorManager =  errorManager;
       production_part part;
 
       if (prod == null)
@@ -63,9 +64,9 @@ public class lr_item_core {
   /** Constructor for dot at start of right hand side. 
    * @param prod production this item uses.
    */
-  public lr_item_core(production prod) throws internal_error
+  public lr_item_core(IErrorManager errorManager, production prod) throws internal_error
     {
-      this(prod,0);
+      this(errorManager, prod,0);
     }
 
   /*-----------------------------------------------------------*/
@@ -74,6 +75,8 @@ public class lr_item_core {
 
   /** The production for the item. */
   protected production _the_production;
+  
+  private final IErrorManager errorManager;
 
   /** The production for the item. */
   public production the_production() {return _the_production;}
@@ -150,7 +153,7 @@ public class lr_item_core {
 	throw new internal_error(
 	  "Attempt to shift past end of an lr_item_core");
 
-      return new lr_item_core(_the_production, _dot_pos+1);
+      return new lr_item_core(errorManager, _the_production, _dot_pos+1);
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -268,7 +271,7 @@ public class lr_item_core {
       try {
         return to_simple_string();
       } catch(internal_error e) {
-	e.crash();
+	e.crash(errorManager);
 	return null;
       }
     }
