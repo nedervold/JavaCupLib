@@ -185,7 +185,7 @@ public class Main {
 		production.clear();
 		action_production.clear();
 		emit.clear();
-		non_terminal.clear();
+		NonTerminalFactory.clear();
 		parse_reduce_row.clear();
 		parse_action_row.clear();
 		lalr_state.clear();
@@ -527,7 +527,7 @@ public class Main {
 		}
 
 		/* check for unused non terminals */
-		for (Enumeration n = non_terminal.all(); n.hasMoreElements();) {
+		for (Enumeration n = NonTerminalFactory.all(); n.hasMoreElements();) {
 			nt = (non_terminal) n.nextElement();
 
 			/* is this one unused */
@@ -574,14 +574,14 @@ public class Main {
 		/* compute nullability of all non terminals */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Computing non-terminal nullability...");
-		non_terminal.compute_nullability();
+		NonTerminalFactory.compute_nullability();
 
 		nullability_end = System.currentTimeMillis();
 
 		/* compute first sets of all non terminals */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Computing first sets...");
-		non_terminal.compute_first_sets();
+		NonTerminalFactory.compute_first_sets();
 
 		first_end = System.currentTimeMillis();
 
@@ -667,8 +667,8 @@ public class Main {
 		/* basic stats */
 		System.err.print("  " + terminal.number() + " terminal"
 				+ plural(terminal.number()) + ", ");
-		System.err.print(non_terminal.number() + " non-terminal"
-				+ plural(non_terminal.number()) + ", and ");
+		System.err.print(NonTerminalFactory.number() + " non-terminal"
+				+ plural(NonTerminalFactory.number()) + ", and ");
 		System.err.println(production.number() + " production"
 				+ plural(production.number()) + " declared, ");
 		System.err.println("  producing " + lalr_state.number()
@@ -832,8 +832,8 @@ public class Main {
 		System.err.println();
 
 		System.err.println("===== Non terminals =====");
-		for (int nidx = 0, cnt = 0; nidx < non_terminal.number(); nidx++, cnt++) {
-			System.err.print("[" + nidx + "]" + non_terminal.find(nidx).name()
+		for (int nidx = 0, cnt = 0; nidx < NonTerminalFactory.number(); nidx++, cnt++) {
+			System.err.print("[" + nidx + "]" + NonTerminalFactory.find(nidx).name()
 					+ " ");
 			if ((cnt + 1) % 5 == 0)
 				System.err.println();

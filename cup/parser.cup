@@ -1,4 +1,3 @@
-
 /*================================================================*/ 
 /* 
   JavaCup Specification for the JavaCup Specification Language
@@ -259,7 +258,7 @@ spec ::=
           symbols.put("error", new symbol_part(terminal.error));
 
           /* declare start non terminal */
-          non_terms.put("$START", non_terminal.START_nt);
+          non_terms.put("$START", NonTerminalFactory.START_nt);
 	:}
 	package_spec
 	import_list
@@ -543,7 +542,7 @@ start_spec ::=
 	      add_rhs_part(new symbol_part(terminal.EOF));
 	      if (!emit.xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 	      emit.set_start_production(
-		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
+		     new production(NonTerminalFactory.START_nt, rhs_parts, rhs_pos));
 	      new_rhs();
 	    }
 	:}
@@ -632,12 +631,12 @@ rhs ::=
 		  if (!emit.xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 		  if ((sym!=null) && (sym instanceof terminal)) {
 		    emit.set_start_production(
-		      new production(non_terminal.START_nt, rhs_parts, 
+		      new production(NonTerminalFactory.START_nt, rhs_parts, 
 				     rhs_pos, ((terminal)sym).precedence_num(),
 				     ((terminal)sym).precedence_side()));
 		  } else {
 		    emit.set_start_production(
-		      new production(non_terminal.START_nt, rhs_parts, rhs_pos));
+		      new production(NonTerminalFactory.START_nt, rhs_parts, rhs_pos));
 		  }
 	          new_rhs();
 		}
@@ -668,7 +667,7 @@ rhs ::=
 	          add_rhs_part(new symbol_part(terminal.EOF));
 		  if (!emit.xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 	          emit.set_start_production(
-		     new production(non_terminal.START_nt, rhs_parts, rhs_pos));
+		     new production(NonTerminalFactory.START_nt, rhs_parts, rhs_pos));
 
 	          new_rhs();
 		}
@@ -827,7 +826,7 @@ new_non_term_id ::=
 	      }
 	      /* build the non terminal object */
               non_terminal this_nt = 
-		non_terminal.createNonTerminal(non_term_id, multipart_name);
+		NonTerminalFactory.createNonTerminal(non_term_id, multipart_name);
 
 	      /* put it in the non_terms table */
 	      non_terms.put(non_term_id, this_nt);

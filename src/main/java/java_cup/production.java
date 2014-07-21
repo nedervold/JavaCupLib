@@ -589,7 +589,7 @@ public class production {
 	    declare_str = declare_labels(
 		      _rhs, act_loc, "");
 	    /* create a new non terminal for the action production */
-	    new_nt = non_terminal.create_new(null, lhs().the_symbol().stack_type()); // TUM 20060608 embedded actions patch
+	    new_nt = NonTerminalFactory.create_new(null, lhs().the_symbol().stack_type()); // TUM 20060608 embedded actions patch
 	    new_nt.is_embedded_action = true; /* 24-Mar-1998, CSA */
 
 	    /* create a new production with just the action */

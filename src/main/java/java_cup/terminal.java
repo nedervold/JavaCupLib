@@ -37,22 +37,24 @@ public class terminal extends symbol {
       _precedence_side = precedence_side;
     }
 
-private static void register(terminal t) {
-	/* add to set of all terminals and check for duplicates */
-      Object conflict = _all.put(t.name(),t);
-      if (conflict != null)
-	// can't throw an execption here because this is used in static 
-	// initializers, so we do a crash instead
-	// was:
-	// throw new internal_error("Duplicate terminal (" + nm + ") created");
-	(new internal_error("Duplicate terminal (" + t.name() + ") created")).crash();
+	private static void register(terminal t) {
+		/* add to set of all terminals and check for duplicates */
+		Object conflict = _all.put(t.name(), t);
+		if (conflict != null)
+			// can't throw an execption here because this is used in static
+			// initializers, so we do a crash instead
+			// was:
+			// throw new internal_error("Duplicate terminal (" + nm +
+			// ") created");
+			(new internal_error("Duplicate terminal (" + t.name() + ") created"))
+					.crash();
 
-      /* assign a unique index */
-      next_index++;
+		/* assign a unique index */
+		next_index++;
 
-      /* add to by_index set */
-      _all_by_index.put(new Integer(t.index()), t);
-}
+		/* add to by_index set */
+		_all_by_index.put(new Integer(t.index()), t);
+	}
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 

@@ -173,7 +173,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			out.println("  /* non terminals */");
 
 			/* walk over the non terminals *//* later might sort these */
-			for (Enumeration e = non_terminal.all(); e.hasMoreElements();) {
+			for (Enumeration e = NonTerminalFactory.all(); e.hasMoreElements();) {
 				nt = (non_terminal) e.nextElement();
 
 				// ****
@@ -1256,7 +1256,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 				symbol_class_file.println("  /* non terminals */");
 
 				/* walk over the non terminals *//* later might sort these */
-				for (Enumeration e = non_terminal.all(); e.hasMoreElements();) {
+				for (Enumeration e = NonTerminalFactory.all(); e.hasMoreElements();) {
 					nt = (non_terminal) e.nextElement();
 
 					// ****
