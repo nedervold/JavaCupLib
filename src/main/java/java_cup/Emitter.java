@@ -1,7 +1,6 @@
 package java_cup;
 
 import java.io.File;
-import java.io.PrintWriter;
 import java.util.Stack;
 
 public interface Emitter {

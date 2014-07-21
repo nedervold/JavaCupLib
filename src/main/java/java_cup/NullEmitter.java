@@ -1,7 +1,6 @@
 package java_cup;
 
 import java.io.File;
-import java.io.PrintWriter;
 
 public class NullEmitter extends AbstractEmitter {
 

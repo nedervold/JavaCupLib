@@ -1,10 +1,11 @@
 package java_cup;
 
-import java.util.Date;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.Enumeration;
-import java.io.*;
 
-import java_cup.runtime.*;
+import java_cup.runtime.ComplexSymbolFactory;
 
 /**
  * This class serves as the main driver for the JavaCup system. It accepts user

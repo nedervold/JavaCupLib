@@ -1,8 +1,9 @@
 
 package java_cup;
-import java_cup.runtime.Symbol;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+
+import java_cup.runtime.Symbol;
 public class ErrorManager{
     private static ErrorManager errorManager;
     private int errors = 0;
