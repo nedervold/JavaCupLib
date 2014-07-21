@@ -2,15 +2,17 @@ package java_cup;
 
 public class ErrorManagerAccess {
 
-	protected static ErrorManager errorManager;
-
-	public static ErrorManager getManager() { return errorManager; }
+	protected static IErrorManager errorManager;
 
 	static {
-        errorManager = new ErrorManager();
-    }
+		errorManager = new ErrorManager();
+	}
 
-    public ErrorManagerAccess() {
+	public static IErrorManager getManager() {
+		return errorManager;
+	}
+
+	public ErrorManagerAccess() {
 		super();
 	}
 
