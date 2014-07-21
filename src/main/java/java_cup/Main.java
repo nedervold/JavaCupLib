@@ -473,7 +473,7 @@ public class Main {
 	 * items such as the code to scan with.
 	 */
 	protected static void parse_grammar_spec() throws java.lang.Exception {
-		parser parser_obj;
+		java_cup.runtime.lr_parser parser_obj;
 
 		/* create a parser and parse with it */
 		parser_obj = createParser();
@@ -493,9 +493,10 @@ public class Main {
 		}
 	}
 
-	private static parser createParser() {
+	private static java_cup.runtime.lr_parser createParser() {
 		ComplexSymbolFactory csf = new ComplexSymbolFactory();
-		return new parser(new Lexer(csf), csf);
+		parser result = new parser(new Lexer(csf), csf);
+		return result;
 	}
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
