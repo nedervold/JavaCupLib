@@ -162,7 +162,7 @@ public class Main {
 	/* Additional timing information is also collected in emit */
 
 	/* Factories */
-	private static IErrorManager errorManager = ErrorManagerAccess.getManager();
+	private static IErrorManager errorManager = new ErrorManager();;
 	private static LalrStateFactory lalrStateFactory = new LalrStateFactory();
 	private static Emitter emit = new cup_emit();
 	private static TerminalFactory terminalFactory = new TerminalFactory(errorManager);
@@ -499,7 +499,9 @@ public class Main {
 
 	private static java_cup.runtime.lr_parser createParser() {
 		ComplexSymbolFactory csf = new ComplexSymbolFactory();
-		parser result = new parser(new Lexer(csf), csf);
+		Lexer lexer = new Lexer(csf);
+		lexer.errorManager = errorManager;
+		parser result = new parser(lexer, csf);
 		result.errorManager = errorManager;
 		result.emitter = emit;
 		result.productionFactory = productionFactory;
