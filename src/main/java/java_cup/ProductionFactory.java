@@ -78,7 +78,7 @@ public class ProductionFactory {
 		production result = new production(lhs_sym, rhs_parts, rhs_l,
 				action_str);
 
-		ProductionFactory.register(lhs_sym, result);
+		register(lhs_sym, result);
 		return result;
 	}
 
@@ -101,7 +101,7 @@ public class ProductionFactory {
 		action_production result = new action_production(base, lhs_sym, rhs_parts, rhs_len,
 				action_str, indexOfIntermediateResult);
 
-		ProductionFactory.register(lhs_sym, result);
+		register(lhs_sym, result);
 		return result;
 	}
 
