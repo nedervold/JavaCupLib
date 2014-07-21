@@ -3,6 +3,7 @@ package java_cup;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Enumeration;
 
 import java_cup.runtime.ComplexSymbolFactory;
@@ -73,113 +74,107 @@ import java_cup.runtime.ComplexSymbolFactory;
 
 public class Main {
 
-	/*-----------------------------------------------------------*/
-	/*--- Constructor(s) ----------------------------------------*/
-	/*-----------------------------------------------------------*/
-	/**
-	 * Only constructor is private, so we do not allocate any instances of this
-	 * class.
-	 */
-	private Main() {
-	}
-
 	/*-------------------------*/
 	/* Options set by the user */
 	/*-------------------------*/
 	/** User option -- do we print progress messages. */
-	protected static boolean print_progress = false;
+	protected boolean print_progress = false;
 	/** User option -- do we produce a dump of the state machine */
-	protected static boolean opt_dump_states = false;
+	protected boolean opt_dump_states = false;
 	/** User option -- do we produce a dump of the parse tables */
-	protected static boolean opt_dump_tables = false;
+	protected boolean opt_dump_tables = false;
 	/** User option -- do we produce a dump of the grammar */
-	protected static boolean opt_dump_grammar = false;
+	protected boolean opt_dump_grammar = false;
 	/** User option -- do we show timing information as a part of the summary */
-	protected static boolean opt_show_timing = false;
+	protected boolean opt_show_timing = false;
 	/** User option -- do we run produce extra debugging messages */
-	protected static boolean opt_do_debug = false;
+	protected boolean opt_do_debug = false;
 	/**
 	 * User option -- do we compact tables by making most common reduce the
 	 * default action
 	 */
-	protected static boolean opt_compact_red = false;
+	protected boolean opt_compact_red = false;
 	/**
 	 * User option -- should we include non terminal symbol numbers in the
 	 * symbol constant class.
 	 */
-	protected static boolean include_non_terms = false;
+	protected boolean include_non_terms = false;
 	/** User option -- do not print a summary. */
-	protected static boolean no_summary = false;
+	protected boolean no_summary = false;
 	/** User option -- number of conflicts to expect */
-	protected static int expect_conflicts = 0;
+	protected int expect_conflicts = 0;
 
 	/* frankf added this 6/18/96 */
 	/** User option -- should generator generate code for left/right values? */
-	protected static boolean lr_values = true;
-	protected static boolean locations = false;
-	protected static boolean xmlactions = false;
-	protected static boolean genericlabels = false;
+	protected boolean lr_values = true;
+	protected boolean locations = false;
+	protected boolean xmlactions = false;
+	protected boolean genericlabels = false;
 
 	/** User option -- should symbols be put in a class or an interface? [CSA] */
-	protected static boolean sym_interface = false;
+	protected boolean sym_interface = false;
 
 	/**
 	 * User option -- should generator suppress references to
 	 * java_cup.runtime.Scanner for compatibility with old runtimes?
 	 */
-	protected static boolean suppress_scanner = false;
+	protected boolean suppress_scanner = false;
 
 	/*----------------------------------------------------------------------*/
 	/* Timing data (not all of these time intervals are mutually exclusive) */
 	/*----------------------------------------------------------------------*/
 	/** Timing data -- when did we start */
-	protected static long start_time = 0;
+	protected long start_time = 0;
 	/** Timing data -- when did we end preliminaries */
-	protected static long prelim_end = 0;
+	protected long prelim_end = 0;
 	/** Timing data -- when did we end parsing */
-	protected static long parse_end = 0;
+	protected long parse_end = 0;
 	/** Timing data -- when did we end checking */
-	protected static long check_end = 0;
+	protected long check_end = 0;
 	/** Timing data -- when did we end dumping */
-	protected static long dump_end = 0;
+	protected long dump_end = 0;
 	/** Timing data -- when did we end state and table building */
-	protected static long build_end = 0;
+	protected long build_end = 0;
 	/** Timing data -- when did we end nullability calculation */
-	protected static long nullability_end = 0;
+	protected long nullability_end = 0;
 	/** Timing data -- when did we end first set calculation */
-	protected static long first_end = 0;
+	protected long first_end = 0;
 	/** Timing data -- when did we end state machine construction */
-	protected static long machine_end = 0;
+	protected long machine_end = 0;
 	/** Timing data -- when did we end table construction */
-	protected static long table_end = 0;
+	protected long table_end = 0;
 	/** Timing data -- when did we end checking for non-reduced productions */
-	protected static long reduce_check_end = 0;
+	protected long reduce_check_end = 0;
 	/** Timing data -- when did we finish emitting code */
-	protected static long emit_end = 0;
+	protected long emit_end = 0;
 	/** Timing data -- when were we completely done */
-	protected static long final_time = 0;
+	protected long final_time = 0;
 
 	/* Additional timing information is also collected in emit */
 
 	/* Factories */
-	private static IErrorManager errorManager = new ErrorManager();;
-	private static LalrStateFactory lalrStateFactory = new LalrStateFactory();
-	private static Emitter emit = new cup_emit();
-	private static TerminalFactory terminalFactory = new TerminalFactory(errorManager);
-	private static NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(errorManager, terminalFactory);
-	private static ProductionFactory productionFactory = new ProductionFactory(errorManager, terminalFactory, nonTerminalFactory, emit);
+	private IErrorManager errorManager = new ErrorManager();;
+	private LalrStateFactory lalrStateFactory = new LalrStateFactory();
+	private Emitter emit = new cup_emit();
+	private TerminalFactory terminalFactory = new TerminalFactory(errorManager);
+	private NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(errorManager, terminalFactory);
+	private ProductionFactory productionFactory = new ProductionFactory(errorManager, terminalFactory, nonTerminalFactory, emit);
 	
 	/*-----------------------------------------------------------*/
 	/*--- Main Program ------------------------------------------*/
 	/*-----------------------------------------------------------*/
 
+	public static void main(String argv[]) throws internal_error, IOException, Exception{
+		new Main(argv);
+	}
+	
 	/**
 	 * The main driver for the system.
 	 * 
 	 * @param argv
 	 *            an array of strings containing command line arguments.
 	 */
-	public static void main(String argv[]) throws internal_error,
+	public Main(String argv[]) throws internal_error,
 			java.io.IOException, java.lang.Exception {
 		boolean did_output = false;
 
@@ -279,7 +274,7 @@ public class Main {
 	 * @param message
 	 *            a specific error message to preface the usage message by.
 	 */
-	protected static void usage(String message) {
+	protected void usage(String message) {
 		System.err.println();
 		System.err.println(message);
 		System.err.println();
@@ -326,7 +321,7 @@ public class Main {
 	 * @param argv
 	 *            the command line arguments to be parsed.
 	 */
-	protected static void parse_args(String argv[]) {
+	protected void parse_args(String argv[]) {
 		int len = argv.length;
 		int i;
 
@@ -347,7 +342,7 @@ public class Main {
 						|| argv[i].endsWith(".cup"))
 					usage("-destdir must have a name argument");
 				/* record the name */
-				Main.dest_dir = new java.io.File(argv[i]);
+				dest_dir = new java.io.File(argv[i]);
 			} else if (argv[i].equals("-parser")) {
 				/* must have an arg */
 				if (++i >= len || argv[i].startsWith("-")
@@ -449,21 +444,21 @@ public class Main {
 	/*-------*/
 
 	/** Input file. This is a buffered version of System.in. */
-	protected static BufferedInputStream input_file;
+	protected BufferedInputStream input_file;
 
 	/** Output directory. */
-	protected static File dest_dir = null;
+	protected File dest_dir = null;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/**
 	 * Parse the grammar specification from standard input. This produces sets
 	 * of terminal, non-terminals, and productions which can be accessed via
-	 * static variables of the respective classes, as well as the setting of
+	 * variables of the respective classes, as well as the setting of
 	 * various variables (mostly in the emit class) for small user supplied
 	 * items such as the code to scan with.
 	 */
-	protected static void parse_grammar_spec() throws java.lang.Exception {
+	protected void parse_grammar_spec() throws java.lang.Exception {
 		java_cup.runtime.lr_parser parser_obj;
 
 		/* create a parser and parse with it */
@@ -484,7 +479,7 @@ public class Main {
 		}
 	}
 
-	private static java_cup.runtime.lr_parser createParser() {
+	private java_cup.runtime.lr_parser createParser() {
 		ComplexSymbolFactory csf = new ComplexSymbolFactory();
 		Lexer lexer = new Lexer(csf);
 		lexer.errorManager = errorManager;
@@ -503,7 +498,7 @@ public class Main {
 	 * Check for unused symbols. Unreduced productions get checked when tables
 	 * are created.
 	 */
-	protected static void check_unused() {
+	protected void check_unused() {
 		terminal term;
 		non_terminal nt;
 
@@ -554,13 +549,13 @@ public class Main {
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Start state in the overall state machine. */
-	protected static lalr_state start_state;
+	protected lalr_state start_state;
 
 	/** Resulting parse action table. */
-	protected static parse_action_table action_table;
+	protected parse_action_table action_table;
 
 	/** Resulting reduce-goto table. */
-	protected static parse_reduce_table reduce_table;
+	protected parse_reduce_table reduce_table;
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
@@ -575,7 +570,7 @@ public class Main {
 	 * <li>Checking for unreduced productions.
 	 * </ul>
 	 */
-	protected static void build_parser() throws internal_error {
+	protected void build_parser() throws internal_error {
 		/* compute nullability of all non terminals */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Computing non-terminal nullability...");
@@ -634,7 +629,7 @@ public class Main {
 	 * @param val
 	 *            the numerical value determining plurality.
 	 */
-	protected static String plural(int val) {
+	protected String plural(int val) {
 		if (val == 1)
 			return "";
 		else
@@ -652,7 +647,7 @@ public class Main {
 	 * @param output_produced
 	 *            did the system get far enough to generate code.
 	 */
-	protected static void emit_summary(boolean output_produced) {
+	protected void emit_summary(boolean output_produced) {
 		final_time = System.currentTimeMillis();
 
 		if (no_summary)
@@ -712,7 +707,7 @@ public class Main {
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Produce the optional timing summary as part of an overall summary. */
-	protected static void show_times() {
+	protected void show_times() {
 		long total_time = final_time - start_time;
 
 		System.err
@@ -784,7 +779,7 @@ public class Main {
 	 * @param total_time
 	 *            total time percentages are calculated against (in ms).
 	 */
-	protected static String timestr(long time_val, long total_time) {
+	protected String timestr(long time_val, long total_time) {
 		boolean neg;
 		long ms = 0;
 		long sec = 0;
@@ -822,7 +817,7 @@ public class Main {
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Produce a human readable dump of the grammar. */
-	public static void dump_grammar() throws internal_error {
+	public void dump_grammar() throws internal_error {
 		System.err.println("===== Terminals =====");
 		for (int tidx = 0, cnt = 0; tidx < terminalFactory.number(); tidx++, cnt++) {
 			System.err.print("[" + tidx + "]" + terminalFactory.find(tidx).name()
@@ -865,7 +860,7 @@ public class Main {
 	 * Produce a (semi-) human readable dump of the complete viable prefix
 	 * recognition state machine.
 	 */
-	public static void dump_machine() {
+	public void dump_machine() {
 		lalr_state ordered[] = new lalr_state[lalrStateFactory.number()];
 
 		/* put the states in sorted order for a nicer display */
@@ -886,7 +881,7 @@ public class Main {
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/** Produce a (semi-) human readable dumps of the parse tables */
-	public static void dump_tables() {
+	public void dump_tables() {
 		System.err.println(action_table);
 		System.err.println(reduce_table);
 	}

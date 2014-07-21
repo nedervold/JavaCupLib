@@ -51,9 +51,6 @@ import java.util.Enumeration;
  * detected (see the source code and public variables below for more details).
  * <p>
  * 
- * This class is "static" (contains only static data and methods).
- * <p>
- * 
  * @see java_cup.main
  * @version last update: 11/25/95
  * @author Scott Hudson
