@@ -476,8 +476,7 @@ public class Main {
 		parser parser_obj;
 
 		/* create a parser and parse with it */
-		ComplexSymbolFactory csf = new ComplexSymbolFactory();
-		parser_obj = new parser(new Lexer(csf), csf);
+		parser_obj = createParser();
 		try {
 			if (opt_do_debug)
 				parser_obj.debug_parse();
@@ -492,6 +491,11 @@ public class Main {
 					"Internal error: Unexpected exception");
 			throw e;
 		}
+	}
+
+	private static parser createParser() {
+		ComplexSymbolFactory csf = new ComplexSymbolFactory();
+		return new parser(new Lexer(csf), csf);
 	}
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
