@@ -9,16 +9,16 @@ public class ProductionFactory {
 	 * Table of all productions. Elements are stored using their index as the
 	 * key.
 	 */
-	protected static Hashtable _all = new Hashtable();
+	protected static Hashtable<Integer, production> _all = new Hashtable<Integer, production>();
 
 	/** Access to all productions. */
-	public static Enumeration all() {
+	public static Enumeration<production> all() {
 		return _all.elements();
 	}
 
 	/** Lookup a production by index. */
 	public static production find(int indx) {
-		return (production) _all.get(new Integer(indx));
+		return _all.get(indx);
 	}
 
 	public static void clear() {
@@ -77,6 +77,8 @@ public class ProductionFactory {
 			throws internal_error {
 		production result = new production(lhs_sym, rhs_parts, rhs_l,
 				action_str);
+
+		ProductionFactory.register(lhs_sym, result);
 		return result;
 	}
 
@@ -96,11 +98,14 @@ public class ProductionFactory {
 			non_terminal lhs_sym, production_part[] rhs_parts, int rhs_len,
 			String action_str, int indexOfIntermediateResult)
 			throws internal_error {
-		return new action_production(base, lhs_sym, rhs_parts, rhs_len,
+		action_production result = new action_production(base, lhs_sym, rhs_parts, rhs_len,
 				action_str, indexOfIntermediateResult);
+
+		ProductionFactory.register(lhs_sym, result);
+		return result;
 	}
 
-	protected static void register(non_terminal lhs_sym, production prod)
+	private static void register(non_terminal lhs_sym, production prod)
 			throws internal_error {
 		/* assign an index */
 		prod.setIndex(next_index++);

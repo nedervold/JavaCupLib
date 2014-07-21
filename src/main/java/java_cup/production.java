@@ -156,8 +156,6 @@ public class production {
 
 		/* rewrite production to remove any embedded actions */
 		remove_embedded_actions();
-
-		ProductionFactory.register(lhs_sym, this);
 	}
 
 	/** The left hand side non-terminal. */
@@ -399,7 +397,6 @@ public class production {
 		String declaration = "";
 
 		symbol_part part;
-		action_part act_part;
 		int pos;
 
 		/* walk down the parts and extract the labels */
@@ -531,11 +528,8 @@ public class production {
 	 * they should be perfectly valid in this code string, since it was
 	 * originally a code string in the parent, not on its own. frank 6/20/96
 	 */
-	protected void remove_embedded_actions(
-
-	) throws internal_error {
+	protected void remove_embedded_actions() throws internal_error {
 		non_terminal new_nt;
-		production new_prod;
 		String declare_str;
 		int lastLocation = -1;
 		/* walk over the production and process each action */
@@ -549,7 +543,7 @@ public class production {
 				new_nt.is_embedded_action = true; /* 24-Mar-1998, CSA */
 
 				/* create a new production with just the action */
-				new_prod = ProductionFactory.createActionProduction(this,
+				ProductionFactory.createActionProduction(this,
 						new_nt, null, 0, declare_str
 								+ ((action_part) rhs(act_loc)).code_string(),
 						(lastLocation == -1) ? -1 : (act_loc - lastLocation));
