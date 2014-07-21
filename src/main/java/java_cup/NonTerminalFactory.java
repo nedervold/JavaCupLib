@@ -89,7 +89,7 @@ public abstract class NonTerminalFactory  {
 			  /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
 	/** Compute nullability of all non-terminals. */
-	public static void compute_nullability() throws internal_error {
+	public static void compute_nullability(ProductionFactory productionFactory) throws internal_error {
 	  boolean      change = true;
 	  non_terminal nt;
 	  production   prod;
@@ -118,7 +118,7 @@ public abstract class NonTerminalFactory  {
 	}
 	
 	  /* do one last pass over the productions to finalize all of them */
-	  for (Enumeration<production> e=ProductionFactory.all(); e.hasMoreElements(); )
+	  for (Enumeration<production> e=productionFactory.all(); e.hasMoreElements(); )
 	{
 	  prod = (production)e.nextElement();
 	  prod.set_nullable(prod.check_nullable());

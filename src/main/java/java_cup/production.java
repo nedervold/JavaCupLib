@@ -58,7 +58,7 @@ public class production {
 	 * all actions at the end where they can be handled as part of a reduce by
 	 * the parser.
 	 */
-	protected production(final non_terminal lhs_sym, production_part rhs_parts[],
+	protected production(ProductionFactory productionFactory, Emitter emit, final non_terminal lhs_sym, production_part rhs_parts[],
 			int rhs_l, String action_str) throws internal_error {
 		int i;
 		action_part tail_action;
@@ -100,7 +100,7 @@ public class production {
 		}
 
 		/* get the generated declaration code for the necessary labels. */
-		declare_str = declare_labels(rhs_parts, rightlen, action_str);
+		declare_str = declare_labels(emit, rhs_parts, rightlen, action_str);
 
 		if (action_str == null)
 			action_str = declare_str;
@@ -155,7 +155,7 @@ public class production {
 		_action = new action_part(action_str);
 
 		/* rewrite production to remove any embedded actions */
-		remove_embedded_actions();
+		remove_embedded_actions(productionFactory, emit);
 	}
 
 	/** The left hand side non-terminal. */
@@ -312,12 +312,11 @@ public class production {
 	 *            the stack type of label?
 	 * @author frankf
 	 */
-	protected String make_declaration(String labelname, String stack_type,
+	protected String make_declaration(Emitter emit, String labelname, String stack_type,
 			int offset) {
 		String ret;
 
 		/* Put in the left/right value labels */
-		Emitter emit = EmitterAccess.instance();
 		if (emit.lr_values()) {
 			if (!emit.locations())
 				ret = "\t\tint "
@@ -392,7 +391,7 @@ public class production {
 	 * @param lhs_type
 	 *            the object type associated with the LHS symbol.
 	 */
-	protected String declare_labels(production_part rhs[], int rhs_len,
+	protected String declare_labels(Emitter emit, production_part rhs[], int rhs_len,
 			String final_action) {
 		String declaration = "";
 
@@ -405,12 +404,11 @@ public class production {
 				part = (symbol_part) rhs[pos];
 				String label;
 				/* if it has a label, make declaration! */
-				Emitter emit = EmitterAccess.instance();
 				if ((label = part.label()) != null || emit.xmlactions()) {
 					if (label == null)
 						label = part.the_symbol().name() + pos;
 					declaration = declaration
-							+ make_declaration(label, part.the_symbol()
+							+ make_declaration(emit, label, part.the_symbol()
 									.stack_type(), rhs_len - pos - 1);
 				}
 			}
@@ -528,7 +526,7 @@ public class production {
 	 * they should be perfectly valid in this code string, since it was
 	 * originally a code string in the parent, not on its own. frank 6/20/96
 	 */
-	protected void remove_embedded_actions() throws internal_error {
+	protected void remove_embedded_actions(ProductionFactory productionFactory, Emitter emit) throws internal_error {
 		non_terminal new_nt;
 		String declare_str;
 		int lastLocation = -1;
@@ -536,14 +534,14 @@ public class production {
 		for (int act_loc = 0; act_loc < rhs_length(); act_loc++)
 			if (rhs(act_loc).is_action()) {
 
-				declare_str = declare_labels(_rhs, act_loc, "");
+				declare_str = declare_labels(emit, _rhs, act_loc, "");
 				/* create a new non terminal for the action production */
 				new_nt = NonTerminalFactory.create_new(null, lhs().the_symbol()
 						.stack_type()); // TUM 20060608 embedded actions patch
 				new_nt.is_embedded_action = true; /* 24-Mar-1998, CSA */
 
 				/* create a new production with just the action */
-				ProductionFactory.createActionProduction(this,
+				productionFactory.createActionProduction(this,
 						new_nt, null, 0, declare_str
 								+ ((action_part) rhs(act_loc)).code_string(),
 						(lastLocation == -1) ? -1 : (act_loc - lastLocation));

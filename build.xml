@@ -69,6 +69,7 @@
 	   destdir="target/classes"
 	   classpath="lib/JFlex.jar,lib/java-cup-11b.jar"
 	   excludes="java_cup/anttask/*.java"
+	   debug="true"
 	   includeantruntime="false" />
   </target>
 

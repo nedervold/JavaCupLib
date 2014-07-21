@@ -57,7 +57,7 @@ public class parse_action_table {
    *  Issue a warning message (to System.err) for each production that
    *  is never reduced.
    */
-  public void check_reductions()
+  public void check_reductions(ProductionFactory productionFactory, Emitter emit)
     throws internal_error
     {
       parse_action act;
@@ -79,7 +79,7 @@ public class parse_action_table {
 	}
 
       /* now go across every production and make sure we hit it */
-      for (Enumeration<production> p = ProductionFactory.all(); p.hasMoreElements(); )
+      for (Enumeration<production> p = productionFactory.all(); p.hasMoreElements(); )
 	{
 	  prod = (production)p.nextElement();
 
@@ -90,7 +90,6 @@ public class parse_action_table {
 	      emit.not_reduced++;
 
 	      /* give a warning if they haven't been turned off */
-	      Emitter emit = EmitterAccess.instance();
 		if (!emit.nowarn())
 		{
 

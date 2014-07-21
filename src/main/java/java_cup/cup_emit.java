@@ -203,7 +203,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param start_prod
 	 *            the start production of the grammar.
 	 */
-	private void emit_action_code(PrintWriter out, production start_prod)
+	private void emit_action_code(ProductionFactory productionFactory, PrintWriter out, production start_prod)
 			throws internal_error {
 		production prod;
 
@@ -235,7 +235,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  }");
 
 		out.println();
-		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
+		for (int instancecounter = 0; instancecounter <= productionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			out.println("  /** Method " + instancecounter
 					+ " with the actual generated action code for actions "
@@ -259,9 +259,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			// START Switch
 			/* emit action code for each production as a separate case */
 			int proditeration = instancecounter * UPPERLIMIT;
-			prod = ProductionFactory.find(proditeration);
+			prod = productionFactory.find(proditeration);
 			for (; proditeration < Math.min((instancecounter + 1) * UPPERLIMIT,
-					ProductionFactory.number()); prod = (production) ProductionFactory
+					productionFactory.number()); prod = (production) productionFactory
 					.find(++proditeration)) {
 				/* case label */
 				out.println("          /*. . . . . . . . . . . . . . . . . . . .*/");
@@ -442,7 +442,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("    throws java.lang.Exception");
 		out.println("    {");
 
-		if (ProductionFactory.number() < UPPERLIMIT) { // Make it simple for the
+		if (productionFactory.number() < UPPERLIMIT) { // Make it simple for the
 												// optimizer to inline!
 			out.println("              return " + pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
@@ -466,7 +466,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
-		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
+		for (int instancecounter = 0; instancecounter <= productionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			/* case label */
 			out.println("          /*. . . . . . . . "
@@ -506,22 +506,22 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param out
 	 *            stream to produce output on.
 	 */
-	private void emit_production_table(PrintWriter out) {
+	private void emit_production_table(ProductionFactory productionFactory, PrintWriter out) {
 		production all_prods[];
 		production prod;
 
 		long start_time = System.currentTimeMillis();
 
 		/* collect up the productions in order */
-		all_prods = new production[ProductionFactory.number()];
-		for (Enumeration<production> p = ProductionFactory.all(); p.hasMoreElements();) {
+		all_prods = new production[productionFactory.number()];
+		for (Enumeration<production> p = productionFactory.all(); p.hasMoreElements();) {
 			prod = (production) p.nextElement();
 			all_prods[prod.index()] = prod;
 		}
 
 		// make short[][]
-		short[][] prod_table = new short[ProductionFactory.number()][2];
-		for (int i = 0; i < ProductionFactory.number(); i++) {
+		short[][] prod_table = new short[productionFactory.number()][2];
+		for (int i = 0; i < productionFactory.number(); i++) {
 			prod = all_prods[i];
 			// { lhs symbol , rhs size }
 			prod_table[i][0] = (short) prod.lhs().the_symbol().index();
@@ -556,7 +556,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param compact_reduces
 	 *            do we use the most frequent reduce as default?
 	 */
-	private void do_action_table(PrintWriter out, parse_action_table act_tab,
+	private void do_action_table(ProductionFactory productionFactory, PrintWriter out, parse_action_table act_tab,
 			boolean compact_reduces) throws internal_error {
 		parse_action_row row;
 		parse_action act;
@@ -573,7 +573,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 			/* determine the default for the row */
 			if (compact_reduces)
-				row.compute_default();
+				row.compute_default(productionFactory);
 			else
 				row.default_reduce = -1;
 
@@ -778,7 +778,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * java_cup.parse_action_table, java_cup.parse_reduce_table, int,
 	 * java_cup.production, boolean, boolean)
 	 */
-	protected void parser(PrintWriter out, parse_action_table action_table,
+	protected void parser(ProductionFactory productionFactory, PrintWriter out, parse_action_table action_table,
 			parse_reduce_table reduce_table, int start_st,
 			production start_prod, boolean compact_reduces,
 			boolean suppress_scanner) throws internal_error {
@@ -828,8 +828,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		}
 
 		/* emit the various tables */
-		emit_production_table(out);
-		do_action_table(out, action_table, compact_reduces);
+		emit_production_table(productionFactory, out);
+		do_action_table(productionFactory, out, action_table, compact_reduces);
 		do_reduce_table(out, reduce_table);
 
 		/* instance of the action encapsulation class */
@@ -914,9 +914,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* put out the action code class */
 		if (!xmlactions())
-			emit_action_code(out, start_prod);
+			emit_action_code(productionFactory, out, start_prod);
 		else
-			emit_xmlaction_code(out, start_prod);
+			emit_xmlaction_code(productionFactory, out, start_prod);
 		parser_time = System.currentTimeMillis() - start_time;
 	}
 
@@ -928,7 +928,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param start_prod
 	 *            the start production of the grammar.
 	 */
-	private void emit_xmlaction_code(PrintWriter out, production start_prod)
+	private void emit_xmlaction_code(ProductionFactory productionFactory, PrintWriter out, production start_prod)
 			throws internal_error {
 		production prod;
 
@@ -957,7 +957,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  }");
 
 		out.println();
-		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
+		for (int instancecounter = 0; instancecounter <= productionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			out.println("  /** Method " + instancecounter
 					+ " with the actual generated action code for actions "
@@ -981,9 +981,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			// START Switch
 			/* emit action code for each production as a separate case */
 			int proditeration = instancecounter * UPPERLIMIT;
-			prod = ProductionFactory.find(proditeration);
+			prod = productionFactory.find(proditeration);
 			for (; proditeration < Math.min((instancecounter + 1) * UPPERLIMIT,
-					ProductionFactory.number()); prod = (production) ProductionFactory
+					productionFactory.number()); prod = (production) productionFactory
 					.find(++proditeration)) {
 				/* case label */
 				out.println("          /*. . . . . . . . . . . . . . . . . . . .*/");
@@ -1023,7 +1023,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 				// determine the variant:
 				int variant = 0;
 				for (int i = 0; i < proditeration; i++)
-					if (ProductionFactory.find(i).lhs().equals(prod.lhs()))
+					if (productionFactory.find(i).lhs().equals(prod.lhs()))
 						variant++;
 
 				out.println("                RESULT = new XMLElement.NonTerminal(\""
@@ -1102,7 +1102,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("    throws java.lang.Exception");
 		out.println("    {");
 
-		if (ProductionFactory.number() < UPPERLIMIT) { // Make it simple for the
+		if (productionFactory.number() < UPPERLIMIT) { // Make it simple for the
 												// optimizer to inline!
 			out.println("              return " + pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
@@ -1126,7 +1126,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
-		for (int instancecounter = 0; instancecounter <= ProductionFactory.number()
+		for (int instancecounter = 0; instancecounter <= productionFactory.number()
 				/ UPPERLIMIT; instancecounter++) {
 			/* case label */
 			out.println("          /*. . . . . . . . "
@@ -1183,8 +1183,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		/* open each of the output files */
 
 		/* parser class */
-		Emitter emit = EmitterAccess.instance();
-		out_name = emit.parser_class_name() + ".java";
+		out_name = parser_class_name() + ".java";
 		fil = new File(dest_dir, out_name);
 		try {
 			parser_class_file = new PrintWriter(new BufferedOutputStream(
@@ -1195,7 +1194,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		}
 
 		/* symbol constants class */
-		out_name = emit.symbol_const_class_name() + ".java";
+		out_name = symbol_const_class_name() + ".java";
 		fil = new File(dest_dir, out_name);
 		try {
 			symbol_class_file = new PrintWriter(new BufferedOutputStream(
@@ -1206,7 +1205,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		}
 	}
 
-	public void emit_parser(final File dest_dir,
+	public void emit_parser(ProductionFactory productionFactory, final File dest_dir,
 			final parse_action_table action_table,
 			final parse_reduce_table reduce_table,
 			final lalr_state start_state, final boolean include_non_terms,
@@ -1273,7 +1272,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println();
 
 			set_symbols_time(System.currentTimeMillis() - start_time);
-			parser(parser_class_file, action_table, reduce_table,
+			parser(productionFactory, parser_class_file, action_table, reduce_table,
 					start_state.index(), start_production(), opt_compact_red,
 					suppress_scanner);
 		} finally {

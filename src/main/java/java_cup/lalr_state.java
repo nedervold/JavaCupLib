@@ -146,6 +146,7 @@ public class lalr_state {
    * @param reduce_table the reduce-goto table to put entries in.
    */
   public void build_table_entries(
+	Emitter emit,
     parse_action_table act_table, 
     parse_reduce_table reduce_table)
     throws internal_error
@@ -253,7 +254,7 @@ public class lalr_state {
 
       /* if we end up with conflict(s), report them */
       if (!conflict_set.empty())
-        report_conflicts(conflict_set);
+        report_conflicts(emit, conflict_set);
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -392,7 +393,7 @@ public class lalr_state {
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Produce warning messages for all conflicts found in this state.  */
-  protected void report_conflicts(terminal_set conflict_set)
+  protected void report_conflicts(Emitter emit, terminal_set conflict_set)
     throws internal_error
     {
       lalr_item    itm, compare;
@@ -430,14 +431,14 @@ public class lalr_state {
                             /* does the comparison item conflict? */
                             if (compare.lookahead().intersects(itm.lookahead()))
                               /* report a reduce/reduce conflict */
-                              report_reduce_reduce(itm, compare);
+                              report_reduce_reduce(emit, itm, compare);
 			}
 		    }
 		}
 	      /* report S/R conflicts under all the symbols we conflict under */
 	      for (int t = 0; t < TerminalFactory.number(); t++)
 		if (conflict_set.contains(t))
-		  report_shift_reduce(itm,t);
+		  report_shift_reduce(emit, itm,t);
 	    }
 	}
     }
@@ -449,7 +450,7 @@ public class lalr_state {
    * @param itm1 first item in conflict.
    * @param itm2 second item in conflict.
    */
-  protected void report_reduce_reduce(lalr_item itm1, lalr_item itm2)
+  protected void report_reduce_reduce(Emitter emit, lalr_item itm1, lalr_item itm2)
     throws internal_error
     {
       boolean comma_flag = false;
@@ -473,7 +474,6 @@ public class lalr_state {
 	message+="the second production.\n";
 
       /* count the conflict */
-      Emitter emit = EmitterAccess.instance();
 	emit.set_num_conflicts(emit.num_conflicts() + 1);
       ErrorManagerAccess.getManager().emit_warning(message);
     }
@@ -486,6 +486,7 @@ public class lalr_state {
    * @param conflict_sym the index of the symbol conflict occurs under.
    */
   protected void report_shift_reduce(
+    Emitter emit,
     lalr_item red_itm, 
     int       conflict_sym)
     throws internal_error
@@ -518,7 +519,6 @@ public class lalr_state {
       "  Resolved in favor of shifting.\n";
 
       /* count the conflict */
-      Emitter emit = EmitterAccess.instance();
 	emit.set_num_conflicts(emit.num_conflicts() + 1);
       ErrorManagerAccess.getManager().emit_warning(message);
     }

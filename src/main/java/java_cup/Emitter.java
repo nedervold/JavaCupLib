@@ -14,7 +14,7 @@ public interface Emitter {
 	// Hm Added clear to clear all static fields
 	public abstract void clear();
 
-	public void emit_parser(File dest_dir, parse_action_table action_table,
+	public void emit_parser(ProductionFactory productionFactory, File dest_dir, parse_action_table action_table,
 			parse_reduce_table reduce_table, lalr_state start_state,
 			boolean include_non_terms, boolean opt_compact_red,
 			boolean suppress_scanner, boolean sym_interface)

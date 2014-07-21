@@ -73,16 +73,16 @@ public class parse_action_row {
    *  be used to encode the fact that no reduction can be used as a 
    *  default (in which case error will be used).
    */
-  public void compute_default()
+  public void compute_default(ProductionFactory productionFactory)
     {
       int i, prod, max_prod, max_red;
 
       /* if we haven't allocated the count table, do so now */
       if (reduction_count == null) 
-	reduction_count = new int[ProductionFactory.number()];
+	reduction_count = new int[productionFactory.number()];
 
       /* clear the reduction count table and maximums */
-      for (i = 0; i < ProductionFactory.number(); i++)
+      for (i = 0; i < productionFactory.number(); i++)
 	reduction_count[i] = 0;
       max_prod = -1;
       max_red = 0;

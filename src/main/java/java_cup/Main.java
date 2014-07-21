@@ -163,6 +163,8 @@ public class Main {
 
 	/* Factories */
 	private static LalrStateFactory lalrStateFactory = new LalrStateFactory();
+	private static Emitter emit = new cup_emit();
+	private static ProductionFactory productionFactory = new ProductionFactory(emit);
 	
 	/*-----------------------------------------------------------*/
 	/*--- Main Program ------------------------------------------*/
@@ -176,7 +178,6 @@ public class Main {
 	 */
 	public static void main(String argv[]) throws internal_error,
 			java.io.IOException, java.lang.Exception {
-		Emitter emit = EmitterAccess.instance();
 		boolean did_output = false;
 
 		start_time = System.currentTimeMillis();
@@ -186,7 +187,7 @@ public class Main {
 		 * calls
 		 */
 		TerminalFactory.clear();
-		ProductionFactory.clear();
+		productionFactory.clear();
 		emit.clear();
 		NonTerminalFactory.clear();
 		parse_reduce_row.clear();
@@ -241,7 +242,7 @@ public class Main {
 			} else { // everything's okay, emit parser.
 				if (print_progress)
 					System.err.println("Writing parser...");
-				emit.emit_parser(dest_dir, action_table, reduce_table,
+				emit.emit_parser(productionFactory, dest_dir, action_table, reduce_table,
 						start_state, include_non_terms, opt_compact_red,
 						suppress_scanner, sym_interface);
 				did_output = true;
@@ -341,8 +342,7 @@ public class Main {
 		/* parse the options */
 		for (i = 0; i < len; i++) {
 			/* try to get the various options */
-			Emitter emit = EmitterAccess.instance();
-			if (argv[i].equals("-package")) {
+				if (argv[i].equals("-package")) {
 				/* must have an arg */
 				if (++i >= len || argv[i].startsWith("-")
 						|| argv[i].endsWith(".cup"))
@@ -496,6 +496,8 @@ public class Main {
 	private static java_cup.runtime.lr_parser createParser() {
 		ComplexSymbolFactory csf = new ComplexSymbolFactory();
 		parser result = new parser(new Lexer(csf), csf);
+		result.emitter = emit;
+		result.productionFactory = productionFactory;
 		return result;
 	}
 
@@ -510,7 +512,6 @@ public class Main {
 		non_terminal nt;
 
 		/* check for unused terminals */
-		Emitter emit = EmitterAccess.instance();
 		for (Enumeration<terminal> t = TerminalFactory.all(); t.hasMoreElements();) {
 			term = (terminal) t.nextElement();
 
@@ -582,7 +583,7 @@ public class Main {
 		/* compute nullability of all non terminals */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Computing non-terminal nullability...");
-		NonTerminalFactory.compute_nullability();
+		NonTerminalFactory.compute_nullability(productionFactory);
 
 		nullability_end = System.currentTimeMillis();
 
@@ -596,7 +597,6 @@ public class Main {
 		/* build the LR viable prefix recognition machine */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Building state machine...");
-		Emitter emit = EmitterAccess.instance();
 		start_state = lalrStateFactory.build_machine(emit.start_production());
 
 		machine_end = System.currentTimeMillis();
@@ -608,7 +608,7 @@ public class Main {
 		reduce_table = new parse_reduce_table(lalrStateFactory.number());
 		for (Enumeration<lalr_state> st = lalrStateFactory.all(); st.hasMoreElements();) {
 			lalr_state lst = (lalr_state) st.nextElement();
-			lst.build_table_entries(action_table, reduce_table);
+			lst.build_table_entries(emit, action_table, reduce_table);
 		}
 
 		table_end = System.currentTimeMillis();
@@ -616,7 +616,7 @@ public class Main {
 		/* check and warn for non-reduced productions */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Checking for non-reduced productions...");
-		action_table.check_reductions();
+		action_table.check_reductions(productionFactory, emit);
 
 		reduce_check_end = System.currentTimeMillis();
 
@@ -677,13 +677,12 @@ public class Main {
 				+ plural(TerminalFactory.number()) + ", ");
 		System.err.print(NonTerminalFactory.number() + " non-terminal"
 				+ plural(NonTerminalFactory.number()) + ", and ");
-		System.err.println(ProductionFactory.number() + " production"
-				+ plural(ProductionFactory.number()) + " declared, ");
+		System.err.println(productionFactory.number() + " production"
+				+ plural(productionFactory.number()) + " declared, ");
 		System.err.println("  producing " + lalrStateFactory.number()
 				+ " unique parse states.");
 
 		/* unused symbols */
-		Emitter emit = EmitterAccess.instance();
 		System.err.println("  " + emit.unused_term() + " terminal"
 				+ plural(emit.unused_term()) + " declared but not used.");
 		System.err.println("  " + emit.unused_non_term() + " non-terminal"
@@ -753,7 +752,6 @@ public class Main {
 		if (emit_end != 0 && build_end != 0)
 			System.err.println("      Code Output    "
 					+ timestr(emit_end - build_end, total_time));
-		Emitter emit = EmitterAccess.instance();
 		if (emit.symbols_time() != 0)
 			System.err.println("        Symbols      "
 					+ timestr(emit.symbols_time(), total_time));
@@ -850,8 +848,8 @@ public class Main {
 		System.err.println();
 
 		System.err.println("===== Productions =====");
-		for (int pidx = 0; pidx < ProductionFactory.number(); pidx++) {
-			production prod = ProductionFactory.find(pidx);
+		for (int pidx = 0; pidx < productionFactory.number(); pidx++) {
+			production prod = productionFactory.find(pidx);
 			System.err.print("[" + pidx + "] " + prod.lhs().the_symbol().name()
 					+ " ::= ");
 			for (int i = 0; i < prod.rhs_length(); i++)
