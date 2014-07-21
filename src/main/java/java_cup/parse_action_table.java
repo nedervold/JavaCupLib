@@ -15,6 +15,7 @@ import java.util.Enumeration;
  */
 public class parse_action_table {
 
+	private final TerminalFactory terminalFactory;
   /*-----------------------------------------------------------*/
   /*--- Constructor(s) ----------------------------------------*/
   /*-----------------------------------------------------------*/
@@ -25,6 +26,8 @@ public class parse_action_table {
    */
   public parse_action_table(TerminalFactory terminalFactory, int num_states)
     {
+	  this.terminalFactory = terminalFactory;
+	  
       /* determine how many states we are working with */
       _num_states = num_states;
 
@@ -57,7 +60,7 @@ public class parse_action_table {
    *  Issue a warning message (to System.err) for each production that
    *  is never reduced.
    */
-  public void check_reductions(IErrorManager errorManager, ProductionFactory productionFactory, Emitter emit)
+  public void check_reductions(IErrorManager errorManager, TerminalFactory terminalFactory, ProductionFactory productionFactory, Emitter emit)
     throws internal_error
     {
       parse_action act;
@@ -66,7 +69,7 @@ public class parse_action_table {
       /* tabulate reductions -- look at every table entry */
       for (int row = 0; row < num_states(); row++)
 	{
-	  for (int col = 0; col < parse_action_row.size(); col++)
+	  for (int col = 0; col < terminalFactory.number(); col++)
 	    {
 	      /* look at the action entry to see if its a reduce */
 	      act = under_state[row].under_term[col];
@@ -113,7 +116,7 @@ public class parse_action_table {
 	{
 	  result += "From state #" + row + "\n";
 	  cnt = 0;
-	  for (int col = 0; col < parse_action_row.size(); col++)
+	  for (int col = 0; col < terminalFactory.number(); col++)
 	    {
 	      /* if the action is not an error print it */ 
 	      if (under_state[row].under_term[col].kind() != parse_action.ERROR)

@@ -11,7 +11,6 @@ public interface Emitter {
 
 	public abstract long action_table_time();
 
-	// Hm Added clear to clear all static fields
 	public abstract void clear();
 
 	public void emit_parser(TerminalFactory terminalFactory,

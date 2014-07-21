@@ -194,8 +194,6 @@ public class Main {
 		productionFactory.clear();
 		emit.clear();
 		nonTerminalFactory.clear();
-		parse_reduce_row.clear();
-		parse_action_row.clear();
 		lalrStateFactory.clear();
 
 		/* process user options and arguments */
@@ -625,7 +623,7 @@ public class Main {
 		/* check and warn for non-reduced productions */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Checking for non-reduced productions...");
-		action_table.check_reductions(errorManager, productionFactory, emit);
+		action_table.check_reductions(errorManager, terminalFactory, productionFactory, emit);
 
 		reduce_check_end = System.currentTimeMillis();
 

@@ -13,6 +13,8 @@ package java_cup;
  */
 public class parse_reduce_table {
  
+	private final NonTerminalFactory nonTerminalFactory;
+	
   /*-----------------------------------------------------------*/
   /*--- Constructor(s) ----------------------------------------*/
   /*-----------------------------------------------------------*/
@@ -23,6 +25,8 @@ public class parse_reduce_table {
    */
   public parse_reduce_table(NonTerminalFactory nonTerminalFactory, int num_states)
     {
+	  this.nonTerminalFactory = nonTerminalFactory;
+	  
       /* determine how many states we are working with */
       _num_states = num_states;
 
@@ -64,7 +68,7 @@ public class parse_reduce_table {
 	{
 	  result += "From state #" + row + "\n";
 	  cnt = 0;
-	  for (int col = 0; col < parse_reduce_row.size(); col++)
+	  for (int col = 0; col < nonTerminalFactory.number(); col++)
 	    {
 	      /* pull out the table entry */
 	      goto_st = under_state[row].under_non_term[col];

@@ -15,7 +15,7 @@ public class parse_reduce_row {
   public parse_reduce_row(NonTerminalFactory nonTerminalFactory)
     {
       /* make sure the size is set */
-      if (_size <= 0 )  _size = nonTerminalFactory.number();
+      _size = nonTerminalFactory.number();
 
       /* allocate the array */
       under_non_term = new lalr_state[size()];
@@ -26,16 +26,12 @@ public class parse_reduce_row {
   /*-----------------------------------------------------------*/
 
   /** Number of columns (non terminals) in every row. */
-  private static int _size = 0;
+  private  int _size = 0;
 
   /** Number of columns (non terminals) in every row. */
-  public static int size() {return _size;}
+  public  int size() {return _size;}
    
-  //Hm Added clear  to clear all static fields
-  public static void clear() {
-      _size = 0;
-  }
-  
+   
   /*-----------------------------------------------------------*/
   /*--- (Access to) Instance Variables ------------------------*/
   /*-----------------------------------------------------------*/

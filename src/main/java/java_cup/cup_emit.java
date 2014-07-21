@@ -560,7 +560,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param compact_reduces
 	 *            do we use the most frequent reduce as default?
 	 */
-	private void do_action_table(ProductionFactory productionFactory,
+	private void do_action_table(TerminalFactory terminalFactory, ProductionFactory productionFactory,
 			PrintWriter out, parse_action_table act_tab, boolean compact_reduces)
 			throws internal_error {
 		parse_action_row row;
@@ -583,11 +583,11 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 				row.default_reduce = -1;
 
 			/* make temporary table for the row. */
-			short[] temp_table = new short[2 * parse_action_row.size()];
+			short[] temp_table = new short[2 * terminalFactory.number()];
 			int nentries = 0;
 
 			/* do each column */
-			for (int j = 0; j < parse_action_row.size(); j++) {
+			for (int j = 0; j < terminalFactory.number(); j++) {
 				/* extract the action from the table */
 				act = row.under_term[j];
 
@@ -660,7 +660,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param red_tab
 	 *            the internal representation of the reduce-goto table.
 	 */
-	private void do_reduce_table(PrintWriter out, parse_reduce_table red_tab) {
+	private void do_reduce_table(NonTerminalFactory nonTerminalFactory, PrintWriter out, parse_reduce_table red_tab) {
 		lalr_state goto_st;
 
 		long start_time = System.currentTimeMillis();
@@ -670,10 +670,10 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		/* do each row of the reduce-goto table */
 		for (int i = 0; i < red_tab.num_states(); i++) {
 			/* make temporary table for the row. */
-			short[] temp_table = new short[2 * parse_reduce_row.size()];
+			short[] temp_table = new short[2 * nonTerminalFactory.number()];
 			int nentries = 0;
 			/* do each entry in the row */
-			for (int j = 0; j < parse_reduce_row.size(); j++) {
+			for (int j = 0; j < nonTerminalFactory.number(); j++) {
 				/* get the entry */
 				goto_st = red_tab.under_state[i].under_non_term[j];
 
@@ -783,7 +783,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * java_cup.parse_action_table, java_cup.parse_reduce_table, int,
 	 * java_cup.production, boolean, boolean)
 	 */
-	protected void parser(TerminalFactory terminalFactory,
+	protected void parser(NonTerminalFactory nonTerminalFactory, TerminalFactory terminalFactory,
 			ProductionFactory productionFactory, PrintWriter out,
 			parse_action_table action_table, parse_reduce_table reduce_table,
 			int start_st, production start_prod, boolean compact_reduces,
@@ -835,8 +835,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* emit the various tables */
 		emit_production_table(productionFactory, out);
-		do_action_table(productionFactory, out, action_table, compact_reduces);
-		do_reduce_table(out, reduce_table);
+		do_action_table(terminalFactory, productionFactory, out, action_table, compact_reduces);
+		do_reduce_table(nonTerminalFactory, out, reduce_table);
 
 		/* instance of the action encapsulation class */
 		out.println("  /** Instance of action encapsulation class. */");
@@ -1282,7 +1282,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println();
 
 			set_symbols_time(System.currentTimeMillis() - start_time);
-			parser(terminalFactory, productionFactory, parser_class_file, action_table,
+			parser(nonTerminalFactory, terminalFactory, productionFactory, parser_class_file, action_table,
 					reduce_table, start_state.index(), start_production(),
 					opt_compact_red, suppress_scanner);
 		} finally {
