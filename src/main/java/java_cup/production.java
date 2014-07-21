@@ -171,55 +171,6 @@ public class production {
 		lhs_sym.add_production(prod);
 	}
 
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/** Constructor with no action string. */
-	protected production(non_terminal lhs_sym, production_part rhs_parts[],
-			int rhs_l) throws internal_error {
-		this(lhs_sym, rhs_parts, rhs_l, null);
-	}
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/*
-	 * Constructor with precedence and associativity of production contextually
-	 * define
-	 */
-	protected production(non_terminal lhs_sym, production_part rhs_parts[],
-			int rhs_l, String action_str, int prec_num, int prec_side)
-			throws internal_error {
-		this(lhs_sym, rhs_parts, rhs_l, action_str);
-
-		/* set the precedence */
-		set_precedence_num(prec_num);
-		set_precedence_side(prec_side);
-	}
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/*
-	 * Constructor w/ no action string and contextual precedence defined
-	 */
-	protected production(non_terminal lhs_sym, production_part rhs_parts[],
-			int rhs_l, int prec_num, int prec_side) throws internal_error {
-		this(lhs_sym, rhs_parts, rhs_l, null);
-		/* set the precedence */
-		set_precedence_num(prec_num);
-		set_precedence_side(prec_side);
-	}
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/*-----------------------------------------------------------*/
-	/*--- (Access to) Static (Class) Variables ------------------*/
-	/*-----------------------------------------------------------*/
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/*-----------------------------------------------------------*/
-	/*--- (Access to) Instance Variables ------------------------*/
-	/*-----------------------------------------------------------*/
-
 	/** The left hand side non-terminal. */
 	protected symbol_part _lhs;
 

@@ -42,6 +42,9 @@ Refactoring steps taken
   open_files(), part of close_files() and emit_parser() into cup_emit.
   Now setting a NullEmitter means no code files at all.
 
+* Removing globals from terminal, non_terminal, production (and
+  action_production).
+
 ------------------------------------------------------------
 
 TODO:
@@ -49,4 +52,20 @@ TODO:
 * The pascal specification has one conflict and needs to be run with
   expect to succeed.  Allow passing flags into runJavaCup.  Perhaps
   keep it as is, too, to demo a failing run.
+
+------------------------------------------------------------
+
+NOTES:
+
+* The results are sensitive enough on the inputs (and calculations)
+  that the minimal test suite seems to be sufficient.  Even small
+  changes (like the order in which productions are created) create
+  test failures.
+
+* When there are multiple constructors that call each other, using
+  Eclipse's "Introduce Factory..." call doesn't work quite right for
+  refactoring.  You end up with multiple createXxx() calls that call
+  the multiple constructors, but what you really need is multiple
+  factory methods that call *each other* in the same way the
+  constructors called each other.
 
