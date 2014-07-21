@@ -17,7 +17,7 @@ public class terminal_set {
   public terminal_set() 
     { 
       /* allocate the bitset at what is probably the right size */
-      _elements = new BitSet(terminal.number());
+      _elements = new BitSet(TerminalFactory.number());
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -230,7 +230,7 @@ public class terminal_set {
       
       result = "{";
       comma_flag = false;
-      for (int t = 0; t < terminal.number(); t++)
+      for (int t = 0; t < TerminalFactory.number(); t++)
 	{
 	  if (_elements.get(t))
 	    {
@@ -239,7 +239,7 @@ public class terminal_set {
 	      else
 	        comma_flag = true;
 
-	      result += terminal.find(t).name();
+	      result += TerminalFactory.find(t).name();
 	    }
 	}
       result += "}";

@@ -181,7 +181,7 @@ public class Main {
 		 * clean all static members, that contain remaining stuff from earlier
 		 * calls
 		 */
-		terminal.clear();
+		TerminalFactory.clear();
 		production.clear();
 		action_production.clear();
 		emit.clear();
@@ -503,15 +503,15 @@ public class Main {
 
 		/* check for unused terminals */
 		Emitter emit = EmitterAccess.instance();
-		for (Enumeration t = terminal.all(); t.hasMoreElements();) {
+		for (Enumeration t = TerminalFactory.all(); t.hasMoreElements();) {
 			term = (terminal) t.nextElement();
 
 			/* don't issue a message for EOF */
-			if (term == terminal.EOF)
+			if (term == TerminalFactory.EOF)
 				continue;
 
 			/* or error */
-			if (term == terminal.error)
+			if (term == TerminalFactory.error)
 				continue;
 
 			/* is this one unused */
@@ -665,8 +665,8 @@ public class Main {
 				+ plural(ErrorManager.getManager().getWarningCount()));
 
 		/* basic stats */
-		System.err.print("  " + terminal.number() + " terminal"
-				+ plural(terminal.number()) + ", ");
+		System.err.print("  " + TerminalFactory.number() + " terminal"
+				+ plural(TerminalFactory.number()) + ", ");
 		System.err.print(NonTerminalFactory.number() + " non-terminal"
 				+ plural(NonTerminalFactory.number()) + ", and ");
 		System.err.println(production.number() + " production"
@@ -822,8 +822,8 @@ public class Main {
 	/** Produce a human readable dump of the grammar. */
 	public static void dump_grammar() throws internal_error {
 		System.err.println("===== Terminals =====");
-		for (int tidx = 0, cnt = 0; tidx < terminal.number(); tidx++, cnt++) {
-			System.err.print("[" + tidx + "]" + terminal.find(tidx).name()
+		for (int tidx = 0, cnt = 0; tidx < TerminalFactory.number(); tidx++, cnt++) {
+			System.err.print("[" + tidx + "]" + TerminalFactory.find(tidx).name()
 					+ " ");
 			if ((cnt + 1) % 5 == 0)
 				System.err.println();

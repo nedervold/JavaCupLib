@@ -16,7 +16,7 @@ public class parse_action_row {
   public parse_action_row()
     {
       /* make sure the size is set */
-      if (_size <= 0 )  _size = terminal.number();
+      if (_size <= 0 )  _size = TerminalFactory.number();
 
       /* allocate the array */
       under_term = new parse_action[size()];

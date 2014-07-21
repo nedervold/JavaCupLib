@@ -288,7 +288,7 @@ public class lalr_state {
       start_items = new lalr_item_set();
 
       itm = new lalr_item(start_prod);
-      itm.lookahead().add(terminal.EOF);
+      itm.lookahead().add(TerminalFactory.EOF);
 
       start_items.add(itm);
 
@@ -493,7 +493,7 @@ public class lalr_state {
 	      act = new reduce_action(itm.the_production());
 
 	      /* consider each lookahead symbol */
-	      for (int t = 0; t < terminal.number(); t++)
+	      for (int t = 0; t < TerminalFactory.number(); t++)
 		{
 		  /* skip over the ones not in the lookahead */
 		  if (!itm.lookahead().contains(t)) continue;
@@ -507,7 +507,7 @@ public class lalr_state {
 	          else
 		    {
 		      /* we now have at least one conflict */
-		      terminal term = terminal.find(t);
+		      terminal term = TerminalFactory.find(t);
 		      other_act = our_act_row.under_term[t];
 
 		      /* if the other act was not a shift */
@@ -560,7 +560,7 @@ public class lalr_state {
 		  /* shift always wins */
 		  if (!fix_with_precedence(p, sym.index(), our_act_row, act)) {
 		    our_act_row.under_term[sym.index()] = act;
-		    conflict_set.add(terminal.find(sym.index()));
+		    conflict_set.add(TerminalFactory.find(sym.index()));
 		  }
 		}
 	    }
@@ -606,7 +606,7 @@ public class lalr_state {
 
       throws internal_error {
 
-      terminal term = terminal.find(term_index);
+      terminal term = TerminalFactory.find(term_index);
 
       /* if the production has a precedence number, it can be fixed */
       if (p.precedence_num() > assoc.no_prec) {
@@ -757,7 +757,7 @@ public class lalr_state {
 		    }
 		}
 	      /* report S/R conflicts under all the symbols we conflict under */
-	      for (int t = 0; t < terminal.number(); t++)
+	      for (int t = 0; t < TerminalFactory.number(); t++)
 		if (conflict_set.contains(t))
 		  report_shift_reduce(itm,t);
 	    }
@@ -780,12 +780,12 @@ public class lalr_state {
       "  between " + itm1.to_simple_string() + "\n" +
       "  and     " + itm2.to_simple_string() + "\n" +
 	  "  under symbols: {";
-      for (int t = 0; t < terminal.number(); t++)
+      for (int t = 0; t < TerminalFactory.number(); t++)
 	{
 	  if (itm1.lookahead().contains(t) && itm2.lookahead().contains(t))
 	    {
 	      if (comma_flag) message+=(", "); else comma_flag = true;
-	      message += (terminal.find(t).name());
+	      message += (TerminalFactory.find(t).name());
 	    }
 	}
       message += "}\n  Resolved in favor of ";
@@ -836,7 +836,7 @@ public class lalr_state {
 		}
 	    }
 	}
-      message += "  under symbol "+ terminal.find(conflict_sym).name() + "\n"+
+      message += "  under symbol "+ TerminalFactory.find(conflict_sym).name() + "\n"+
       "  Resolved in favor of shifting.\n";
 
       /* count the conflict */

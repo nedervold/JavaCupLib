@@ -159,7 +159,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  /* terminals */");
 
 		/* walk over the terminals *//* later might sort these */
-		for (Enumeration e = terminal.all(); e.hasMoreElements();) {
+		for (Enumeration e = TerminalFactory.all(); e.hasMoreElements();) {
 			term = (terminal) e.nextElement();
 
 			/* output a constant decl for the terminal */
@@ -875,12 +875,12 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* methods to indicate EOF and error symbol indexes */
 		out.println("  /** <code>EOF</code> Symbol index. */");
-		out.println("  public int EOF_sym() {return " + terminal.EOF.index()
+		out.println("  public int EOF_sym() {return " + TerminalFactory.EOF.index()
 				+ ";}");
 		out.println();
 		out.println("  /** <code>error</code> Symbol index. */");
 		out.println("  public int error_sym() {return "
-				+ terminal.error.index() + ";}");
+				+ TerminalFactory.error.index() + ";}");
 		out.println();
 
 		/* user supplied code for user_init() */
@@ -1242,7 +1242,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println("  /* terminals */");
 
 			/* walk over the terminals *//* later might sort these */
-			for (Enumeration e = terminal.all(); e.hasMoreElements();) {
+			for (Enumeration e = TerminalFactory.all(); e.hasMoreElements();) {
 				term = (terminal) e.nextElement();
 
 				/* output a constant decl for the terminal */

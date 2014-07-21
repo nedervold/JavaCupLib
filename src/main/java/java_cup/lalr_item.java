@@ -308,9 +308,9 @@ public class lalr_item extends lr_item_core {
       if (lookahead() != null)
 	{
 	  result += "{";
-	  for (int t = 0; t < terminal.number(); t++)
+	  for (int t = 0; t < TerminalFactory.number(); t++)
 	    if (lookahead().contains(t))
-	      result += terminal.find(t).name() + " ";
+	      result += TerminalFactory.find(t).name() + " ";
 	  result += "}";
 	}
       else
