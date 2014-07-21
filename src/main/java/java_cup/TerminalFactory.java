@@ -36,14 +36,6 @@ public  class TerminalFactory {
 	 */
 	protected Hashtable<String, terminal> _all = new Hashtable<String, terminal>();
 
-	public void clear() {
-		_all.clear();
-		_all_by_index.clear();
-		next_index = 0;
-		EOF = createTerminal("EOF");
-		error = createTerminal("error");
-	}
-
 	/** Access to all terminals. */
 	public Enumeration<terminal> all() {
 		return _all.elements();

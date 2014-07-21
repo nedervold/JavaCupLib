@@ -21,11 +21,6 @@ public class ProductionFactory {
 		return _all.get(indx);
 	}
 
-	public void clear() {
-		_all.clear();
-		next_index = 0;
-	}
-
 	/** Total number of productions. */
 	public int number() {
 		return _all.size();

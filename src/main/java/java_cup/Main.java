@@ -190,11 +190,7 @@ public class Main {
 		 * clean all static members, that contain remaining stuff from earlier
 		 * calls
 		 */
-		terminalFactory.clear();
-		productionFactory.clear();
-		emit.clear();
 		nonTerminalFactory.clear();
-		lalrStateFactory.clear();
 
 		/* process user options and arguments */
 		parse_args(argv);

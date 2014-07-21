@@ -14,12 +14,6 @@ public class LalrStateFactory {
 		return _all.elements();
 	}
 
-	public void clear() {
-		_all.clear();
-		_all_kernels.clear();
-		next_index = 0;
-	}
-
 	/** Indicate total number of states there are. */
 	public int number() {
 		return _all.size();

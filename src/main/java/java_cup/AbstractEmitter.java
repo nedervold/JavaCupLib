@@ -82,6 +82,23 @@ public abstract class AbstractEmitter implements Emitter {
 
 	public AbstractEmitter() {
 		super();
+		_genericlabels = false;
+		_xmlactions = false;
+		_locations = false;
+		_lr_values = true;
+		action_code = null;
+		import_list = new Stack<String>();
+		init_code = null;
+		not_reduced = 0;
+		num_conflicts = 0;
+		package_name = null;
+		parser_class_name = "parser";
+		parser_code = null;
+		scan_code = null;
+		start_production = null;
+		symbol_const_class_name = "sym";
+		unused_non_term = 0;
+		unused_term = 0;
 	}
 
 	public boolean xmlactions() {
@@ -251,26 +268,6 @@ public abstract class AbstractEmitter implements Emitter {
 
 	public void set_genericlabels(boolean b) {
 		_genericlabels = b;
-	}
-
-	public void clear() {
-		_genericlabels = false;
-		_xmlactions = false;
-		_locations = false;
-		_lr_values = true;
-		action_code = null;
-		import_list = new Stack<String>();
-		init_code = null;
-		not_reduced = 0;
-		num_conflicts = 0;
-		package_name = null;
-		parser_class_name = "parser";
-		parser_code = null;
-		scan_code = null;
-		start_production = null;
-		symbol_const_class_name = "sym";
-		unused_non_term = 0;
-		unused_term = 0;
 	}
 
 	public String pre(String str) {

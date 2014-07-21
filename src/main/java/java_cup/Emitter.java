@@ -11,8 +11,6 @@ public interface Emitter {
 
 	public abstract long action_table_time();
 
-	public abstract void clear();
-
 	public void emit_parser(TerminalFactory terminalFactory,
 			NonTerminalFactory nonTerminalFactory,
 			ProductionFactory productionFactory, File dest_dir,
