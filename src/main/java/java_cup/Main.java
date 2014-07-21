@@ -161,6 +161,9 @@ public class Main {
 
 	/* Additional timing information is also collected in emit */
 
+	/* Factories */
+	private static LalrStateFactory lalrStateFactory = new LalrStateFactory();
+	
 	/*-----------------------------------------------------------*/
 	/*--- Main Program ------------------------------------------*/
 	/*-----------------------------------------------------------*/
@@ -188,7 +191,7 @@ public class Main {
 		NonTerminalFactory.clear();
 		parse_reduce_row.clear();
 		parse_action_row.clear();
-		LalrStateFactory.clear();
+		lalrStateFactory.clear();
 
 		/* process user options and arguments */
 		parse_args(argv);
@@ -589,16 +592,16 @@ public class Main {
 		if (opt_do_debug || print_progress)
 			System.err.println("  Building state machine...");
 		Emitter emit = EmitterAccess.instance();
-		start_state = LalrStateFactory.build_machine(emit.start_production());
+		start_state = lalrStateFactory.build_machine(emit.start_production());
 
 		machine_end = System.currentTimeMillis();
 
 		/* build the LR parser action and reduce-goto tables */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Filling in tables...");
-		action_table = new parse_action_table();
-		reduce_table = new parse_reduce_table();
-		for (Enumeration<lalr_state> st = LalrStateFactory.all(); st.hasMoreElements();) {
+		action_table = new parse_action_table(lalrStateFactory.number());
+		reduce_table = new parse_reduce_table(lalrStateFactory.number());
+		for (Enumeration<lalr_state> st = lalrStateFactory.all(); st.hasMoreElements();) {
 			lalr_state lst = (lalr_state) st.nextElement();
 			lst.build_table_entries(action_table, reduce_table);
 		}
@@ -671,7 +674,7 @@ public class Main {
 				+ plural(NonTerminalFactory.number()) + ", and ");
 		System.err.println(ProductionFactory.number() + " production"
 				+ plural(ProductionFactory.number()) + " declared, ");
-		System.err.println("  producing " + LalrStateFactory.number()
+		System.err.println("  producing " + lalrStateFactory.number()
 				+ " unique parse states.");
 
 		/* unused symbols */
@@ -864,16 +867,16 @@ public class Main {
 	 * recognition state machine.
 	 */
 	public static void dump_machine() {
-		lalr_state ordered[] = new lalr_state[LalrStateFactory.number()];
+		lalr_state ordered[] = new lalr_state[lalrStateFactory.number()];
 
 		/* put the states in sorted order for a nicer display */
-		for (Enumeration<lalr_state> s = LalrStateFactory.all(); s.hasMoreElements();) {
+		for (Enumeration<lalr_state> s = lalrStateFactory.all(); s.hasMoreElements();) {
 			lalr_state st = (lalr_state) s.nextElement();
 			ordered[st.index()] = st;
 		}
 
 		System.err.println("===== Viable Prefix Recognizer =====");
-		for (int i = 0; i < LalrStateFactory.number(); i++) {
+		for (int i = 0; i < lalrStateFactory.number(); i++) {
 			if (ordered[i] == start_state)
 				System.err.print("START ");
 			System.err.println(ordered[i]);

@@ -7,21 +7,21 @@ import java.util.Stack;
 public class LalrStateFactory {
 
 	/** Collection of all states. */
-	protected static Hashtable<lalr_item_set, lalr_state> _all = new Hashtable<lalr_item_set, lalr_state>();
+	protected Hashtable<lalr_item_set, lalr_state> _all = new Hashtable<lalr_item_set, lalr_state>();
 
 	/** Collection of all states. */
-	public static Enumeration<lalr_state> all() {
+	public Enumeration<lalr_state> all() {
 		return _all.elements();
 	}
 
-	public static void clear() {
+	public void clear() {
 		_all.clear();
 		_all_kernels.clear();
 		next_index = 0;
 	}
 
 	/** Indicate total number of states there are. */
-	public static int number() {
+	public int number() {
 		return _all.size();
 	}
 
@@ -30,7 +30,7 @@ public class LalrStateFactory {
 	 * set of items -- which uniquely define the state). This table stores state
 	 * objects using (a copy of) their kernel item sets as keys.
 	 */
-	protected static Hashtable<lalr_item_set, lalr_state> _all_kernels = new Hashtable<lalr_item_set, lalr_state>();
+	protected Hashtable<lalr_item_set, lalr_state> _all_kernels = new Hashtable<lalr_item_set, lalr_state>();
 
 	/**
 	 * Find and return state with a given a kernel item set (or null if not
@@ -42,7 +42,7 @@ public class LalrStateFactory {
 	 * @param itms
 	 *            the kernel set of the state we are looking for.
 	 */
-	public static lalr_state find_state(lalr_item_set itms) {
+	public lalr_state find_state(lalr_item_set itms) {
 		if (itms == null)
 			return null;
 		else
@@ -50,13 +50,13 @@ public class LalrStateFactory {
 	}
 
 	/** Static counter for assigning unique state indexes. */
-	protected static int next_index = 0;
+	protected int next_index = 0;
 
 	/**
 	 * Helper routine for debugging -- produces a dump of the given state onto
 	 * System.out.
 	 */
-	protected static void dump_state(lalr_state st) throws internal_error {
+	protected void dump_state(lalr_state st) throws internal_error {
 		lalr_item_set itms;
 		lalr_item itm;
 		production_part part;
@@ -98,7 +98,7 @@ public class LalrStateFactory {
 	 * to the lookahead of one item to be included in other items that it was
 	 * used to directly or indirectly create.
 	 */
-	protected static void propagate_all_lookaheads() throws internal_error {
+	protected void propagate_all_lookaheads() throws internal_error {
 		/* iterate across all states */
 		for (Enumeration<lalr_state> st = all(); st.hasMoreElements();) {
 			/* propagate lookaheads out of that state */
@@ -151,7 +151,7 @@ public class LalrStateFactory {
 	 * @see java_cup.lalr_item_set#compute_closure
 	 * @see java_cup.lalr_state#propagate_all_lookaheads
 	 */
-	public static lalr_state build_machine(production start_prod)
+	public lalr_state build_machine(production start_prod)
 			throws internal_error {
 		lalr_state start_state;
 		lalr_item_set start_items;
@@ -291,7 +291,7 @@ public class LalrStateFactory {
 		return start_state;
 	}
 
-	public static lalr_state createLalrState(lalr_item_set itms)
+	public lalr_state createLalrState(lalr_item_set itms)
 			throws internal_error {
 		/* don't allow null or duplicate item sets */
 		if (itms == null)

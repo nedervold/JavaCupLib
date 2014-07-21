@@ -21,10 +21,10 @@ public class parse_reduce_table {
    *  must already have been entered, and the viable prefix recognizer should
    *  have been constructed before this is called.
    */
-  public parse_reduce_table()
+  public parse_reduce_table(int num_states)
     {
       /* determine how many states we are working with */
-      _num_states = LalrStateFactory.number();
+      _num_states = num_states;
 
       /* allocate the array and fill it in with empty rows */
       under_state = new parse_reduce_row[_num_states];

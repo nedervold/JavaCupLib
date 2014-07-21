@@ -23,10 +23,10 @@ public class parse_action_table {
    *  already have been entered, and the viable prefix recognizer should
    *  have been constructed before this is called.
    */
-  public parse_action_table()
+  public parse_action_table(int num_states)
     {
       /* determine how many states we are working with */
-      _num_states = LalrStateFactory.number();
+      _num_states = num_states;
 
       /* allocate the array and fill it in with empty rows */
       under_state = new parse_action_row[_num_states];
