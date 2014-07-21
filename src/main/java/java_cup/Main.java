@@ -216,7 +216,7 @@ public class Main {
 		parse_end = System.currentTimeMillis();
 
 		/* don't proceed unless we are error free */
-		if (ErrorManager.getManager().getErrorCount() == 0) {
+		if (ErrorManagerAccess.getManager().getErrorCount() == 0) {
 			/* check for unused bits */
 			if (print_progress)
 				System.err.println("Checking specification...");
@@ -232,7 +232,7 @@ public class Main {
 			build_end = System.currentTimeMillis();
 
 			/* output the generated code, if # of conflicts permits */
-			if (ErrorManager.getManager().getErrorCount() != 0) {
+			if (ErrorManagerAccess.getManager().getErrorCount() != 0) {
 				// conflicts! don't emit code, don't dump tables.
 				opt_dump_tables = false;
 			} else { // everything's okay, emit parser.
@@ -271,7 +271,7 @@ public class Main {
 		 * If there were errors during the run, exit with non-zero status
 		 * (makefile-friendliness). --CSA
 		 */
-		if (ErrorManager.getManager().getErrorCount() != 0)
+		if (ErrorManagerAccess.getManager().getErrorCount() != 0)
 			System.exit(100);
 	}
 
@@ -485,7 +485,7 @@ public class Main {
 			 * something threw an exception. catch it and emit a message so we
 			 * have a line number to work with, then re-throw it
 			 */
-			ErrorManager.getManager().emit_error(
+			ErrorManagerAccess.getManager().emit_error(
 					"Internal error: Unexpected exception");
 			throw e;
 		}
@@ -519,7 +519,7 @@ public class Main {
 				/* count it and warn if we are doing warnings */
 				emit.set_unused_term(emit.unused_term() + 1);
 				if (!emit.nowarn()) {
-					ErrorManager.getManager().emit_warning(
+					ErrorManagerAccess.getManager().emit_warning(
 							"Terminal \"" + term.name()
 									+ "\" was declared but never used");
 				}
@@ -535,7 +535,7 @@ public class Main {
 				/* count and warn if we are doing warnings */
 				emit.set_unused_non_term(emit.unused_non_term() + 1);
 				if (!emit.nowarn()) {
-					ErrorManager.getManager().emit_warning(
+					ErrorManagerAccess.getManager().emit_warning(
 							"Non terminal \"" + nt.name()
 									+ "\" was declared but never used");
 				}
@@ -614,7 +614,7 @@ public class Main {
 
 		/* if we have more conflicts than we expected issue a message and die */
 		if (emit.num_conflicts() > expect_conflicts) {
-			ErrorManager.getManager().emit_error(
+			ErrorManagerAccess.getManager().emit_error(
 					"*** More conflicts encountered than expected "
 							+ "-- parser generation aborted");
 			// indicate the problem.
@@ -658,11 +658,11 @@ public class Main {
 				+ " Parser Generation Summary -------");
 
 		/* error and warning count */
-		System.err.println("  " + ErrorManager.getManager().getErrorCount()
-				+ " error" + plural(ErrorManager.getManager().getErrorCount())
-				+ " and " + ErrorManager.getManager().getWarningCount()
+		System.err.println("  " + ErrorManagerAccess.getManager().getErrorCount()
+				+ " error" + plural(ErrorManagerAccess.getManager().getErrorCount())
+				+ " and " + ErrorManagerAccess.getManager().getWarningCount()
 				+ " warning"
-				+ plural(ErrorManager.getManager().getWarningCount()));
+				+ plural(ErrorManagerAccess.getManager().getWarningCount()));
 
 		/* basic stats */
 		System.err.print("  " + TerminalFactory.number() + " terminal"

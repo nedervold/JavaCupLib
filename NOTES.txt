@@ -47,7 +47,8 @@ Refactoring steps taken
 
 * Added generic arguments to old-style collections.
 
-
+* Separated singleton access from ErrorManager into
+  ErrorManagerAccess.
 
 ------------------------------------------------------------
 

@@ -4,22 +4,17 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import java_cup.runtime.Symbol;
-public class ErrorManager{
-    private static ErrorManager errorManager;
+public class ErrorManager {
     private int errors = 0;
     private int warnings = 0;
     private int fatals = 0;
     public int getFatalCount() { return fatals; }
     public int getErrorCount() { return errors; }
     public int getWarningCount() { return warnings; }
-    static {
-        errorManager = new ErrorManager();
-    }
-    public static ErrorManager getManager() { return errorManager; }
-    private ErrorManager(){
+    protected ErrorManager(){
     }
 
-    //TODO: migrate to java.util.logging
+	//TODO: migrate to java.util.logging
     /**
      * Error message format: 
      * ERRORLEVEL at (LINE/COLUMN)@SYMBOL: MESSAGE

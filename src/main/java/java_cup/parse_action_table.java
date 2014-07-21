@@ -94,7 +94,7 @@ public class parse_action_table {
 		if (!emit.nowarn())
 		{
 
-		  ErrorManager.getManager().emit_warning("*** Production \"" + 
+		  ErrorManagerAccess.getManager().emit_warning("*** Production \"" + 
 				  prod.to_simple_string() + "\" never reduced");
 		}
 	    }

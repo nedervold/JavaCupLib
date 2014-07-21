@@ -475,7 +475,7 @@ public class lalr_state {
       /* count the conflict */
       Emitter emit = EmitterAccess.instance();
 	emit.set_num_conflicts(emit.num_conflicts() + 1);
-      ErrorManager.getManager().emit_warning(message);
+      ErrorManagerAccess.getManager().emit_warning(message);
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -520,7 +520,7 @@ public class lalr_state {
       /* count the conflict */
       Emitter emit = EmitterAccess.instance();
 	emit.set_num_conflicts(emit.num_conflicts() + 1);
-      ErrorManager.getManager().emit_warning(message);
+      ErrorManagerAccess.getManager().emit_warning(message);
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/

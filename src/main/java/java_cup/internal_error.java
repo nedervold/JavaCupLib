@@ -14,7 +14,7 @@ public class internal_error extends Exception
 	for cases when we can't actually throw the exception.  */
     public void crash()
       {
-          ErrorManager.getManager().emit_fatal("JavaCUP Internal Error Detected: "+getMessage());
+          ErrorManagerAccess.getManager().emit_fatal("JavaCUP Internal Error Detected: "+getMessage());
           printStackTrace();
           System.exit(-1);
       }
