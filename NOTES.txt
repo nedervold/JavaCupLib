@@ -53,6 +53,10 @@ Refactoring steps taken
 * Removed globals from all the Factories.  The Factories are then
   created in Main and passed around.
 
+* Removed globals from Main.
+
+* Broke the Options out from Main.
+
 ------------------------------------------------------------
 
 TODO:
