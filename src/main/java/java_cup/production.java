@@ -58,7 +58,7 @@ public class production {
 	 * all actions at the end where they can be handled as part of a reduce by
 	 * the parser.
 	 */
-	protected production(non_terminal lhs_sym, production_part rhs_parts[],
+	protected production(final non_terminal lhs_sym, production_part rhs_parts[],
 			int rhs_l, String action_str) throws internal_error {
 		int i;
 		action_part tail_action;
@@ -157,18 +157,7 @@ public class production {
 		/* rewrite production to remove any embedded actions */
 		remove_embedded_actions();
 
-		register(lhs_sym, this);
-	}
-
-	private static void register(non_terminal lhs_sym, production prod) throws internal_error {
-		/* assign an index */
-		prod.setIndex( ProductionFactory.next_index++);
-
-		/* put us in the global collection of productions */
-		ProductionFactory._all.put(new Integer(prod.index()), prod);
-
-		/* put us in the production list of the lhs non terminal */
-		lhs_sym.add_production(prod);
+		ProductionFactory.register(lhs_sym, this);
 	}
 
 	/** The left hand side non-terminal. */

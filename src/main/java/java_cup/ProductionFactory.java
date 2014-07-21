@@ -65,7 +65,7 @@ public class ProductionFactory {
 			production_part[] rhs_parts, int rhs_l, int prec_num, int prec_side)
 			throws internal_error {
 		production result = createProduction(lhs_sym, rhs_parts, rhs_l, null);
-		
+
 		/* set the precedence */
 		result.set_precedence_num(prec_num);
 		result.set_precedence_side(prec_side);
@@ -75,13 +75,16 @@ public class ProductionFactory {
 	public static production createProduction(non_terminal lhs_sym,
 			production_part[] rhs_parts, int rhs_l, String action_str)
 			throws internal_error {
-		return new production(lhs_sym, rhs_parts, rhs_l, action_str);
+		production result = new production(lhs_sym, rhs_parts, rhs_l,
+				action_str);
+		return result;
 	}
 
 	public static production createProduction(non_terminal lhs_sym,
 			production_part[] rhs_parts, int rhs_l, String action_str,
 			int prec_num, int prec_side) throws internal_error {
-		production result = new production(lhs_sym, rhs_parts, rhs_l, action_str);
+		production result = createProduction(lhs_sym, rhs_parts, rhs_l,
+				action_str);
 
 		/* set the precedence */
 		result.set_precedence_num(prec_num);
@@ -95,6 +98,18 @@ public class ProductionFactory {
 			throws internal_error {
 		return new action_production(base, lhs_sym, rhs_parts, rhs_len,
 				action_str, indexOfIntermediateResult);
+	}
+
+	protected static void register(non_terminal lhs_sym, production prod)
+			throws internal_error {
+		/* assign an index */
+		prod.setIndex(next_index++);
+
+		/* put us in the global collection of productions */
+		_all.put(new Integer(prod.index()), prod);
+
+		/* put us in the production list of the lhs non terminal */
+		lhs_sym.add_production(prod);
 	}
 
 	public ProductionFactory() {
