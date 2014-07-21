@@ -27,10 +27,10 @@ public class action_production extends production {
 	 *            the index of the result of the previous intermediate action on
 	 *            the stack relative to top, -1 if no previous action
 	 */
-	protected action_production(ProductionFactory productionFactory, Emitter emit, production base, non_terminal lhs_sym,
+	protected action_production(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, ProductionFactory productionFactory, Emitter emit, production base, non_terminal lhs_sym,
 			production_part rhs_parts[], int rhs_len, String action_str,
 			int indexOfIntermediateResult) throws internal_error {
-		super(productionFactory, emit, lhs_sym, rhs_parts, rhs_len, action_str);
+		super(terminalFactory, nonTerminalFactory, productionFactory, emit, lhs_sym, rhs_parts, rhs_len, action_str);
 		_base_production = base;
 		this.indexOfIntermediateResult = indexOfIntermediateResult;
 	}

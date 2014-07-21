@@ -56,12 +56,12 @@ public class ProductionFactory {
 		return is_id_start(c) || (c >= '0' && c <= '9');
 	}
 
-	public production createProduction(non_terminal lhs_sym,
+	public production createProduction( non_terminal lhs_sym,
 			production_part[] rhs_parts, int rhs_l) throws internal_error {
 		return createProduction(lhs_sym, rhs_parts, rhs_l, null);
 	}
 
-	public production createProduction(non_terminal lhs_sym,
+	public production createProduction( non_terminal lhs_sym,
 			production_part[] rhs_parts, int rhs_l, int prec_num, int prec_side)
 			throws internal_error {
 		production result = createProduction(lhs_sym, rhs_parts, rhs_l, null);
@@ -75,7 +75,7 @@ public class ProductionFactory {
 	public production createProduction(non_terminal lhs_sym,
 			production_part[] rhs_parts, int rhs_l, String action_str)
 			throws internal_error {
-		production result = new production(this, emit, lhs_sym, rhs_parts, rhs_l,
+		production result = new production( terminalFactory, nonTerminalFactory, this, emit, lhs_sym, rhs_parts, rhs_l,
 				action_str);
 
 		register(lhs_sym, result);
@@ -94,11 +94,11 @@ public class ProductionFactory {
 		return result;
 	}
 
-	public action_production createActionProduction(production base,
+	public action_production createActionProduction( production base,
 			non_terminal lhs_sym, production_part[] rhs_parts, int rhs_len,
 			String action_str, int indexOfIntermediateResult)
 			throws internal_error {
-		action_production result = new action_production(this, emit, base, lhs_sym, rhs_parts, rhs_len,
+		action_production result = new action_production(terminalFactory, nonTerminalFactory, this, emit, base, lhs_sym, rhs_parts, rhs_len,
 				action_str, indexOfIntermediateResult);
 
 		register(lhs_sym, result);
@@ -118,10 +118,14 @@ public class ProductionFactory {
 	}
 
 	private final Emitter emit;
+	private final TerminalFactory terminalFactory;
+	private final NonTerminalFactory nonTerminalFactory;
 	
-	public ProductionFactory(Emitter emit) {
+	public ProductionFactory(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, Emitter emit) {
 		super();
 		this.emit = emit;
+		this.terminalFactory = terminalFactory;
+		this.nonTerminalFactory = nonTerminalFactory;
 	}
 
 }

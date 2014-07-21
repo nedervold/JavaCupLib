@@ -13,10 +13,10 @@ public class parse_action_row {
   /** Simple constructor.  Note: this should not be used until the number of
    *  terminals in the grammar has been established.
    */
-  public parse_action_row()
+  public parse_action_row(TerminalFactory terminalFactory)
     {
       /* make sure the size is set */
-      if (_size <= 0 )  _size = TerminalFactory.number();
+      if (_size <= 0 )  _size = terminalFactory.number();
 
       /* allocate the array */
       under_term = new parse_action[size()];

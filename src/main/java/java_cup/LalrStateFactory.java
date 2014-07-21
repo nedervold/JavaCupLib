@@ -151,7 +151,7 @@ public class LalrStateFactory {
 	 * @see java_cup.lalr_item_set#compute_closure
 	 * @see java_cup.lalr_state#propagate_all_lookaheads
 	 */
-	public lalr_state build_machine(production start_prod)
+	public lalr_state build_machine(TerminalFactory terminalFactory, production start_prod)
 			throws internal_error {
 		lalr_state start_state;
 		lalr_item_set start_items;
@@ -175,8 +175,8 @@ public class LalrStateFactory {
 		/* build item with dot at front of start production and EOF lookahead */
 		start_items = new lalr_item_set();
 
-		itm = new lalr_item(start_prod);
-		itm.lookahead().add(TerminalFactory.EOF);
+		itm = new lalr_item(terminalFactory, start_prod);
+		itm.lookahead().add(terminalFactory.EOF);
 
 		start_items.add(itm);
 
@@ -184,7 +184,7 @@ public class LalrStateFactory {
 		kernel = new lalr_item_set(start_items);
 
 		/* create the closure from that item set */
-		start_items.compute_closure();
+		start_items.compute_closure(terminalFactory);
 
 		/* build a state out of that item set and put it in our work set */
 		start_state = createLalrState(start_items);
@@ -244,7 +244,7 @@ public class LalrStateFactory {
 				/* if we haven't, build a new state out of the item set */
 				if (new_st == null) {
 					/* compute closure of the kernel for the full item set */
-					new_items.compute_closure();
+					new_items.compute_closure(terminalFactory);
 
 					/* build the new state */
 					new_st = createLalrState(new_items);

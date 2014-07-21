@@ -132,7 +132,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#symbols(java.io.PrintWriter, boolean, boolean)
 	 */
-	protected void symbols(PrintWriter out, boolean emit_non_terms,
+	protected void symbols(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, PrintWriter out, boolean emit_non_terms,
 			boolean sym_interface) {
 		terminal term;
 		non_terminal nt;
@@ -159,7 +159,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  /* terminals */");
 
 		/* walk over the terminals *//* later might sort these */
-		for (Enumeration<terminal> e = TerminalFactory.all(); e.hasMoreElements();) {
+		for (Enumeration<terminal> e = terminalFactory.all(); e
+				.hasMoreElements();) {
 			term = (terminal) e.nextElement();
 
 			/* output a constant decl for the terminal */
@@ -173,7 +174,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			out.println("  /* non terminals */");
 
 			/* walk over the non terminals *//* later might sort these */
-			for (Enumeration<non_terminal> e = NonTerminalFactory.all(); e.hasMoreElements();) {
+			for (Enumeration<non_terminal> e = nonTerminalFactory.all(); e
+					.hasMoreElements();) {
 				nt = (non_terminal) e.nextElement();
 
 				// ****
@@ -203,8 +205,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param start_prod
 	 *            the start production of the grammar.
 	 */
-	private void emit_action_code(ProductionFactory productionFactory, PrintWriter out, production start_prod)
-			throws internal_error {
+	private void emit_action_code(ProductionFactory productionFactory,
+			PrintWriter out, production start_prod) throws internal_error {
 		production prod;
 
 		long start_time = System.currentTimeMillis();
@@ -235,8 +237,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  }");
 
 		out.println();
-		for (int instancecounter = 0; instancecounter <= productionFactory.number()
-				/ UPPERLIMIT; instancecounter++) {
+		for (int instancecounter = 0; instancecounter <= productionFactory
+				.number() / UPPERLIMIT; instancecounter++) {
 			out.println("  /** Method " + instancecounter
 					+ " with the actual generated action code for actions "
 					+ (instancecounter * UPPERLIMIT) + " to "
@@ -443,7 +445,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("    {");
 
 		if (productionFactory.number() < UPPERLIMIT) { // Make it simple for the
-												// optimizer to inline!
+			// optimizer to inline!
 			out.println("              return " + pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
 			out.println("                               " + pre("act_num,"));
@@ -466,8 +468,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
-		for (int instancecounter = 0; instancecounter <= productionFactory.number()
-				/ UPPERLIMIT; instancecounter++) {
+		for (int instancecounter = 0; instancecounter <= productionFactory
+				.number() / UPPERLIMIT; instancecounter++) {
 			/* case label */
 			out.println("          /*. . . . . . . . "
 					+ (instancecounter * UPPERLIMIT) + " < #action < "
@@ -506,7 +508,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param out
 	 *            stream to produce output on.
 	 */
-	private void emit_production_table(ProductionFactory productionFactory, PrintWriter out) {
+	private void emit_production_table(ProductionFactory productionFactory,
+			PrintWriter out) {
 		production all_prods[];
 		production prod;
 
@@ -514,7 +517,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* collect up the productions in order */
 		all_prods = new production[productionFactory.number()];
-		for (Enumeration<production> p = productionFactory.all(); p.hasMoreElements();) {
+		for (Enumeration<production> p = productionFactory.all(); p
+				.hasMoreElements();) {
 			prod = (production) p.nextElement();
 			all_prods[prod.index()] = prod;
 		}
@@ -556,8 +560,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param compact_reduces
 	 *            do we use the most frequent reduce as default?
 	 */
-	private void do_action_table(ProductionFactory productionFactory, PrintWriter out, parse_action_table act_tab,
-			boolean compact_reduces) throws internal_error {
+	private void do_action_table(ProductionFactory productionFactory,
+			PrintWriter out, parse_action_table act_tab, boolean compact_reduces)
+			throws internal_error {
 		parse_action_row row;
 		parse_action act;
 		int red;
@@ -778,9 +783,10 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * java_cup.parse_action_table, java_cup.parse_reduce_table, int,
 	 * java_cup.production, boolean, boolean)
 	 */
-	protected void parser(ProductionFactory productionFactory, PrintWriter out, parse_action_table action_table,
-			parse_reduce_table reduce_table, int start_st,
-			production start_prod, boolean compact_reduces,
+	protected void parser(TerminalFactory terminalFactory,
+			ProductionFactory productionFactory, PrintWriter out,
+			parse_action_table action_table, parse_reduce_table reduce_table,
+			int start_st, production start_prod, boolean compact_reduces,
 			boolean suppress_scanner) throws internal_error {
 		long start_time = System.currentTimeMillis();
 
@@ -874,12 +880,12 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* methods to indicate EOF and error symbol indexes */
 		out.println("  /** <code>EOF</code> Symbol index. */");
-		out.println("  public int EOF_sym() {return " + TerminalFactory.EOF.index()
-				+ ";}");
+		out.println("  public int EOF_sym() {return "
+				+ terminalFactory.EOF.index() + ";}");
 		out.println();
 		out.println("  /** <code>error</code> Symbol index. */");
 		out.println("  public int error_sym() {return "
-				+ TerminalFactory.error.index() + ";}");
+				+ terminalFactory.error.index() + ";}");
 		out.println();
 
 		/* user supplied code for user_init() */
@@ -928,8 +934,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param start_prod
 	 *            the start production of the grammar.
 	 */
-	private void emit_xmlaction_code(ProductionFactory productionFactory, PrintWriter out, production start_prod)
-			throws internal_error {
+	private void emit_xmlaction_code(ProductionFactory productionFactory,
+			PrintWriter out, production start_prod) throws internal_error {
 		production prod;
 
 		long start_time = System.currentTimeMillis();
@@ -957,8 +963,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("  }");
 
 		out.println();
-		for (int instancecounter = 0; instancecounter <= productionFactory.number()
-				/ UPPERLIMIT; instancecounter++) {
+		for (int instancecounter = 0; instancecounter <= productionFactory
+				.number() / UPPERLIMIT; instancecounter++) {
 			out.println("  /** Method " + instancecounter
 					+ " with the actual generated action code for actions "
 					+ (instancecounter * UPPERLIMIT) + " to "
@@ -1103,7 +1109,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("    {");
 
 		if (productionFactory.number() < UPPERLIMIT) { // Make it simple for the
-												// optimizer to inline!
+			// optimizer to inline!
 			out.println("              return " + pre("do_action_part")
 					+ String.format("%08d", new Integer(0)) + "(");
 			out.println("                               " + pre("act_num,"));
@@ -1126,8 +1132,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		out.println("        {");
 
 		/* emit action code for each production as a separate case */
-		for (int instancecounter = 0; instancecounter <= productionFactory.number()
-				/ UPPERLIMIT; instancecounter++) {
+		for (int instancecounter = 0; instancecounter <= productionFactory
+				.number() / UPPERLIMIT; instancecounter++) {
 			/* case label */
 			out.println("          /*. . . . . . . . "
 					+ (instancecounter * UPPERLIMIT) + " < #action < "
@@ -1205,7 +1211,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		}
 	}
 
-	public void emit_parser(ProductionFactory productionFactory, final File dest_dir,
+	public void emit_parser(TerminalFactory terminalFactory,
+			NonTerminalFactory nonTerminalFactory,
+			ProductionFactory productionFactory, final File dest_dir,
 			final parse_action_table action_table,
 			final parse_reduce_table reduce_table,
 			final lalr_state start_state, final boolean include_non_terms,
@@ -1240,7 +1248,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println("  /* terminals */");
 
 			/* walk over the terminals *//* later might sort these */
-			for (Enumeration<terminal> e = TerminalFactory.all(); e.hasMoreElements();) {
+			for (Enumeration<terminal> e = terminalFactory.all(); e
+					.hasMoreElements();) {
 				term = (terminal) e.nextElement();
 
 				/* output a constant decl for the terminal */
@@ -1254,7 +1263,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 				symbol_class_file.println("  /* non terminals */");
 
 				/* walk over the non terminals *//* later might sort these */
-				for (Enumeration<non_terminal> e = NonTerminalFactory.all(); e.hasMoreElements();) {
+				for (Enumeration<non_terminal> e = nonTerminalFactory.all(); e
+						.hasMoreElements();) {
 					nt = (non_terminal) e.nextElement();
 
 					// ****
@@ -1272,9 +1282,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println();
 
 			set_symbols_time(System.currentTimeMillis() - start_time);
-			parser(productionFactory, parser_class_file, action_table, reduce_table,
-					start_state.index(), start_production(), opt_compact_red,
-					suppress_scanner);
+			parser(terminalFactory, productionFactory, parser_class_file, action_table,
+					reduce_table, start_state.index(), start_production(),
+					opt_compact_red, suppress_scanner);
 		} finally {
 			close_files();
 		}

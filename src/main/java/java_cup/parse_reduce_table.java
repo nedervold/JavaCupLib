@@ -21,7 +21,7 @@ public class parse_reduce_table {
    *  must already have been entered, and the viable prefix recognizer should
    *  have been constructed before this is called.
    */
-  public parse_reduce_table(int num_states)
+  public parse_reduce_table(NonTerminalFactory nonTerminalFactory, int num_states)
     {
       /* determine how many states we are working with */
       _num_states = num_states;
@@ -29,7 +29,7 @@ public class parse_reduce_table {
       /* allocate the array and fill it in with empty rows */
       under_state = new parse_reduce_row[_num_states];
       for (int i=0; i<_num_states; i++)
-	under_state[i] = new parse_reduce_row();
+	under_state[i] = new parse_reduce_row(nonTerminalFactory);
     }
 
    

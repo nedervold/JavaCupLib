@@ -194,6 +194,8 @@ action code {:
 parser code {:
   Emitter emitter;
   ProductionFactory productionFactory;
+  TerminalFactory terminalFactory;
+  NonTerminalFactory nonTerminalFactory;
 
  /* override error routines */
   protected Lexer lexer;
@@ -260,10 +262,10 @@ start with spec;
 spec ::= 
 	{:
           /* declare "error" as a terminal */
-          symbols.put("error", new symbol_part(TerminalFactory.error));
+          symbols.put("error", new symbol_part(parser.terminalFactory.error));
 
           /* declare start non terminal */
-          non_terms.put("$START", NonTerminalFactory.START_nt);
+          non_terms.put("$START", parser.nonTerminalFactory.START_nt());
 	:}
 	package_spec
 	import_list
@@ -544,10 +546,10 @@ start_spec ::=
 	      /* build a special start production */
 	      new_rhs();
 	      add_rhs_part(add_lab(new symbol_part(start_nt), "start_val"));
-	      add_rhs_part(new symbol_part(TerminalFactory.EOF));
+	      add_rhs_part(new symbol_part(parser.terminalFactory.EOF));
 	      if (!emit.xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 	      emit.set_start_production(
-		     parser.productionFactory.createProduction(NonTerminalFactory.START_nt, rhs_parts, rhs_pos));
+		     parser.productionFactory.createProduction(parser.nonTerminalFactory.START_nt(), rhs_parts, rhs_pos));
 	      new_rhs();
 	    }
 	:}
@@ -632,16 +634,16 @@ rhs ::=
 	          /* build a special start production */
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
-	          add_rhs_part(new symbol_part(TerminalFactory.EOF));
+	          add_rhs_part(new symbol_part(parser.terminalFactory.EOF));
 		  if (!emit.xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 		  if ((sym!=null) && (sym instanceof terminal)) {
 		    emit.set_start_production(
-		      parser.productionFactory.createProduction(NonTerminalFactory.START_nt, rhs_parts, 
+		      parser.productionFactory.createProduction(parser.nonTerminalFactory.START_nt(), rhs_parts, 
 				     rhs_pos, ((terminal)sym).precedence_num(),
 				     ((terminal)sym).precedence_side()));
 		  } else {
 		    emit.set_start_production(
-		      parser.productionFactory.createProduction(NonTerminalFactory.START_nt, rhs_parts, rhs_pos));
+		      parser.productionFactory.createProduction(parser.nonTerminalFactory.START_nt(), rhs_parts, rhs_pos));
 		  }
 	          new_rhs();
 		}
@@ -669,10 +671,10 @@ rhs ::=
 	          /* build a special start production */
 	          new_rhs();
 	          add_rhs_part(add_lab(new symbol_part(start_nt),"start_val"));
-	          add_rhs_part(new symbol_part(TerminalFactory.EOF));
+	          add_rhs_part(new symbol_part(parser.terminalFactory.EOF));
 		  if (!emit.xmlactions()) add_rhs_part(new action_part("RESULT = start_val;"));
 	          emit.set_start_production(
-		     parser.productionFactory.createProduction(NonTerminalFactory.START_nt, rhs_parts, rhs_pos));
+		     parser.productionFactory.createProduction(parser.nonTerminalFactory.START_nt(), rhs_parts, rhs_pos));
 
 	          new_rhs();
 		}
@@ -807,7 +809,7 @@ new_term_id ::=
 	      }
 	      /* build a production_part and put it in the table */ 
 	      symbols.put(term_id, 
-	        new symbol_part(TerminalFactory.createTerminal(term_id, multipart_name)));
+	        new symbol_part(parser.terminalFactory.createTerminal(term_id, multipart_name)));
 	    }
 	:}
 	;
@@ -831,7 +833,7 @@ new_non_term_id ::=
 	      }
 	      /* build the non terminal object */
               non_terminal this_nt = 
-		NonTerminalFactory.createNonTerminal(non_term_id, multipart_name);
+		parser.nonTerminalFactory.createNonTerminal(non_term_id, multipart_name);
 
 	      /* put it in the non_terms table */
 	      non_terms.put(non_term_id, this_nt);

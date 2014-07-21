@@ -50,6 +50,9 @@ Refactoring steps taken
 * Separated singleton access from ErrorManager into
   ErrorManagerAccess.
 
+* Removed globals from all the Factories.  The Factories are then
+  created in Main and passed around.
+
 ------------------------------------------------------------
 
 TODO:

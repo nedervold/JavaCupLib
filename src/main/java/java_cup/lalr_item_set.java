@@ -234,7 +234,7 @@ public class lalr_item_set {
    *  assumes that nullability and first sets have been computed for all 
    *  productions before it is called.
    */
-  public void compute_closure()
+  public void compute_closure(TerminalFactory terminalFactory)
     throws internal_error
     {
       lalr_item_set consider;
@@ -275,7 +275,7 @@ public class lalr_item_set {
 		  prod = (production)p.nextElement();
 
 		  /* create new item with dot at start and that lookahead */
-		  new_itm = new lalr_item(prod, 
+		  new_itm = new lalr_item(terminalFactory, prod, 
 					     new terminal_set(new_lookaheads));
 
 		  /* add/merge item into the set */

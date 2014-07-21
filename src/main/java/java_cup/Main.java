@@ -164,7 +164,10 @@ public class Main {
 	/* Factories */
 	private static LalrStateFactory lalrStateFactory = new LalrStateFactory();
 	private static Emitter emit = new cup_emit();
-	private static ProductionFactory productionFactory = new ProductionFactory(emit);
+	private static TerminalFactory terminalFactory = new TerminalFactory();
+	private static NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(terminalFactory);
+	static { nonTerminalFactory.START_nt(); }
+	private static ProductionFactory productionFactory = new ProductionFactory(terminalFactory, nonTerminalFactory, emit);
 	
 	/*-----------------------------------------------------------*/
 	/*--- Main Program ------------------------------------------*/
@@ -186,10 +189,10 @@ public class Main {
 		 * clean all static members, that contain remaining stuff from earlier
 		 * calls
 		 */
-		TerminalFactory.clear();
+		terminalFactory.clear();
 		productionFactory.clear();
 		emit.clear();
-		NonTerminalFactory.clear();
+		nonTerminalFactory.clear();
 		parse_reduce_row.clear();
 		parse_action_row.clear();
 		lalrStateFactory.clear();
@@ -242,7 +245,7 @@ public class Main {
 			} else { // everything's okay, emit parser.
 				if (print_progress)
 					System.err.println("Writing parser...");
-				emit.emit_parser(productionFactory, dest_dir, action_table, reduce_table,
+				emit.emit_parser(terminalFactory, nonTerminalFactory, productionFactory, dest_dir, action_table, reduce_table,
 						start_state, include_non_terms, opt_compact_red,
 						suppress_scanner, sym_interface);
 				did_output = true;
@@ -498,6 +501,8 @@ public class Main {
 		parser result = new parser(new Lexer(csf), csf);
 		result.emitter = emit;
 		result.productionFactory = productionFactory;
+		result.nonTerminalFactory = nonTerminalFactory;
+		result.terminalFactory = terminalFactory;
 		return result;
 	}
 
@@ -512,15 +517,15 @@ public class Main {
 		non_terminal nt;
 
 		/* check for unused terminals */
-		for (Enumeration<terminal> t = TerminalFactory.all(); t.hasMoreElements();) {
+		for (Enumeration<terminal> t = terminalFactory.all(); t.hasMoreElements();) {
 			term = (terminal) t.nextElement();
 
 			/* don't issue a message for EOF */
-			if (term == TerminalFactory.EOF)
+			if (term == terminalFactory.EOF)
 				continue;
 
 			/* or error */
-			if (term == TerminalFactory.error)
+			if (term == terminalFactory.error)
 				continue;
 
 			/* is this one unused */
@@ -536,7 +541,7 @@ public class Main {
 		}
 
 		/* check for unused non terminals */
-		for (Enumeration<non_terminal> n = NonTerminalFactory.all(); n.hasMoreElements();) {
+		for (Enumeration<non_terminal> n = nonTerminalFactory.all(); n.hasMoreElements();) {
 			nt = (non_terminal) n.nextElement();
 
 			/* is this one unused */
@@ -583,32 +588,32 @@ public class Main {
 		/* compute nullability of all non terminals */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Computing non-terminal nullability...");
-		NonTerminalFactory.compute_nullability(productionFactory);
+		nonTerminalFactory.compute_nullability(productionFactory);
 
 		nullability_end = System.currentTimeMillis();
 
 		/* compute first sets of all non terminals */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Computing first sets...");
-		NonTerminalFactory.compute_first_sets();
+		nonTerminalFactory.compute_first_sets();
 
 		first_end = System.currentTimeMillis();
 
 		/* build the LR viable prefix recognition machine */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Building state machine...");
-		start_state = lalrStateFactory.build_machine(emit.start_production());
+		start_state = lalrStateFactory.build_machine(terminalFactory, emit.start_production());
 
 		machine_end = System.currentTimeMillis();
 
 		/* build the LR parser action and reduce-goto tables */
 		if (opt_do_debug || print_progress)
 			System.err.println("  Filling in tables...");
-		action_table = new parse_action_table(lalrStateFactory.number());
-		reduce_table = new parse_reduce_table(lalrStateFactory.number());
+		action_table = new parse_action_table(terminalFactory, lalrStateFactory.number());
+		reduce_table = new parse_reduce_table(nonTerminalFactory, lalrStateFactory.number());
 		for (Enumeration<lalr_state> st = lalrStateFactory.all(); st.hasMoreElements();) {
 			lalr_state lst = (lalr_state) st.nextElement();
-			lst.build_table_entries(emit, action_table, reduce_table);
+			lst.build_table_entries(terminalFactory, emit, action_table, reduce_table);
 		}
 
 		table_end = System.currentTimeMillis();
@@ -673,10 +678,10 @@ public class Main {
 				+ plural(ErrorManagerAccess.getManager().getWarningCount()));
 
 		/* basic stats */
-		System.err.print("  " + TerminalFactory.number() + " terminal"
-				+ plural(TerminalFactory.number()) + ", ");
-		System.err.print(NonTerminalFactory.number() + " non-terminal"
-				+ plural(NonTerminalFactory.number()) + ", and ");
+		System.err.print("  " + terminalFactory.number() + " terminal"
+				+ plural(terminalFactory.number()) + ", ");
+		System.err.print(nonTerminalFactory.number() + " non-terminal"
+				+ plural(nonTerminalFactory.number()) + ", and ");
 		System.err.println(productionFactory.number() + " production"
 				+ plural(productionFactory.number()) + " declared, ");
 		System.err.println("  producing " + lalrStateFactory.number()
@@ -828,8 +833,8 @@ public class Main {
 	/** Produce a human readable dump of the grammar. */
 	public static void dump_grammar() throws internal_error {
 		System.err.println("===== Terminals =====");
-		for (int tidx = 0, cnt = 0; tidx < TerminalFactory.number(); tidx++, cnt++) {
-			System.err.print("[" + tidx + "]" + TerminalFactory.find(tidx).name()
+		for (int tidx = 0, cnt = 0; tidx < terminalFactory.number(); tidx++, cnt++) {
+			System.err.print("[" + tidx + "]" + terminalFactory.find(tidx).name()
 					+ " ");
 			if ((cnt + 1) % 5 == 0)
 				System.err.println();
@@ -838,8 +843,8 @@ public class Main {
 		System.err.println();
 
 		System.err.println("===== Non terminals =====");
-		for (int nidx = 0, cnt = 0; nidx < NonTerminalFactory.number(); nidx++, cnt++) {
-			System.err.print("[" + nidx + "]" + NonTerminalFactory.find(nidx).name()
+		for (int nidx = 0, cnt = 0; nidx < nonTerminalFactory.number(); nidx++, cnt++) {
+			System.err.print("[" + nidx + "]" + nonTerminalFactory.find(nidx).name()
 					+ " ");
 			if ((cnt + 1) % 5 == 0)
 				System.err.println();

@@ -3,9 +3,9 @@ package java_cup;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-public abstract class TerminalFactory {
+public  class TerminalFactory {
 
-	private static void register(terminal t) {
+	private void register(terminal t) {
 		/* add to set of all terminals and check for duplicates */
 		Object conflict = _all.put(t.name(), t);
 		if (conflict != null)
@@ -27,9 +27,9 @@ public abstract class TerminalFactory {
 	/**
 	 * Table of all terminals. Elements are stored using name strings as the key
 	 */
-	protected static Hashtable<String, terminal> _all = new Hashtable<String, terminal>();
+	protected Hashtable<String, terminal> _all = new Hashtable<String, terminal>();
 
-	public static void clear() {
+	public void clear() {
 		_all.clear();
 		_all_by_index.clear();
 		next_index = 0;
@@ -38,12 +38,12 @@ public abstract class TerminalFactory {
 	}
 
 	/** Access to all terminals. */
-	public static Enumeration<terminal> all() {
+	public Enumeration<terminal> all() {
 		return _all.elements();
 	}
 
 	/** Lookup a terminal by name string. */
-	public static terminal find(String with_name) {
+	public terminal find(String with_name) {
 		if (with_name == null)
 			return null;
 		else
@@ -51,19 +51,19 @@ public abstract class TerminalFactory {
 	}
 
 	/** Table of all terminals indexed by their index number. */
-	protected static Hashtable<Integer, terminal> _all_by_index = new Hashtable<Integer, terminal>();
+	protected Hashtable<Integer, terminal> _all_by_index = new Hashtable<Integer, terminal>();
 
 	/** Lookup a terminal by index. */
-	public static terminal find(int indx) {
+	public terminal find(int indx) {
 		return _all_by_index.get(indx);
 	}
 
 	/** Total number of terminals. */
-	public static int number() {
+	public int number() {
 		return _all.size();
 	}
 
-	public static terminal createTerminal(String nm, String tp,
+	public terminal createTerminal(String nm, String tp,
 			int precedence_side, int precedence_num) {
 		terminal result = new terminal(nm, tp, precedence_side, precedence_num,
 				next_index);
@@ -71,23 +71,23 @@ public abstract class TerminalFactory {
 		return result;
 	}
 
-	public static terminal createTerminal(String nm, String tp) {
+	public terminal createTerminal(String nm, String tp) {
 		terminal result = new terminal(nm, tp, next_index);
 		register(result);
 		return result;
 	}
 
-	public static terminal createTerminal(String nm) {
+	public terminal createTerminal(String nm) {
 		terminal result = new terminal(nm, next_index);
 		register(result);
 		return result;
 	}
 
 	/** Static counter to assign unique index. */
-	protected static int next_index = 0;
+	protected int next_index = 0;
 	/** Special terminal for end of input. */
-	public static terminal EOF = createTerminal("EOF");
+	public terminal EOF = createTerminal("EOF");
 	/** special terminal used for error recovery */
-	public static terminal error = createTerminal("error");
+	public terminal error = createTerminal("error");
 
 }

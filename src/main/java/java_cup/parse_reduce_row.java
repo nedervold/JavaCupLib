@@ -12,10 +12,10 @@ public class parse_reduce_row {
   /** Simple constructor. Note: this should not be used until the number
    *  of terminals in the grammar has been established.
    */
-  public parse_reduce_row()
+  public parse_reduce_row(NonTerminalFactory nonTerminalFactory)
     {
       /* make sure the size is set */
-      if (_size <= 0 )  _size = NonTerminalFactory.number();
+      if (_size <= 0 )  _size = nonTerminalFactory.number();
 
       /* allocate the array */
       under_non_term = new lalr_state[size()];

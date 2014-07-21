@@ -39,12 +39,13 @@ public class lalr_item extends lr_item_core {
    * @param pos  the position of the "dot" within the production.
    * @param look the set of lookahead symbols.
    */
-  public lalr_item(production prod, int pos, terminal_set look) 
+  public lalr_item(TerminalFactory terminalFactory, production prod, int pos, terminal_set look) 
     throws internal_error
     {
       super(prod, pos);
       _lookahead = look;
       _propagate_items = new Stack<lalr_item>();
+      this.terminalFactory = terminalFactory;
       needs_propagation = true;
     }
 
@@ -54,9 +55,9 @@ public class lalr_item extends lr_item_core {
    * @param prod the production for the item.
    * @param look the set of lookahead symbols.
    */
-  public lalr_item(production prod, terminal_set look) throws internal_error
+  public lalr_item(TerminalFactory terminalFactory,production prod, terminal_set look) throws internal_error
     {
-      this(prod,0,look);
+      this(terminalFactory, prod,0,look);
     }
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
@@ -64,9 +65,9 @@ public class lalr_item extends lr_item_core {
   /** Constructor with default position and empty lookahead set. 
    * @param prod the production for the item.
    */
-  public lalr_item(production prod) throws internal_error
+  public lalr_item(TerminalFactory terminalFactory, production prod) throws internal_error
     {
-      this(prod,0,new terminal_set());
+      this(terminalFactory, prod,0,new terminal_set(terminalFactory));
     }
 
   /*-----------------------------------------------------------*/
@@ -86,6 +87,8 @@ public class lalr_item extends lr_item_core {
 
   /** Links to items that the lookahead needs to be propagated to */
   public Stack<lalr_item> propagate_items() {return _propagate_items;}
+  
+ private final TerminalFactory terminalFactory;
 
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
@@ -153,7 +156,7 @@ public class lalr_item extends lr_item_core {
 	throw new internal_error("Attempt to shift past end of an lalr_item");
 
       /* create the new item w/ the dot shifted by one */
-      result = new lalr_item(the_production(), dot_pos()+1, 
+      result = new lalr_item(terminalFactory, the_production(), dot_pos()+1, 
 					    new terminal_set(lookahead()));
 
       /* change in our lookahead needs to be propagated to this item */
@@ -183,7 +186,7 @@ public class lalr_item extends lr_item_core {
 	  "Attempt to calculate a lookahead set with a completed item");
 
       /* start with an empty result */
-      result = new terminal_set();
+      result = new terminal_set(terminalFactory);
 
       /* consider all nullable symbols after the one to the right of the dot */
       for (pos = dot_pos()+1; pos < the_production().rhs_length(); pos++) 
@@ -307,9 +310,9 @@ public class lalr_item extends lr_item_core {
       if (lookahead() != null)
 	{
 	  result += "{";
-	  for (int t = 0; t < TerminalFactory.number(); t++)
+	  for (int t = 0; t < terminalFactory.number(); t++)
 	    if (lookahead().contains(t))
-	      result += TerminalFactory.find(t).name() + " ";
+	      result += terminalFactory.find(t).name() + " ";
 	  result += "}";
 	}
       else

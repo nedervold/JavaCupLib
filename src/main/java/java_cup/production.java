@@ -58,8 +58,9 @@ public class production {
 	 * all actions at the end where they can be handled as part of a reduce by
 	 * the parser.
 	 */
-	protected production(ProductionFactory productionFactory, Emitter emit, final non_terminal lhs_sym, production_part rhs_parts[],
+	protected production(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, ProductionFactory productionFactory, Emitter emit, final non_terminal lhs_sym, production_part rhs_parts[],
 			int rhs_l, String action_str) throws internal_error {
+		_first_set = new terminal_set(terminalFactory);
 		int i;
 		action_part tail_action;
 		String declare_str;
@@ -155,7 +156,7 @@ public class production {
 		_action = new action_part(action_str);
 
 		/* rewrite production to remove any embedded actions */
-		remove_embedded_actions(productionFactory, emit);
+		remove_embedded_actions(nonTerminalFactory, productionFactory, emit);
 	}
 
 	/** The left hand side non-terminal. */
@@ -283,7 +284,7 @@ public class production {
 	 * First set of the production. This is the set of terminals that could
 	 * appear at the front of some string derived from this production.
 	 */
-	protected terminal_set _first_set = new terminal_set();
+	protected terminal_set _first_set;
 
 	/**
 	 * First set of the production. This is the set of terminals that could
@@ -526,7 +527,7 @@ public class production {
 	 * they should be perfectly valid in this code string, since it was
 	 * originally a code string in the parent, not on its own. frank 6/20/96
 	 */
-	protected void remove_embedded_actions(ProductionFactory productionFactory, Emitter emit) throws internal_error {
+	protected void remove_embedded_actions(NonTerminalFactory nonTerminalFactory, ProductionFactory productionFactory, Emitter emit) throws internal_error {
 		non_terminal new_nt;
 		String declare_str;
 		int lastLocation = -1;
@@ -536,7 +537,7 @@ public class production {
 
 				declare_str = declare_labels(emit, _rhs, act_loc, "");
 				/* create a new non terminal for the action production */
-				new_nt = NonTerminalFactory.create_new(null, lhs().the_symbol()
+				new_nt = nonTerminalFactory.create_new(null, lhs().the_symbol()
 						.stack_type()); // TUM 20060608 embedded actions patch
 				new_nt.is_embedded_action = true; /* 24-Mar-1998, CSA */
 
