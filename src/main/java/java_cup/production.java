@@ -53,7 +53,7 @@ public class production {
    *  all actions at the end where they can be handled as part of a reduce by
    *  the parser.
    */
-  public production(
+  protected production(
     non_terminal    lhs_sym, 
     production_part rhs_parts[], 
     int             rhs_l,
@@ -163,7 +163,7 @@ public class production {
   /*. . . . . . . . . . . . . . . . . . . . . . . . . . . . . .*/
 
   /** Constructor with no action string. */
-  public production(
+  private production(
     non_terminal    lhs_sym, 
     production_part rhs_parts[], 
     int             rhs_l)
@@ -176,7 +176,7 @@ public class production {
 
   /* Constructor with precedence and associativity of production
      contextually define */
-  public production(
+  private production(
     non_terminal    lhs_sym, 
     production_part rhs_parts[], 
     int             rhs_l,
@@ -196,7 +196,7 @@ public class production {
      
   /* Constructor w/ no action string and contextual precedence
      defined */
-  public production(
+  private production(
     non_terminal    lhs_sym, 
     production_part rhs_parts[], 
     int             rhs_l,
@@ -382,7 +382,31 @@ public class production {
   /*-----------------------------------------------------------*/
   
 
-  /** Return label declaration code
+  public static production createProduction(non_terminal lhs_sym,
+		production_part[] rhs_parts, int rhs_l) throws internal_error {
+	return new production(lhs_sym, rhs_parts, rhs_l);
+}
+
+public static production createProduction(non_terminal lhs_sym,
+		production_part[] rhs_parts, int rhs_l, int prec_num, int prec_side)
+		throws internal_error {
+	return new production(lhs_sym, rhs_parts, rhs_l, prec_num, prec_side);
+}
+
+public static production createProduction(non_terminal lhs_sym,
+		production_part[] rhs_parts, int rhs_l, String action_str)
+		throws internal_error {
+	return new production(lhs_sym, rhs_parts, rhs_l, action_str);
+}
+
+public static production createProduction(non_terminal lhs_sym,
+		production_part[] rhs_parts, int rhs_l, String action_str,
+		int prec_num, int prec_side) throws internal_error {
+	return new production(lhs_sym, rhs_parts, rhs_l, action_str, prec_num,
+			prec_side);
+}
+
+/** Return label declaration code
    * @param labelname    the label name
    * @param stack_type   the stack type of label?
    * @author frankf
@@ -593,8 +617,8 @@ public class production {
 	    new_nt.is_embedded_action = true; /* 24-Mar-1998, CSA */
 
 	    /* create a new production with just the action */
-	    new_prod = new action_production(this, new_nt, null, 0, 
-		declare_str + ((action_part)rhs(act_loc)).code_string(), (lastLocation==-1)?-1:(act_loc-lastLocation));
+	    new_prod = action_production.createActionProduction(this, new_nt, null, 0,
+				declare_str + ((action_part)rhs(act_loc)).code_string(), (lastLocation==-1)?-1:(act_loc-lastLocation));
 
 	    /* replace the action with the generated non terminal */
 	    _rhs[act_loc] = new symbol_part(new_nt);
