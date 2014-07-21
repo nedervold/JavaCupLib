@@ -167,7 +167,6 @@ public class Main {
 	private static Emitter emit = new cup_emit();
 	private static TerminalFactory terminalFactory = new TerminalFactory(errorManager);
 	private static NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(errorManager, terminalFactory);
-	static { nonTerminalFactory.START_nt(); }
 	private static ProductionFactory productionFactory = new ProductionFactory(errorManager, terminalFactory, nonTerminalFactory, emit);
 	
 	/*-----------------------------------------------------------*/
@@ -185,12 +184,6 @@ public class Main {
 		boolean did_output = false;
 
 		start_time = System.currentTimeMillis();
-
-		/**
-		 * clean all static members, that contain remaining stuff from earlier
-		 * calls
-		 */
-		nonTerminalFactory.clear();
 
 		/* process user options and arguments */
 		parse_args(argv);

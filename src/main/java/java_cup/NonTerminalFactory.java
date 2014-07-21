@@ -9,6 +9,10 @@ public  class NonTerminalFactory {
 		super();
 		this.errorManager = errorManager;
 		this.terminalFactory = terminalFactory;
+		
+		// create the $START symbol, but then reinitialize the storage
+		START_nt();
+		reinit();
 	}
 
 	private final IErrorManager errorManager;
@@ -39,7 +43,7 @@ public  class NonTerminalFactory {
 	 */
 	protected Hashtable<String, non_terminal> _all = new Hashtable<String, non_terminal>();
 
-	public void clear() {
+	private void reinit() {
 		_all.clear();
 		_all_by_index.clear();
 		next_index = 0;
