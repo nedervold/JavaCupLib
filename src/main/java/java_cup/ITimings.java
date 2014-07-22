@@ -30,6 +30,4 @@ public interface ITimings {
 
 	public abstract void show_times(PrintStream ps, Emitter emitter);
 
-	public abstract void start();
-
 }

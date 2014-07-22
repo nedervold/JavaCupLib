@@ -101,8 +101,10 @@ public class Factories {
 		timings.endBuild();
 	}
 
-	public void check_unused(final IErrorManager errorManager,
-			final Emitter emit) {
+	public void check_unused(PrintStream ps1, final IErrorManager errorManager,
+			final Emitter emit, ITimings timings) {
+		ps1.println("Checking specification...");
+
 		terminal term;
 		non_terminal nt;
 
@@ -147,6 +149,7 @@ public class Factories {
 				}
 			}
 		}
+		timings.endCheck();
 	}
 
 	private final lr_parser createParser(final IErrorManager errorManager,
@@ -163,7 +166,7 @@ public class Factories {
 		return result;
 	}
 
-	public void dump(final PrintStream ps, final Options options)
+	public void dump(final PrintStream ps, final Options options, ITimings timings)
 			throws internal_error {
 		/* do requested dumps */
 		if (options.opt_dump_grammar) {
@@ -175,6 +178,7 @@ public class Factories {
 		if (options.opt_dump_tables) {
 			dump_tables(ps);
 		}
+		timings.endDump();
 	}
 
 	/** Produce a human readable dump of the grammar. */
@@ -248,19 +252,19 @@ public class Factories {
 		ps.println(reduce_table);
 	}
 
-	public void emit_summary(final PrintStream ps,
+	public void emit_summary(final PrintStream summaryStream,
 			final boolean output_produced, final Emitter emitter,
 			final IErrorManager errorManager, final Options options,
 			final ITimings timings) {
 
 		if (!options.no_summary) {
-			ps.println("------- " + version.title_str
+			summaryStream.println("------- " + version.title_str
 					+ " Parser Generation Summary -------");
 
 			/* error and warning count */
 			final int errorCount = errorManager.getErrorCount();
 			final int warningCount = errorManager.getWarningCount();
-			ps.println("  " + errorCount + " error" + plural(errorCount)
+			summaryStream.println("  " + errorCount + " error" + plural(errorCount)
 					+ " and " + warningCount + " warning"
 					+ plural(warningCount));
 
@@ -270,53 +274,53 @@ public class Factories {
 			final int productionCount = productionFactory.number();
 			final int stateCount = lalrStateFactory.number();
 
-			ps.print("  " + terminalCount + " terminal" + plural(terminalCount)
+			summaryStream.print("  " + terminalCount + " terminal" + plural(terminalCount)
 					+ ", ");
-			ps.print(nonTerminalCount + " non-terminal"
+			summaryStream.print(nonTerminalCount + " non-terminal"
 					+ plural(nonTerminalCount) + ", and ");
-			ps.println(productionCount + " production"
+			summaryStream.println(productionCount + " production"
 					+ plural(productionCount) + " declared, ");
-			ps.println("  producing " + stateCount + " unique parse states.");
+			summaryStream.println("  producing " + stateCount + " unique parse states.");
 
 			/* unused symbols */
 			final int unusedTerminalCount = emitter.unused_term();
 			final int unusedNonTerminalCount = emitter.unused_non_term();
-			ps.println("  " + unusedTerminalCount + " terminal"
+			summaryStream.println("  " + unusedTerminalCount + " terminal"
 					+ plural(unusedTerminalCount) + " declared but not used.");
-			ps.println("  " + unusedNonTerminalCount + " non-terminal"
+			summaryStream.println("  " + unusedNonTerminalCount + " non-terminal"
 					+ plural(unusedTerminalCount) + " declared but not used.");
 
 			/* productions that didn't reduce */
 			final int unreducedProductionCount = emitter.not_reduced();
-			ps.println("  " + unreducedProductionCount + " production"
+			summaryStream.println("  " + unreducedProductionCount + " production"
 					+ plural(unreducedProductionCount) + " never reduced.");
 
 			/* conflicts */
 			final int conflictCount = emitter.num_conflicts();
-			ps.println("  " + conflictCount + " conflict"
+			summaryStream.println("  " + conflictCount + " conflict"
 					+ plural(conflictCount) + " detected" + " ("
 					+ options.expect_conflicts + " expected).");
 
 			/* code location */
 			if (output_produced) {
-				ps.println("  Code written to \"" + emitter.parser_class_name()
+				summaryStream.println("  Code written to \"" + emitter.parser_class_name()
 						+ ".java\", and \"" + emitter.symbol_const_class_name()
 						+ ".java\".");
 			} else {
-				ps.println("  No code produced.");
+				summaryStream.println("  No code produced.");
 			}
 
 			if (options.opt_show_timing) {
-				timings.show_times(ps, emitter);
+				timings.show_times(summaryStream, emitter);
 			}
 
-			ps.println("---------------------------------------------------- ("
+			summaryStream.println("---------------------------------------------------- ("
 					+ version.title_str + ")");
 		}
 	}
 
 	public void parse_grammar_spec(final boolean do_debug,
-			final IErrorManager errorManager, final Emitter emit)
+			final IErrorManager errorManager, final Emitter emit, ITimings timings)
 			throws java.lang.Exception {
 		/* create a parser and parse with it */
 		final java_cup.runtime.lr_parser parser_obj = createParser(
@@ -336,5 +340,6 @@ public class Factories {
 			errorManager.emit_error("Internal error: Unexpected exception");
 			throw e;
 		}
+		timings.endParsing();
 	}
 }

@@ -54,34 +54,46 @@ public class Timings implements ITimings {
 
 	/** Timing data -- when did we end state and table building */
 	private long build_end = 0;
+
 	/** Timing data -- when did we end checking */
 	private long check_end = 0;
 
 	/** Timing data -- when did we end dumping */
 	private long dump_end = 0;
+
 	/** Timing data -- when did we finish emitting code */
 	private long emit_end = 0;
+
 	/** Timing data -- when were we completely done */
 	private long final_time = 0;
+
 	/** Timing data -- when did we end first set calculation */
 	private long first_end = 0;
+
 	/** Timing data -- when did we end state machine construction */
 	private long machine_end = 0;
+
 	/** Timing data -- when did we end nullability calculation */
 	private long nullability_end = 0;
+
 	/** Timing data -- when did we end parsing */
 	private long parse_end = 0;
+
 	/** Timing data -- when did we end preliminaries */
 	private long prelim_end = 0;
+
 	/** Timing data -- when did we end checking for non-reduced productions */
 	private long reduce_check_end = 0;
+
 	/** Timing data -- when did we start */
-	private long start_time = 0;
+	private final long start_time;
+
 	/** Timing data -- when did we end table construction */
 	private long table_end = 0;
 
 	public Timings() {
 		super();
+		start_time = System.currentTimeMillis();
 	}
 
 	/*
@@ -245,15 +257,6 @@ public class Timings implements ITimings {
 
 		ps.println("      Dump Output    "
 				+ timestr(dump_end - emit_end, total_time));
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.ITimings#start()
-	 */
-	public void start() {
-		start_time = System.currentTimeMillis();
 	}
 
 }

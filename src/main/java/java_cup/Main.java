@@ -71,9 +71,10 @@ public class Main {
 
 	/* Additional timing information is also collected in emit */
 
-	private static boolean emit(PrintStream pp, final Factories factories,
-			final Options options, final Emitter emitter,
-			final IErrorManager errorManager) throws internal_error {
+	private static boolean inner_emit(PrintStream pp,
+			final Factories factories, final Options options,
+			final Emitter emitter, final IErrorManager errorManager)
+			throws internal_error {
 		/* output the generated code, if # of conflicts permits */
 		if (errorManager.getErrorCount() != 0) {
 			// conflicts! don't emit code, don't dump tables.
@@ -114,17 +115,17 @@ public class Main {
 		run();
 	}
 
-
 	private void run() throws Exception, internal_error {
 		final NullPrintStream nps = new NullPrintStream();
 		final PrintStream ps = System.err;
-		PrintStream ps1 = options.print_progress ? ps : nps;
-		PrintStream ps2 = (options.opt_do_debug || options.print_progress) ? ps
+		PrintStream dumpStream = ps;
+		PrintStream summaryStream = ps;
+		PrintStream progressStream = options.print_progress ? ps : nps;
+		PrintStream progressDebugStream = (options.opt_do_debug || options.print_progress) ? ps
 				: nps;
 
 		boolean did_output = false;
 		ITimings timings = new Timings();
-		timings.start();
 
 		/*
 		 * frankf 6/18/96 hackish, yes, but works
@@ -135,48 +136,69 @@ public class Main {
 		emitter.set_genericlabels(options.genericlabels);
 		/* open output set_xmlactionsfiles */
 
-		ps1.println("Opening files...");
+		progressStream.println("Opening files...");
 		timings.endPreliminaries();
 
 		/* parse spec into internal data structures */
-		ps1.println("Parsing specification from standard input...");
+		progressStream.println("Parsing specification from standard input...");
+
 		final Factories factories = new Factories(errorManager, emitter);
-		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
-				emitter);
-		timings.endParsing();
 
-		/* don't proceed unless we are error free */
-		if (errorManager.getErrorCount() == 0) {
-			/* check for unused bits */
-			ps1.println("Checking specification...");
-			factories.check_unused(errorManager, emitter);
-			timings.endCheck();
+		parseGrammarSpecification(timings, factories);
 
-			/* build the state machine and parse tables */
-			ps1.println("Building parse tables...");
-			factories
-					.build_parser(ps2, errorManager, emitter, options, timings);
-			did_output = emit(ps1, factories, options, emitter, errorManager);
-		}
-		timings.endEmit();
+		did_output = emit(progressStream, progressDebugStream, did_output,
+				timings, factories);
 
-		factories.dump(ps, options);
-		timings.endDump();
+		dump(dumpStream, timings, factories);
 
 		/* close input/output files */
-		ps1.println("Closing files...");
+		progressStream.println("Closing files...");
 
 		timings.endAll();
 
-		/* produce a summary if desired */
-		factories.emit_summary(ps, did_output, emitter, errorManager, options,
-				timings);
+		summarize(summaryStream, did_output, timings, factories);
 
 		/*
 		 * If there were errors during the run, exit with non-zero status
 		 * (makefile-friendliness). --CSA
 		 */
 		errorManager.exitIfErrors(100);
+	}
+
+	private void parseGrammarSpecification(ITimings timings,
+			final Factories factories) throws Exception {
+		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
+				emitter, timings);
+	}
+
+	private void dump(PrintStream dumpStream, ITimings timings,
+			final Factories factories) throws internal_error {
+		factories.dump(dumpStream, options, timings);
+	}
+
+	private void summarize(PrintStream summaryStream, boolean did_output,
+			ITimings timings, final Factories factories) {
+		/* produce a summary if desired */
+		factories.emit_summary(summaryStream, did_output, emitter,
+				errorManager, options, timings);
+	}
+
+	private boolean emit(PrintStream ps1, PrintStream ps2, boolean did_output,
+			ITimings timings, final Factories factories) throws internal_error {
+		/* don't proceed unless we are error free */
+		if (errorManager.getErrorCount() == 0) {
+			/* check for unused bits */
+			factories.check_unused(ps1, errorManager, emitter, timings);
+
+			/* build the state machine and parse tables */
+			ps1.println("Building parse tables...");
+			factories
+					.build_parser(ps2, errorManager, emitter, options, timings);
+			did_output = inner_emit(ps1, factories, options, emitter,
+					errorManager);
+		}
+		timings.endEmit();
+		return did_output;
 	}
 
 }
