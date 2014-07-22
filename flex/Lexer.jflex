@@ -32,9 +32,6 @@ import java.io.InputStreamReader;
     protected void emit_warning(String message){
 	errorManager.unrecognizedToken("Scanner at " + (yyline+1) + "(" + (yycolumn+1) + "): " + message);
     }
-    protected void emit_error(String message){
-	errorManager.emit_error("Scanner at " + (yyline+1) + "(" + (yycolumn+1) +  "): " + message);
-    }
 %}
 
 Newline = \r | \n | \r\n
