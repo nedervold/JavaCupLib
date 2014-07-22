@@ -96,8 +96,7 @@ public class parse_action_table {
 		if (!emit.nowarn())
 		{
 
-		  errorManager.emit_warning("*** Production \"" + 
-				  prod.to_simple_string() + "\" never reduced");
+		  errorManager.unreducedProduction(prod);
 		}
 	    }
 	}

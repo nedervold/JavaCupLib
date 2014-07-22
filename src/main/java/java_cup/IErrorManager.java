@@ -4,31 +4,47 @@ import java_cup.runtime.Symbol;
 
 public interface IErrorManager {
 
-	public abstract int getFatalCount();
+	public int getFatalCount();
 
-	public abstract int getErrorCount();
+	public int getErrorCount();
 
-	public abstract boolean areErrors();
+	public boolean areErrors();
 
-	public abstract int getWarningCount();
+	public int getWarningCount();
 
 	// TODO: migrate to java.util.logging
 	/**
 	 * Error message format: ERRORLEVEL at (LINE/COLUMN)@SYMBOL: MESSAGE
 	 * ERRORLEVEL : MESSAGE
 	 **/
-	public abstract void emit_fatal(String message);
+	public void emit_fatal(String message);
 
-	public abstract void emit_fatal(String message, Symbol sym);
+	public void emit_fatal(String message, Symbol sym);
 
-	public abstract void emit_warning(String message);
+	public void emit_warning(String message);
 
-	public abstract void emit_warning(String message, Symbol sym);
+	public void emit_warning(String message, Symbol sym);
 
-	public abstract void emit_error(String message);
+	public void emit_error(String message);
 
-	public abstract void emit_error(String message, Symbol sym);
+	public void emit_error(String message, Symbol sym);
 
-	public abstract void exitIfErrors(int status);
+	public void exitIfErrors(int status);
+
+	// // // //
+
+	public void reduceReduceConflict(TerminalFactory terminalFactory,
+			lalr_state st, lalr_item itm1, lalr_item itm2)
+			throws internal_error;
+
+	public void shiftReduceConflict(lalr_state st,
+			TerminalFactory terminalFactory, lalr_item red_itm, int conflict_sym)
+			throws internal_error;
+
+	public void unreducedProduction(production prod) throws internal_error;
+
+	public void unusedNonTerminal(non_terminal nt);
+
+	public void unusedTerminal(terminal t);
 
 }

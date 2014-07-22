@@ -2,38 +2,7 @@ package java_cup;
 
 import java_cup.runtime.Symbol;
 
-public class ErrorManager implements IErrorManager {
-	private int errors = 0;
-	private int warnings = 0;
-	private int fatals = 0;
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#getFatalCount()
-	 */
-	public int getFatalCount() {
-		return fatals;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#getErrorCount()
-	 */
-	public int getErrorCount() {
-		return errors;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#getWarningCount()
-	 */
-	public int getWarningCount() {
-		return warnings;
-	}
-
+public class ErrorManager extends AbstractErrorManager {
 	protected ErrorManager() {
 	}
 
@@ -45,7 +14,7 @@ public class ErrorManager implements IErrorManager {
 	 */
 	public void emit_fatal(String message) {
 		System.err.println("Fatal : " + message);
-		fatals++;
+		super.emit_fatal(message);
 	}
 
 	/*
@@ -57,7 +26,7 @@ public class ErrorManager implements IErrorManager {
 	public void emit_fatal(String message, Symbol sym) {
 		// System.err.println("Fatal at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
 		System.err.println("Fatal: " + message + " @ " + sym);
-		fatals++;
+		super.emit_fatal(message, sym);
 	}
 
 	/*
@@ -67,7 +36,7 @@ public class ErrorManager implements IErrorManager {
 	 */
 	public void emit_warning(String message) {
 		System.err.println("Warning : " + message);
-		warnings++;
+		super.emit_warning(message);
 	}
 
 	/*
@@ -79,7 +48,7 @@ public class ErrorManager implements IErrorManager {
 	public void emit_warning(String message, Symbol sym) {
 		// System.err.println("Warning at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
 		System.err.println("Fatal: " + message + " @ " + sym);
-		warnings++;
+		super.emit_warning(message, sym);
 	}
 
 	/*
@@ -89,7 +58,7 @@ public class ErrorManager implements IErrorManager {
 	 */
 	public void emit_error(String message) {
 		System.err.println("Error : " + message);
-		errors++;
+		super.emit_error(message);
 	}
 
 	/*
@@ -101,17 +70,7 @@ public class ErrorManager implements IErrorManager {
 	public void emit_error(String message, Symbol sym) {
 		// System.err.println("Error at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
 		System.err.println("Error: " + message + " @ " + sym);
-		errors++;
-	}
-
-	public void exitIfErrors(int status) {
-		if (areErrors()) {
-			System.exit(status);
-		}
-	}
-
-	public boolean areErrors() {
-		return getErrorCount() != 0;
+		super.emit_error(message, sym);
 	}
 
 }

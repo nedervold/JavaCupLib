@@ -168,8 +168,7 @@ public class Factories {
 				/* count it and warn if we are doing warnings */
 				emit.set_unused_term(emit.unused_term() + 1);
 				if (!emit.nowarn()) {
-					errorManager.emit_warning("Terminal \"" + term.name()
-							+ "\" was declared but never used");
+					errorManager.unusedTerminal(term);
 				}
 			}
 		}
@@ -184,8 +183,7 @@ public class Factories {
 				/* count and warn if we are doing warnings */
 				emit.set_unused_non_term(emit.unused_non_term() + 1);
 				if (!emit.nowarn()) {
-					errorManager.emit_warning("Non terminal \"" + nt.name()
-							+ "\" was declared but never used");
+					errorManager.unusedNonTerminal(nt);
 				}
 			}
 		}
