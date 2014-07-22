@@ -71,7 +71,7 @@ public class Main {
 
 	/* Additional timing information is also collected in emit */
 
-	private static boolean emit(ProgressPrinter pp, final Factories factories,
+	private static boolean emit(PrintStream pp, final Factories factories,
 			final Options options, final Emitter emitter,
 			final IErrorManager errorManager) throws internal_error {
 		/* output the generated code, if # of conflicts permits */
@@ -80,7 +80,7 @@ public class Main {
 			options.opt_dump_tables = false;
 			return false;
 		} else { // everything's okay, emit parser.
-			pp.printProgress("Writing parser...");
+			pp.println("Writing parser...");
 
 			emitter.emit_parser(factories, options);
 			return true;
@@ -114,16 +114,17 @@ public class Main {
 		run();
 	}
 
+
 	private void run() throws Exception, internal_error {
+		final NullPrintStream nps = new NullPrintStream();
 		final PrintStream ps = System.err;
+		PrintStream ps1 = options.print_progress ? ps : nps;
+		PrintStream ps2 = (options.opt_do_debug || options.print_progress) ? ps
+				: nps;
+
 		boolean did_output = false;
 		ITimings timings = new Timings();
 		timings.start();
-
-		ProgressPrinter pp = options.print_progress ? new PrintStreamProgressPrinter(
-				ps) : new NullProgressPrinter();
-		ProgressPrinter pp2 = (options.opt_do_debug || options.print_progress) ? new PrintStreamProgressPrinter(
-				ps) : new NullProgressPrinter();
 
 		/*
 		 * frankf 6/18/96 hackish, yes, but works
@@ -134,11 +135,11 @@ public class Main {
 		emitter.set_genericlabels(options.genericlabels);
 		/* open output set_xmlactionsfiles */
 
-		pp.printProgress("Opening files...");
+		ps1.println("Opening files...");
 		timings.endPreliminaries();
 
 		/* parse spec into internal data structures */
-		pp.printProgress("Parsing specification from standard input...");
+		ps1.println("Parsing specification from standard input...");
 		final Factories factories = new Factories(errorManager, emitter);
 		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
 				emitter);
@@ -147,14 +148,15 @@ public class Main {
 		/* don't proceed unless we are error free */
 		if (errorManager.getErrorCount() == 0) {
 			/* check for unused bits */
-			pp.printProgress("Checking specification...");
+			ps1.println("Checking specification...");
 			factories.check_unused(errorManager, emitter);
 			timings.endCheck();
 
 			/* build the state machine and parse tables */
-			pp.printProgress("Building parse tables...");
-			factories.build_parser(pp2, errorManager, emitter, options, timings);
-			did_output = emit(pp, factories, options, emitter, errorManager);
+			ps1.println("Building parse tables...");
+			factories
+					.build_parser(ps2, errorManager, emitter, options, timings);
+			did_output = emit(ps1, factories, options, emitter, errorManager);
 		}
 		timings.endEmit();
 
@@ -162,7 +164,7 @@ public class Main {
 		timings.endDump();
 
 		/* close input/output files */
-		pp.printProgress("Closing files...");
+		ps1.println("Closing files...");
 
 		timings.endAll();
 
@@ -175,25 +177,6 @@ public class Main {
 		 * (makefile-friendliness). --CSA
 		 */
 		errorManager.exitIfErrors(100);
-	}
-
-	static class NullProgressPrinter implements ProgressPrinter {
-		public void printProgress(String msg) {
-			// Do nothing
-		}
-	}
-
-	static class PrintStreamProgressPrinter implements ProgressPrinter {
-		public PrintStreamProgressPrinter(PrintStream ps) {
-			super();
-			this.ps = ps;
-		}
-
-		private final PrintStream ps;
-
-		public void printProgress(String msg) {
-			ps.println(msg);
-		}
 	}
 
 }

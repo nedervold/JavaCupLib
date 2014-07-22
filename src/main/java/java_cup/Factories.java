@@ -50,21 +50,21 @@ public class Factories {
 				terminalFactory, nonTerminalFactory, emitter);
 	}
 
-	public void build_parser(final ProgressPrinter pp,
+	public void build_parser(final PrintStream pp,
 			final IErrorManager errorManager, final Emitter emitter,
 			final Options options, final ITimings timings) throws internal_error {
 		nonTerminalFactory
 				.build_parser(pp, productionFactory, options, timings);
 
 		/* build the LR viable prefix recognition machine */
-		pp.printProgress("  Building state machine...");
+		pp.println("  Building state machine...");
 
 		start_state = lalrStateFactory.build_machine(errorManager,
 				terminalFactory, emitter.start_production());
 		timings.endStateMachine();
 
 		/* build the LR parser action and reduce-goto tables */
-		pp.printProgress("  Filling in tables...");
+		pp.println("  Filling in tables...");
 
 		action_table = new parse_action_table(terminalFactory,
 				lalrStateFactory.number());
@@ -80,7 +80,7 @@ public class Factories {
 		timings.endTables();
 
 		/* check and warn for non-reduced productions */
-		pp.printProgress("  Checking for non-reduced productions...");
+		pp.println("  Checking for non-reduced productions...");
 
 		action_table.check_reductions(errorManager, terminalFactory,
 				productionFactory, emitter);

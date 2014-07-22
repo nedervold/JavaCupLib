@@ -1,19 +1,20 @@
 package java_cup;
 
+import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class NonTerminalFactory {
 
-	public void build_parser(ProgressPrinter pp, ProductionFactory productionFactory,
+	public void build_parser(PrintStream pp, ProductionFactory productionFactory,
 			Options options, ITimings timings) throws internal_error {
 		/* compute nullability of all non terminals */
-		pp.printProgress("  Computing non-terminal nullability...");
+		pp.println("  Computing non-terminal nullability...");
 		compute_nullability(productionFactory);
 		timings.endNullability();
 
 		/* compute first sets of all non terminals */
-		pp.printProgress("  Computing first sets...");
+		pp.println("  Computing first sets...");
 		compute_first_sets();
 		timings.endFirstSets();
 	}
