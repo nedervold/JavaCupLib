@@ -57,6 +57,10 @@ Refactoring steps taken
 
 * Broke the Options out from Main.
 
+* Replaced generic calls in IErrorManager with specific calls, so
+  different implementations can handle or not on the basis of content,
+  not warning level.
+
 ------------------------------------------------------------
 
 TODO:

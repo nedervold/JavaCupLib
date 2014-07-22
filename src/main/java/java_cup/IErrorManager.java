@@ -12,11 +12,6 @@ public interface IErrorManager {
 
 	public int getWarningCount();
 
-	// TODO: migrate to java.util.logging
-	/**
-	 * Error message format: ERRORLEVEL at (LINE/COLUMN)@SYMBOL: MESSAGE
-	 * ERRORLEVEL : MESSAGE
-	 **/
 	public void emit_fatal(String message);
 
 	public void emit_fatal(String message, Symbol sym);
@@ -33,6 +28,16 @@ public interface IErrorManager {
 
 	// // // //
 
+	public void internalFatalError(internal_error e);
+
+	public void parserError(String message);
+
+	public void parserError(String message, Symbol sym);
+
+	public void parserFatalError(String message, Symbol sym);
+
+	public void parserWarning(String message);
+
 	public void reduceReduceConflict(TerminalFactory terminalFactory,
 			lalr_state st, lalr_item itm1, lalr_item itm2)
 			throws internal_error;
@@ -40,6 +45,8 @@ public interface IErrorManager {
 	public void shiftReduceConflict(lalr_state st,
 			TerminalFactory terminalFactory, lalr_item red_itm, int conflict_sym)
 			throws internal_error;
+
+	public void tooManyConflicts(int expected, int actual);
 
 	public void unrecognizedToken(String message);
 
@@ -49,9 +56,4 @@ public interface IErrorManager {
 
 	public void unusedTerminal(terminal t);
 
-	public void parserWarning(String message);
-
-	public void parserError(String message);
-
-	public void parserError(String message, Symbol sym);
 }

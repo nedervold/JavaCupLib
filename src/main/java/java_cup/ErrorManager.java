@@ -5,8 +5,6 @@ import java.util.Enumeration;
 import java_cup.runtime.Symbol;
 
 public class ErrorManager extends AbstractErrorManager {
-	protected ErrorManager() {
-	}
 
 	private static String reduceReduceMessage(
 			final TerminalFactory terminalFactory, final lalr_state st,
@@ -65,48 +63,7 @@ public class ErrorManager extends AbstractErrorManager {
 		return message;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#emit_fatal(java.lang.String)
-	 */
-	public void emit_fatal(String message) {
-		System.err.println("Fatal : " + message);
-		super.emit_fatal(message);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#emit_fatal(java.lang.String,
-	 * java_cup.runtime.Symbol)
-	 */
-	public void emit_fatal(String message, Symbol sym) {
-		// System.err.println("Fatal at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
-		System.err.println("Fatal: " + message + " @ " + sym);
-		super.emit_fatal(message, sym);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#emit_warning(java.lang.String)
-	 */
-	public void emit_warning(String message) {
-		System.err.println("Warning : " + message);
-		super.emit_warning(message);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java_cup.IErrorManager#emit_warning(java.lang.String,
-	 * java_cup.runtime.Symbol)
-	 */
-	public void emit_warning(String message, Symbol sym) {
-		// System.err.println("Warning at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
-		System.err.println("Fatal: " + message + " @ " + sym);
-		super.emit_warning(message, sym);
+	protected ErrorManager() {
 	}
 
 	/*
@@ -114,7 +71,8 @@ public class ErrorManager extends AbstractErrorManager {
 	 * 
 	 * @see java_cup.IErrorManager#emit_error(java.lang.String)
 	 */
-	public void emit_error(String message) {
+	@Override
+	public void emit_error(final String message) {
 		System.err.println("Error : " + message);
 		super.emit_error(message);
 	}
@@ -125,10 +83,80 @@ public class ErrorManager extends AbstractErrorManager {
 	 * @see java_cup.IErrorManager#emit_error(java.lang.String,
 	 * java_cup.runtime.Symbol)
 	 */
-	public void emit_error(String message, Symbol sym) {
+	@Override
+	public void emit_error(final String message, final Symbol sym) {
 		// System.err.println("Error at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
 		System.err.println("Error: " + message + " @ " + sym);
 		super.emit_error(message, sym);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.IErrorManager#emit_fatal(java.lang.String)
+	 */
+	@Override
+	public void emit_fatal(final String message) {
+		System.err.println("Fatal : " + message);
+		super.emit_fatal(message);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.IErrorManager#emit_fatal(java.lang.String,
+	 * java_cup.runtime.Symbol)
+	 */
+	@Override
+	public void emit_fatal(final String message, final Symbol sym) {
+		// System.err.println("Fatal at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
+		System.err.println("Fatal: " + message + " @ " + sym);
+		super.emit_fatal(message, sym);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.IErrorManager#emit_warning(java.lang.String)
+	 */
+	@Override
+	public void emit_warning(final String message) {
+		System.err.println("Warning : " + message);
+		super.emit_warning(message);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.IErrorManager#emit_warning(java.lang.String,
+	 * java_cup.runtime.Symbol)
+	 */
+	@Override
+	public void emit_warning(final String message, final Symbol sym) {
+		// System.err.println("Warning at ("+sym.left+"/"+sym.right+")@"+convSymbol(sym)+" : "+message);
+		System.err.println("Fatal: " + message + " @ " + sym);
+		super.emit_warning(message, sym);
+	}
+
+	public void internalFatalError(final internal_error e) {
+		emit_fatal("JavaCUP Internal Error Detected: " + e.getMessage());
+	}
+
+	public void parserError(final String message) {
+		emit_error(message);
+	}
+
+	public void parserError(final String message, final Symbol sym) {
+		emit_error(message, sym);
+	}
+
+	public void parserFatalError(final String message, final Symbol sym) {
+		emit_fatal(message
+				+ "\nCan't recover from previous error(s), giving up.", sym);
+	}
+
+	public void parserWarning(final String message) {
+		emit_warning(message);
 	}
 
 	public void reduceReduceConflict(final TerminalFactory terminalFactory,
@@ -148,7 +176,12 @@ public class ErrorManager extends AbstractErrorManager {
 		emit_warning(message);
 	}
 
-	public void unrecognizedToken(String message) {
+	public void tooManyConflicts(int expected, int actual) {
+		emit_error("*** More conflicts encountered than expected "
+				+ "-- parser generation aborted");
+	}
+
+	public void unrecognizedToken(final String message) {
 		emit_warning(message);
 	}
 
@@ -166,18 +199,6 @@ public class ErrorManager extends AbstractErrorManager {
 	public void unusedTerminal(final terminal term) {
 		emit_warning("Terminal \"" + term.name()
 				+ "\" was declared but never used");
-	}
-
-	public void parserWarning(String message) {
-		emit_warning(message);
-	}
-
-	public void parserError(String message) {
-		emit_error(message);
-	}
-
-	public void parserError(String message, Symbol sym) {
-		emit_error(message, sym);
 	}
 
 }

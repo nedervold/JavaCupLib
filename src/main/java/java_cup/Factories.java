@@ -132,8 +132,7 @@ public class Factories {
 		 */
 		if (emitter.num_conflicts() > options.expect_conflicts) {
 			errorManager
-					.emit_error("*** More conflicts encountered than expected "
-							+ "-- parser generation aborted");
+					.tooManyConflicts(options.expect_conflicts, emitter.num_conflicts());
 			// indicate the problem.
 			// we'll die on return, after clean up.
 		}
@@ -379,7 +378,7 @@ public class Factories {
 			 * something threw an exception. catch it and emit a message so we
 			 * have a line number to work with, then re-throw it
 			 */
-			errorManager.emit_error("Internal error: Unexpected exception");
+			errorManager.parserError("Internal error: Unexpected exception");
 			throw e;
 		}
 		timings.endParsing();

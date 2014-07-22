@@ -206,9 +206,10 @@ parser code {:
     {
       done_parsing();
       if (info instanceof Symbol){
-          errorManager.emit_fatal(message+ "\nCan't recover from previous error(s), giving up.",(Symbol)info);
+          errorManager.parserFatalError(message,(Symbol)info);
       } else {
-          errorManager.emit_fatal(message + "\nCan't recover from previous error(s), giving up.",cur_token); }
+          errorManager.parserFatalError(message, cur_token);
+      }
       System.exit(1);
     }
 

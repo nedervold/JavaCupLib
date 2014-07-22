@@ -1,11 +1,8 @@
 package java_cup;
 
-import java.util.Enumeration;
-
 import java_cup.runtime.Symbol;
 
 public abstract class AbstractErrorManager implements IErrorManager {
-
 
 	private int errors = 0;
 
