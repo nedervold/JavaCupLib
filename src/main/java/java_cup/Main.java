@@ -69,25 +69,6 @@ import java.io.PrintStream;
 
 public class Main {
 
-	/* Additional timing information is also collected in emit */
-
-	private static boolean inner_emit(PrintStream pp,
-			final Factories factories, final Options options,
-			final Emitter emitter, final IErrorManager errorManager)
-			throws internal_error {
-		/* output the generated code, if # of conflicts permits */
-		if (errorManager.getErrorCount() != 0) {
-			// conflicts! don't emit code, don't dump tables.
-			options.opt_dump_tables = false;
-			return false;
-		} else { // everything's okay, emit parser.
-			pp.println("Writing parser...");
-
-			emitter.emit_parser(factories, options);
-			return true;
-		}
-	}
-
 	public static void main(final String argv[]) throws internal_error,
 			IOException, Exception {
 		new Main(argv);
@@ -97,8 +78,6 @@ public class Main {
 	private final Emitter emitter = new cup_emit();
 
 	private final IErrorManager errorManager = new ErrorManager();
-
-	/** Input file. This is a buffered version of System.in. */
 
 	private final Options options;
 
@@ -115,17 +94,35 @@ public class Main {
 		run();
 	}
 
+	private boolean buildParser(final Factories factories,
+			final PrintStream progressStream,
+			final PrintStream progressDebugStream, final ITimings timings)
+			throws internal_error {
+		return factories.checkBuildAndEmitParser(errorManager, emitter,
+				options, progressStream, progressDebugStream, timings);
+	}
+
+	private void dump(final PrintStream dumpStream, final ITimings timings,
+			final Factories factories) throws internal_error {
+		factories.dump(dumpStream, options, timings);
+	}
+
+	private void parseGrammarSpecification(final ITimings timings,
+			final Factories factories) throws Exception {
+		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
+				emitter, timings);
+	}
+
 	private void run() throws Exception, internal_error {
 		final NullPrintStream nps = new NullPrintStream();
 		final PrintStream ps = System.err;
-		PrintStream dumpStream = ps;
-		PrintStream summaryStream = ps;
-		PrintStream progressStream = options.print_progress ? ps : nps;
-		PrintStream progressDebugStream = (options.opt_do_debug || options.print_progress) ? ps
-				: nps;
+		final PrintStream dumpStream = ps;
+		final PrintStream summaryStream = ps;
+		final PrintStream progressStream = options.print_progress ? ps : nps;
+		final PrintStream progressDebugStream = options.opt_do_debug
+				|| options.print_progress ? ps : nps;
 
-		boolean did_output = false;
-		ITimings timings = new Timings();
+		final ITimings timings = new Timings();
 
 		/*
 		 * frankf 6/18/96 hackish, yes, but works
@@ -146,8 +143,8 @@ public class Main {
 
 		parseGrammarSpecification(timings, factories);
 
-		did_output = emit(progressStream, progressDebugStream, did_output,
-				timings, factories);
+		final boolean did_output = buildParser(factories, progressStream,
+				progressDebugStream, timings);
 
 		dump(dumpStream, timings, factories);
 
@@ -165,40 +162,12 @@ public class Main {
 		errorManager.exitIfErrors(100);
 	}
 
-	private void parseGrammarSpecification(ITimings timings,
-			final Factories factories) throws Exception {
-		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
-				emitter, timings);
-	}
-
-	private void dump(PrintStream dumpStream, ITimings timings,
-			final Factories factories) throws internal_error {
-		factories.dump(dumpStream, options, timings);
-	}
-
-	private void summarize(PrintStream summaryStream, boolean did_output,
-			ITimings timings, final Factories factories) {
+	private void summarize(final PrintStream summaryStream,
+			final boolean did_output, final ITimings timings,
+			final Factories factories) {
 		/* produce a summary if desired */
 		factories.emit_summary(summaryStream, did_output, emitter,
 				errorManager, options, timings);
-	}
-
-	private boolean emit(PrintStream ps1, PrintStream ps2, boolean did_output,
-			ITimings timings, final Factories factories) throws internal_error {
-		/* don't proceed unless we are error free */
-		if (errorManager.getErrorCount() == 0) {
-			/* check for unused bits */
-			factories.check_unused(ps1, errorManager, emitter, timings);
-
-			/* build the state machine and parse tables */
-			ps1.println("Building parse tables...");
-			factories
-					.build_parser(ps2, errorManager, emitter, options, timings);
-			did_output = inner_emit(ps1, factories, options, emitter,
-					errorManager);
-		}
-		timings.endEmit();
-		return did_output;
 	}
 
 }

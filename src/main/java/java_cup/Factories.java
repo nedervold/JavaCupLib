@@ -22,6 +22,45 @@ public class Factories {
 		}
 	}
 
+	public boolean checkBuildAndEmitParser(IErrorManager errorManager,
+			Emitter emitter, Options options, PrintStream progressStream,
+			PrintStream progressDebugStream, ITimings timings)
+			throws internal_error {
+		try {
+			/* don't proceed unless we are error free */
+			if (errorManager.getErrorCount() == 0) {
+				/* check for unused bits */
+				check_unused(progressStream, errorManager, emitter, timings);
+
+				/* build the state machine and parse tables */
+				progressStream.println("Building parse tables...");
+				build_parser(progressDebugStream, errorManager, emitter,
+						options, timings);
+				return emit_parser(progressStream, options, emitter,
+						errorManager);
+			} else {
+				return false;
+			}
+		} finally {
+			timings.endEmit();
+		}
+	}
+
+	public boolean emit_parser(PrintStream progressStream,
+			final Options options, final Emitter emitter,
+			final IErrorManager errorManager) throws internal_error {
+		if (errorManager.getErrorCount() != 0) {
+			// conflicts! don't emit code, don't dump tables.
+			options.opt_dump_tables = false;
+			return false;
+		} else { // everything's okay, emit parser.
+			progressStream.println("Writing parser...");
+
+			emitter.emit_parser(this, options);
+			return true;
+		}
+	}
+
 	public parse_action_table action_table;
 
 	public final LalrStateFactory lalrStateFactory;
@@ -52,7 +91,8 @@ public class Factories {
 
 	public void build_parser(final PrintStream pp,
 			final IErrorManager errorManager, final Emitter emitter,
-			final Options options, final ITimings timings) throws internal_error {
+			final Options options, final ITimings timings)
+			throws internal_error {
 		nonTerminalFactory
 				.build_parser(pp, productionFactory, options, timings);
 
@@ -166,8 +206,8 @@ public class Factories {
 		return result;
 	}
 
-	public void dump(final PrintStream ps, final Options options, ITimings timings)
-			throws internal_error {
+	public void dump(final PrintStream ps, final Options options,
+			ITimings timings) throws internal_error {
 		/* do requested dumps */
 		if (options.opt_dump_grammar) {
 			dump_grammar(ps);
@@ -264,8 +304,8 @@ public class Factories {
 			/* error and warning count */
 			final int errorCount = errorManager.getErrorCount();
 			final int warningCount = errorManager.getWarningCount();
-			summaryStream.println("  " + errorCount + " error" + plural(errorCount)
-					+ " and " + warningCount + " warning"
+			summaryStream.println("  " + errorCount + " error"
+					+ plural(errorCount) + " and " + warningCount + " warning"
 					+ plural(warningCount));
 
 			/* basic stats */
@@ -274,26 +314,29 @@ public class Factories {
 			final int productionCount = productionFactory.number();
 			final int stateCount = lalrStateFactory.number();
 
-			summaryStream.print("  " + terminalCount + " terminal" + plural(terminalCount)
-					+ ", ");
+			summaryStream.print("  " + terminalCount + " terminal"
+					+ plural(terminalCount) + ", ");
 			summaryStream.print(nonTerminalCount + " non-terminal"
 					+ plural(nonTerminalCount) + ", and ");
 			summaryStream.println(productionCount + " production"
 					+ plural(productionCount) + " declared, ");
-			summaryStream.println("  producing " + stateCount + " unique parse states.");
+			summaryStream.println("  producing " + stateCount
+					+ " unique parse states.");
 
 			/* unused symbols */
 			final int unusedTerminalCount = emitter.unused_term();
 			final int unusedNonTerminalCount = emitter.unused_non_term();
 			summaryStream.println("  " + unusedTerminalCount + " terminal"
 					+ plural(unusedTerminalCount) + " declared but not used.");
-			summaryStream.println("  " + unusedNonTerminalCount + " non-terminal"
-					+ plural(unusedTerminalCount) + " declared but not used.");
+			summaryStream.println("  " + unusedNonTerminalCount
+					+ " non-terminal" + plural(unusedTerminalCount)
+					+ " declared but not used.");
 
 			/* productions that didn't reduce */
 			final int unreducedProductionCount = emitter.not_reduced();
-			summaryStream.println("  " + unreducedProductionCount + " production"
-					+ plural(unreducedProductionCount) + " never reduced.");
+			summaryStream.println("  " + unreducedProductionCount
+					+ " production" + plural(unreducedProductionCount)
+					+ " never reduced.");
 
 			/* conflicts */
 			final int conflictCount = emitter.num_conflicts();
@@ -303,9 +346,9 @@ public class Factories {
 
 			/* code location */
 			if (output_produced) {
-				summaryStream.println("  Code written to \"" + emitter.parser_class_name()
-						+ ".java\", and \"" + emitter.symbol_const_class_name()
-						+ ".java\".");
+				summaryStream.println("  Code written to \""
+						+ emitter.parser_class_name() + ".java\", and \""
+						+ emitter.symbol_const_class_name() + ".java\".");
 			} else {
 				summaryStream.println("  No code produced.");
 			}
@@ -314,14 +357,15 @@ public class Factories {
 				timings.show_times(summaryStream, emitter);
 			}
 
-			summaryStream.println("---------------------------------------------------- ("
-					+ version.title_str + ")");
+			summaryStream
+					.println("---------------------------------------------------- ("
+							+ version.title_str + ")");
 		}
 	}
 
 	public void parse_grammar_spec(final boolean do_debug,
-			final IErrorManager errorManager, final Emitter emit, ITimings timings)
-			throws java.lang.Exception {
+			final IErrorManager errorManager, final Emitter emit,
+			ITimings timings) throws java.lang.Exception {
 		/* create a parser and parse with it */
 		final java_cup.runtime.lr_parser parser_obj = createParser(
 				errorManager, emit);
