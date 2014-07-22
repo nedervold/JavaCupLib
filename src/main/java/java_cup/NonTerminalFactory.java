@@ -3,13 +3,33 @@ package java_cup;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-public  class NonTerminalFactory {
+public class NonTerminalFactory {
 
-	public NonTerminalFactory(IErrorManager errorManager, TerminalFactory terminalFactory) {
+	public void build_parser(ProductionFactory productionFactory,
+			Options options, Timings timings) throws internal_error {
+		/* compute nullability of all non terminals */
+		if (options.opt_do_debug || options.print_progress) {
+			System.err.println("  Computing non-terminal nullability...");
+		}
+		compute_nullability(productionFactory);
+
+		timings.nullability_end = System.currentTimeMillis();
+
+		/* compute first sets of all non terminals */
+		if (options.opt_do_debug || options.print_progress) {
+			System.err.println("  Computing first sets...");
+		}
+		compute_first_sets();
+
+		timings.first_end = System.currentTimeMillis();
+	}
+
+	public NonTerminalFactory(IErrorManager errorManager,
+			TerminalFactory terminalFactory) {
 		super();
 		this.errorManager = errorManager;
 		this.terminalFactory = terminalFactory;
-		
+
 		// create the $START symbol, but then reinitialize the storage
 		START_nt();
 		reinit();
@@ -82,12 +102,14 @@ public  class NonTerminalFactory {
 	protected int next_nt = 0;
 	/** special non-terminal for start symbol */
 	private non_terminal START_nt;
+
 	public non_terminal START_nt() {
-		if (START_nt == null){
+		if (START_nt == null) {
 			START_nt = createNonTerminal("$START");
 		}
 		return START_nt;
 	}
+
 	/**
 	 * Method for creating a new uniquely named hidden non-terminal using the
 	 * given string as a base for the name (or "NT$" if null is passed).
@@ -199,7 +221,5 @@ public  class NonTerminalFactory {
 		register(nt);
 		return nt;
 	}
-
-
 
 }

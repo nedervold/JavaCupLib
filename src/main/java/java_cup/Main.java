@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.lr_parser;
 
 /**
  * This class serves as the main driver for the JavaCup system. It accepts user
@@ -128,23 +129,6 @@ public class Main extends Timings {
 
 	/* Additional timing information is also collected in emit */
 
-	private static java_cup.runtime.lr_parser createParser(
-			final IErrorManager errorManager, final Emitter emit,
-			final TerminalFactory terminalFactory,
-			final NonTerminalFactory nonTerminalFactory,
-			final ProductionFactory productionFactory) {
-		final ComplexSymbolFactory csf = new ComplexSymbolFactory();
-		final Lexer lexer = new Lexer(csf);
-		lexer.errorManager = errorManager;
-		final parser result = new parser(lexer, csf);
-		result.errorManager = errorManager;
-		result.emitter = emit;
-		result.productionFactory = productionFactory;
-		result.nonTerminalFactory = nonTerminalFactory;
-		result.terminalFactory = terminalFactory;
-		return result;
-	};
-
 	/** Produce a human readable dump of the grammar. */
 	public static void dump_grammar(final TerminalFactory terminalFactory,
 			final NonTerminalFactory nonTerminalFactory,
@@ -227,42 +211,8 @@ public class Main extends Timings {
 	}
 
 	/**
-	 * Parse the grammar specification from standard input. This produces sets
-	 * of terminal, non-terminals, and productions which can be accessed via
-	 * variables of the respective classes, as well as the setting of various
-	 * variables (mostly in the emit class) for small user supplied items such
-	 * as the code to scan with.
-	 */
-	protected static void parse_grammar_spec(final boolean do_debug,
-			final IErrorManager errorManager, final Emitter emit,
-			final TerminalFactory terminalFactory,
-			final NonTerminalFactory nonTerminalFactory,
-			final ProductionFactory productionFactory)
-			throws java.lang.Exception {
-		/* create a parser and parse with it */
-		final java_cup.runtime.lr_parser parser_obj = createParser(
-				errorManager, emit, terminalFactory, nonTerminalFactory,
-				productionFactory);
-
-		try {
-			if (do_debug) {
-				parser_obj.debug_parse();
-			} else {
-				parser_obj.parse();
-			}
-		} catch (final Exception e) {
-			/*
-			 * something threw an exception. catch it and emit a message so we
-			 * have a line number to work with, then re-throw it
-			 */
-			errorManager.emit_error("Internal error: Unexpected exception");
-			throw e;
-		}
-	}
-
-	/**
-	 * Helper routine to optionally return a plural or non-plural ending.
-	 * Used only by Main.emit_summary().
+	 * Helper routine to optionally return a plural or non-plural ending. Used
+	 * only by Main.emit_summary().
 	 * 
 	 * @param val
 	 *            the numerical value determining plurality.
@@ -276,33 +226,135 @@ public class Main extends Timings {
 	}
 
 	/** Resulting parse action table. */
-	protected parse_action_table action_table;
-
 	private final Emitter emitter = new cup_emit();
 
 	private final IErrorManager errorManager = new ErrorManager();
 
 	/** Input file. This is a buffered version of System.in. */
-	protected BufferedInputStream input_file;
-
-	private final LalrStateFactory lalrStateFactory = new LalrStateFactory();
-
-	private final TerminalFactory terminalFactory = new TerminalFactory(
-			errorManager);
-
-	private final NonTerminalFactory nonTerminalFactory = new NonTerminalFactory(
-			errorManager, terminalFactory);
 
 	private final Options options;
 
-	private final ProductionFactory productionFactory = new ProductionFactory(
-			errorManager, terminalFactory, nonTerminalFactory, emitter);
+	public static class Factories {
+		public Factories(IErrorManager errorManager, Emitter emitter) {
+			lalrStateFactory = new LalrStateFactory();
 
-	/** Resulting reduce-goto table. */
-	protected parse_reduce_table reduce_table;
+			terminalFactory = new TerminalFactory(errorManager);
 
-	/** Start state in the overall state machine. */
-	protected lalr_state start_state;
+			nonTerminalFactory = new NonTerminalFactory(errorManager,
+					terminalFactory);
+
+			productionFactory = new ProductionFactory(errorManager,
+					terminalFactory, nonTerminalFactory, emitter);
+		}
+
+		public final LalrStateFactory lalrStateFactory;
+
+		public final TerminalFactory terminalFactory;
+
+		public final NonTerminalFactory nonTerminalFactory;
+
+		public final ProductionFactory productionFactory;
+
+		private final lr_parser createParser(final IErrorManager errorManager,
+				final Emitter emit) {
+			final ComplexSymbolFactory csf = new ComplexSymbolFactory();
+			final Lexer lexer = new Lexer(csf);
+			lexer.errorManager = errorManager;
+			final parser result = new parser(lexer, csf);
+			result.errorManager = errorManager;
+			result.emitter = emit;
+			result.productionFactory = productionFactory;
+			result.nonTerminalFactory = nonTerminalFactory;
+			result.terminalFactory = terminalFactory;
+			return result;
+		}
+
+		/** Resulting reduce-goto table. */
+		public parse_reduce_table reduce_table;
+
+		/** Start state in the overall state machine. */
+		public lalr_state start_state;
+
+		public parse_action_table action_table;
+
+		public void parse_grammar_spec(final boolean do_debug,
+				final IErrorManager errorManager, final Emitter emit)
+				throws java.lang.Exception {
+			/* create a parser and parse with it */
+			final java_cup.runtime.lr_parser parser_obj = createParser(
+					errorManager, emit);
+
+			try {
+				if (do_debug) {
+					parser_obj.debug_parse();
+				} else {
+					parser_obj.parse();
+				}
+			} catch (final Exception e) {
+				/*
+				 * something threw an exception. catch it and emit a message so
+				 * we have a line number to work with, then re-throw it
+				 */
+				errorManager.emit_error("Internal error: Unexpected exception");
+				throw e;
+			}
+		}
+
+		public void build_parser(IErrorManager errorManager, Emitter emitter,
+				Options options, Timings timings) throws internal_error {
+			nonTerminalFactory
+					.build_parser(productionFactory, options, timings);
+
+			/* build the LR viable prefix recognition machine */
+			if (options.opt_do_debug || options.print_progress) {
+				System.err.println("  Building state machine...");
+			}
+			this.start_state = lalrStateFactory.build_machine(errorManager,
+					terminalFactory, emitter.start_production());
+
+			timings.machine_end = System.currentTimeMillis();
+
+			/* build the LR parser action and reduce-goto tables */
+			if (options.opt_do_debug || options.print_progress) {
+				System.err.println("  Filling in tables...");
+			}
+			this.action_table = new parse_action_table(terminalFactory,
+					lalrStateFactory.number());
+			this.reduce_table = new parse_reduce_table(nonTerminalFactory,
+					lalrStateFactory.number());
+			for (final Enumeration<lalr_state> st = lalrStateFactory.all(); st
+					.hasMoreElements();) {
+				final lalr_state lst = st.nextElement();
+				lst.build_table_entries(errorManager, terminalFactory, emitter,
+						this.action_table, this.reduce_table);
+			}
+
+			timings.table_end = System.currentTimeMillis();
+
+			/* check and warn for non-reduced productions */
+			if (options.opt_do_debug || options.print_progress) {
+				System.err.println("  Checking for non-reduced productions...");
+			}
+			this.action_table.check_reductions(errorManager, terminalFactory,
+					productionFactory, emitter);
+
+			timings.reduce_check_end = System.currentTimeMillis();
+
+			/*
+			 * if we have more conflicts than we expected issue a message and
+			 * die
+			 */
+			if (emitter.num_conflicts() > options.expect_conflicts) {
+				errorManager
+						.emit_error("*** More conflicts encountered than expected "
+								+ "-- parser generation aborted");
+				// indicate the problem.
+				// we'll die on return, after clean up.
+			}
+
+			timings.build_end = System.currentTimeMillis();
+		}
+	}
 
 	/**
 	 * The main driver for the system.
@@ -330,8 +382,6 @@ public class Main extends Timings {
 		if (options.print_progress) {
 			System.err.println("Opening files...");
 		}
-		/* use a buffered version of standard input */
-		input_file = new BufferedInputStream(System.in);
 
 		prelim_end = System.currentTimeMillis();
 
@@ -339,8 +389,10 @@ public class Main extends Timings {
 		if (options.print_progress) {
 			System.err.println("Parsing specification from standard input...");
 		}
-		parse_grammar_spec(options.opt_do_debug, errorManager, emitter,
-				terminalFactory, nonTerminalFactory, productionFactory);
+
+		Factories factories = new Factories(errorManager, emitter);
+		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
+				emitter);
 
 		parse_end = System.currentTimeMillis();
 
@@ -350,8 +402,8 @@ public class Main extends Timings {
 			if (options.print_progress) {
 				System.err.println("Checking specification...");
 			}
-			check_unused(errorManager, emitter, terminalFactory,
-					nonTerminalFactory);
+			check_unused(errorManager, emitter, factories.terminalFactory,
+					factories.nonTerminalFactory);
 
 			check_end = System.currentTimeMillis();
 
@@ -359,38 +411,24 @@ public class Main extends Timings {
 			if (options.print_progress) {
 				System.err.println("Building parse tables...");
 			}
-			build_parser();
 
-			build_end = System.currentTimeMillis();
+			factories.build_parser(errorManager, emitter, options, this);
 
-			/* output the generated code, if # of conflicts permits */
-			if (errorManager.getErrorCount() != 0) {
-				// conflicts! don't emit code, don't dump tables.
-				options.opt_dump_tables = false;
-			} else { // everything's okay, emit parser.
-				if (options.print_progress) {
-					System.err.println("Writing parser...");
-				}
-				emitter.emit_parser(terminalFactory, nonTerminalFactory,
-						productionFactory, options.dest_dir, action_table,
-						reduce_table, start_state, options.include_non_terms,
-						options.opt_compact_red, options.suppress_scanner,
-						options.sym_interface);
-				did_output = true;
-			}
+			did_output = emit(factories, options, emitter, errorManager);
 		}
 		/* fix up the times to make the summary easier */
 		emit_end = System.currentTimeMillis();
 
 		/* do requested dumps */
 		if (options.opt_dump_grammar) {
-			dump_grammar(terminalFactory, nonTerminalFactory, productionFactory);
+			dump_grammar(factories.terminalFactory,
+					factories.nonTerminalFactory, factories.productionFactory);
 		}
 		if (options.opt_dump_states) {
-			dump_machine(lalrStateFactory, start_state);
+			dump_machine(factories.lalrStateFactory, factories.start_state);
 		}
 		if (options.opt_dump_tables) {
-			dump_tables(action_table, reduce_table);
+			dump_tables(factories.action_table, factories.reduce_table);
 		}
 
 		dump_end = System.currentTimeMillis();
@@ -399,13 +437,10 @@ public class Main extends Timings {
 		if (options.print_progress) {
 			System.err.println("Closing files...");
 		}
-		if (input_file != null) {
-			input_file.close();
-		}
 
 		/* produce a summary if desired */
 		if (!options.no_summary) {
-			emit_summary(did_output);
+			emit_summary(did_output, factories);
 		}
 
 		/*
@@ -417,82 +452,31 @@ public class Main extends Timings {
 		}
 	}
 
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
-
-	/**
-	 * Build the (internal) parser from the previously parsed specification.
-	 * This includes:
-	 * <ul>
-	 * <li>Computing nullability of non-terminals.
-	 * <li>Computing first sets of non-terminals and productions.
-	 * <li>Building the viable prefix recognizer machine.
-	 * <li>Filling in the (internal) parse tables.
-	 * <li>Checking for unreduced productions.
-	 * </ul>
-	 */
-	protected void build_parser() throws internal_error {
-		/* compute nullability of all non terminals */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Computing non-terminal nullability...");
-		}
-		nonTerminalFactory.compute_nullability(productionFactory);
-
-		nullability_end = System.currentTimeMillis();
-
-		/* compute first sets of all non terminals */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Computing first sets...");
-		}
-		nonTerminalFactory.compute_first_sets();
-
-		first_end = System.currentTimeMillis();
-
-		/* build the LR viable prefix recognition machine */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Building state machine...");
-		}
-		start_state = lalrStateFactory.build_machine(errorManager,
-				terminalFactory, emitter.start_production());
-
-		machine_end = System.currentTimeMillis();
-
-		/* build the LR parser action and reduce-goto tables */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Filling in tables...");
-		}
-		action_table = new parse_action_table(terminalFactory,
-				lalrStateFactory.number());
-		reduce_table = new parse_reduce_table(nonTerminalFactory,
-				lalrStateFactory.number());
-		for (final Enumeration<lalr_state> st = lalrStateFactory.all(); st
-				.hasMoreElements();) {
-			final lalr_state lst = st.nextElement();
-			lst.build_table_entries(errorManager, terminalFactory, emitter,
-					action_table, reduce_table);
-		}
-
-		table_end = System.currentTimeMillis();
-
-		/* check and warn for non-reduced productions */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Checking for non-reduced productions...");
-		}
-		action_table.check_reductions(errorManager, terminalFactory,
-				productionFactory, emitter);
-
-		reduce_check_end = System.currentTimeMillis();
-
-		/* if we have more conflicts than we expected issue a message and die */
-		if (emitter.num_conflicts() > options.expect_conflicts) {
-			errorManager
-					.emit_error("*** More conflicts encountered than expected "
-							+ "-- parser generation aborted");
-			// indicate the problem.
-			// we'll die on return, after clean up.
+	private static boolean emit(Factories factories, Options options,
+			Emitter emitter, IErrorManager errorManager) throws internal_error {
+		/* output the generated code, if # of conflicts permits */
+		if (errorManager.getErrorCount() != 0) {
+			// conflicts! don't emit code, don't dump tables.
+			options.opt_dump_tables = false;
+			return false;
+		} else { // everything's okay, emit parser.
+			if (options.print_progress) {
+				System.err.println("Writing parser...");
+			}
+			emitter.emit_parser(factories, options);
+//			emitter.emit_parser(factories.terminalFactory,
+//					factories.nonTerminalFactory, factories.productionFactory,
+//					factories.action_table, factories.reduce_table,
+//					factories.start_state, options.dest_dir,
+//					options.include_non_terms, options.opt_compact_red,
+//					options.suppress_scanner, options.sym_interface);
+			return true;
 		}
 	}
+
+	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
+
+	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
 	/* . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . */
 
@@ -505,7 +489,12 @@ public class Main extends Timings {
 	 * @param output_produced
 	 *            did the system get far enough to generate code.
 	 */
-	protected void emit_summary(final boolean output_produced) {
+	protected void emit_summary(final boolean output_produced,
+			Factories factories) {
+		LalrStateFactory lalrStateFactory = factories.lalrStateFactory;
+		ProductionFactory productionFactory = factories.productionFactory;
+		TerminalFactory terminalFactory = factories.terminalFactory;
+		NonTerminalFactory nonTerminalFactory = factories.nonTerminalFactory;
 		final_time = System.currentTimeMillis();
 
 		if (options.no_summary) {

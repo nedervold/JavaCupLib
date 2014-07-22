@@ -1,6 +1,5 @@
 package java_cup;
 
-import java.io.File;
 import java.util.Stack;
 
 public interface Emitter {
@@ -11,13 +10,8 @@ public interface Emitter {
 
 	public abstract long action_table_time();
 
-	public void emit_parser(TerminalFactory terminalFactory,
-			NonTerminalFactory nonTerminalFactory,
-			ProductionFactory productionFactory, File dest_dir,
-			parse_action_table action_table, parse_reduce_table reduce_table,
-			lalr_state start_state, boolean include_non_terms,
-			boolean opt_compact_red, boolean suppress_scanner,
-			boolean sym_interface) throws internal_error;
+	public void emit_parser(Main.Factories factories, Options options)
+			throws internal_error;
 
 	public abstract long goto_table_time();
 

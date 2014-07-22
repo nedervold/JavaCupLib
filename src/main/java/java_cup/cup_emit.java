@@ -129,8 +129,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * 
 	 * @see java_cup.Emitter#symbols(java.io.PrintWriter, boolean, boolean)
 	 */
-	protected void symbols(TerminalFactory terminalFactory, NonTerminalFactory nonTerminalFactory, PrintWriter out, boolean emit_non_terms,
-			boolean sym_interface) {
+	protected void symbols(TerminalFactory terminalFactory,
+			NonTerminalFactory nonTerminalFactory, PrintWriter out,
+			boolean emit_non_terms, boolean sym_interface) {
 		terminal term;
 		non_terminal nt;
 		String class_or_interface = (sym_interface) ? "interface" : "class";
@@ -557,8 +558,9 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param compact_reduces
 	 *            do we use the most frequent reduce as default?
 	 */
-	private void do_action_table(TerminalFactory terminalFactory, ProductionFactory productionFactory,
-			PrintWriter out, parse_action_table act_tab, boolean compact_reduces)
+	private void do_action_table(TerminalFactory terminalFactory,
+			ProductionFactory productionFactory, PrintWriter out,
+			parse_action_table act_tab, boolean compact_reduces)
 			throws internal_error {
 		parse_action_row row;
 		parse_action act;
@@ -657,7 +659,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * @param red_tab
 	 *            the internal representation of the reduce-goto table.
 	 */
-	private void do_reduce_table(NonTerminalFactory nonTerminalFactory, PrintWriter out, parse_reduce_table red_tab) {
+	private void do_reduce_table(NonTerminalFactory nonTerminalFactory,
+			PrintWriter out, parse_reduce_table red_tab) {
 		lalr_state goto_st;
 
 		long start_time = System.currentTimeMillis();
@@ -780,7 +783,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 	 * java_cup.parse_action_table, java_cup.parse_reduce_table, int,
 	 * java_cup.production, boolean, boolean)
 	 */
-	protected void parser(NonTerminalFactory nonTerminalFactory, TerminalFactory terminalFactory,
+	protected void parser(NonTerminalFactory nonTerminalFactory,
+			TerminalFactory terminalFactory,
 			ProductionFactory productionFactory, PrintWriter out,
 			parse_action_table action_table, parse_reduce_table reduce_table,
 			int start_st, production start_prod, boolean compact_reduces,
@@ -832,7 +836,8 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 
 		/* emit the various tables */
 		emit_production_table(productionFactory, out);
-		do_action_table(terminalFactory, productionFactory, out, action_table, compact_reduces);
+		do_action_table(terminalFactory, productionFactory, out, action_table,
+				compact_reduces);
 		do_reduce_table(nonTerminalFactory, out, reduce_table);
 
 		/* instance of the action encapsulation class */
@@ -1208,19 +1213,16 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		}
 	}
 
-	public void emit_parser(TerminalFactory terminalFactory,
-			NonTerminalFactory nonTerminalFactory,
-			ProductionFactory productionFactory, final File dest_dir,
-			final parse_action_table action_table,
-			final parse_reduce_table reduce_table,
-			final lalr_state start_state, final boolean include_non_terms,
-			final boolean opt_compact_red, final boolean suppress_scanner,
-			final boolean sym_interface) throws internal_error {
-		open_files(dest_dir);
+	public void emit_parser(Main.Factories factories, Options options)
+			throws internal_error {
+		TerminalFactory terminalFactory = factories.terminalFactory;
+		NonTerminalFactory nonTerminalFactory = factories.nonTerminalFactory;
+		open_files(options.dest_dir);
 		try {
 			terminal term;
 			non_terminal nt;
-			String class_or_interface = (sym_interface) ? "interface" : "class";
+			String class_or_interface = (options.sym_interface) ? "interface"
+					: "class";
 
 			long start_time = System.currentTimeMillis();
 
@@ -1255,7 +1257,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			}
 
 			/* do the non terminals if they want them (parser doesn't need them) */
-			if (include_non_terms) {
+			if (options.include_non_terms) {
 				symbol_class_file.println();
 				symbol_class_file.println("  /* non terminals */");
 
@@ -1279,9 +1281,11 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 			symbol_class_file.println();
 
 			set_symbols_time(System.currentTimeMillis() - start_time);
-			parser(nonTerminalFactory, terminalFactory, productionFactory, parser_class_file, action_table,
-					reduce_table, start_state.index(), start_production(),
-					opt_compact_red, suppress_scanner);
+			parser(nonTerminalFactory, terminalFactory,
+					factories.productionFactory, parser_class_file,
+					factories.action_table, factories.reduce_table,
+					factories.start_state.index(), start_production(),
+					options.opt_compact_red, options.suppress_scanner);
 		} finally {
 			close_files();
 		}
