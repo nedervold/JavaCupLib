@@ -41,6 +41,8 @@ public interface IErrorManager {
 			TerminalFactory terminalFactory, lalr_item red_itm, int conflict_sym)
 			throws internal_error;
 
+	public void unrecognizedToken(String message);
+
 	public void unreducedProduction(production prod) throws internal_error;
 
 	public void unusedNonTerminal(non_terminal nt);
