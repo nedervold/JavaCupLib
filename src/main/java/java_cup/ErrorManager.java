@@ -168,4 +168,16 @@ public class ErrorManager extends AbstractErrorManager {
 				+ "\" was declared but never used");
 	}
 
+	public void parserWarning(String message) {
+		emit_warning(message);
+	}
+
+	public void parserError(String message) {
+		emit_error(message);
+	}
+
+	public void parserError(String message, Symbol sym) {
+		emit_error(message, sym);
+	}
+
 }

@@ -49,4 +49,9 @@ public interface IErrorManager {
 
 	public void unusedTerminal(terminal t);
 
+	public void parserWarning(String message);
+
+	public void parserError(String message);
+
+	public void parserError(String message, Symbol sym);
 }
