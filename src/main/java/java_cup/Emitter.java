@@ -12,7 +12,7 @@ public interface Emitter {
 
 	public abstract long action_table_time();
 
-	public void emit_parser(Main.Factories factories, Options options)
+	public void emit_parser(Factories factories, Options options)
 			throws internal_error;
 
 	public abstract long goto_table_time();

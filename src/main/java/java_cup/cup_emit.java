@@ -1213,7 +1213,7 @@ public class cup_emit extends AbstractEmitter implements Emitter {
 		}
 	}
 
-	public void emit_parser(Main.Factories factories, Options options)
+	public void emit_parser(Factories factories, Options options)
 			throws internal_error {
 		TerminalFactory terminalFactory = factories.terminalFactory;
 		NonTerminalFactory nonTerminalFactory = factories.nonTerminalFactory;
