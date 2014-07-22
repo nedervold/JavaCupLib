@@ -6,22 +6,16 @@ import java.util.Hashtable;
 public class NonTerminalFactory {
 
 	public void build_parser(ProgressPrinter pp, ProductionFactory productionFactory,
-			Options options, Timings timings) throws internal_error {
+			Options options, ITimings timings) throws internal_error {
 		/* compute nullability of all non terminals */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Computing non-terminal nullability...");
-		}
+		pp.printProgress("  Computing non-terminal nullability...");
 		compute_nullability(productionFactory);
-
-		timings.nullability_end = System.currentTimeMillis();
+		timings.endNullability();
 
 		/* compute first sets of all non terminals */
-		if (options.opt_do_debug || options.print_progress) {
-			System.err.println("  Computing first sets...");
-		}
+		pp.printProgress("  Computing first sets...");
 		compute_first_sets();
-
-		timings.first_end = System.currentTimeMillis();
+		timings.endFirstSets();
 	}
 
 	public NonTerminalFactory(IErrorManager errorManager,

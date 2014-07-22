@@ -2,7 +2,7 @@ package java_cup;
 
 import java.io.PrintStream;
 
-public class Timings {
+public class Timings implements ITimings {
 
 	/**
 	 * Helper routine to format a decimal based display of seconds and
@@ -53,37 +53,150 @@ public class Timings {
 	}
 
 	/** Timing data -- when did we end state and table building */
-	public long build_end = 0;
-
+	private long build_end = 0;
 	/** Timing data -- when did we end checking */
-	public long check_end = 0;
+	private long check_end = 0;
+
 	/** Timing data -- when did we end dumping */
-	public long dump_end = 0;
+	private long dump_end = 0;
 	/** Timing data -- when did we finish emitting code */
-	public long emit_end = 0;
+	private long emit_end = 0;
 	/** Timing data -- when were we completely done */
-	public long final_time = 0;
+	private long final_time = 0;
 	/** Timing data -- when did we end first set calculation */
-	public long first_end = 0;
+	private long first_end = 0;
 	/** Timing data -- when did we end state machine construction */
-	public long machine_end = 0;
+	private long machine_end = 0;
 	/** Timing data -- when did we end nullability calculation */
-	public long nullability_end = 0;
+	private long nullability_end = 0;
 	/** Timing data -- when did we end parsing */
-	public long parse_end = 0;
+	private long parse_end = 0;
 	/** Timing data -- when did we end preliminaries */
-	public long prelim_end = 0;
+	private long prelim_end = 0;
 	/** Timing data -- when did we end checking for non-reduced productions */
-	public long reduce_check_end = 0;
+	private long reduce_check_end = 0;
 	/** Timing data -- when did we start */
-	public long start_time = 0;
+	private long start_time = 0;
 	/** Timing data -- when did we end table construction */
-	public long table_end = 0;
+	private long table_end = 0;
 
 	public Timings() {
 		super();
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endAll()
+	 */
+	public void endAll() {
+		final_time = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endBuild()
+	 */
+	public void endBuild() {
+		build_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endCheck()
+	 */
+	public void endCheck() {
+		check_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endDump()
+	 */
+	public void endDump() {
+		dump_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endEmit()
+	 */
+	public void endEmit() {
+		emit_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endFirstSets()
+	 */
+	public void endFirstSets() {
+		first_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endNullability()
+	 */
+	public void endNullability() {
+		nullability_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endParsing()
+	 */
+	public void endParsing() {
+		parse_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endPreliminaries()
+	 */
+	public void endPreliminaries() {
+		prelim_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endReducedChecking()
+	 */
+	public void endReducedChecking() {
+		reduce_check_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endStateMachine()
+	 */
+	public void endStateMachine() {
+		machine_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#endTables()
+	 */
+	public void endTables() {
+		table_end = System.currentTimeMillis();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#show_times(java.io.PrintStream, java_cup.Emitter)
+	 */
 	public void show_times(PrintStream ps, final Emitter emitter) {
 		final long total_time = final_time - start_time;
 
@@ -132,6 +245,15 @@ public class Timings {
 
 		ps.println("      Dump Output    "
 				+ timestr(dump_end - emit_end, total_time));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java_cup.ITimings#start()
+	 */
+	public void start() {
+		start_time = System.currentTimeMillis();
 	}
 
 }

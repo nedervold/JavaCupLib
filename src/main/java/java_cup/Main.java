@@ -117,8 +117,8 @@ public class Main {
 	private void run() throws Exception, internal_error {
 		final PrintStream ps = System.err;
 		boolean did_output = false;
-		Timings timings = new Timings();
-		timings.start_time = System.currentTimeMillis();
+		ITimings timings = new Timings();
+		timings.start();
 
 		ProgressPrinter pp = options.print_progress ? new PrintStreamProgressPrinter(
 				ps) : new NullProgressPrinter();
@@ -135,44 +135,36 @@ public class Main {
 		/* open output set_xmlactionsfiles */
 
 		pp.printProgress("Opening files...");
-
-		timings.prelim_end = System.currentTimeMillis();
+		timings.endPreliminaries();
 
 		/* parse spec into internal data structures */
 		pp.printProgress("Parsing specification from standard input...");
-
 		final Factories factories = new Factories(errorManager, emitter);
 		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
 				emitter);
-
-		timings.parse_end = System.currentTimeMillis();
+		timings.endParsing();
 
 		/* don't proceed unless we are error free */
 		if (errorManager.getErrorCount() == 0) {
 			/* check for unused bits */
 			pp.printProgress("Checking specification...");
 			factories.check_unused(errorManager, emitter);
-
-			timings.check_end = System.currentTimeMillis();
+			timings.endCheck();
 
 			/* build the state machine and parse tables */
 			pp.printProgress("Building parse tables...");
-
 			factories.build_parser(pp2, errorManager, emitter, options, timings);
-
 			did_output = emit(pp, factories, options, emitter, errorManager);
 		}
-		/* fix up the times to make the summary easier */
-		timings.emit_end = System.currentTimeMillis();
+		timings.endEmit();
 
 		factories.dump(ps, options);
-
-		timings.dump_end = System.currentTimeMillis();
+		timings.endDump();
 
 		/* close input/output files */
 		pp.printProgress("Closing files...");
 
-		timings.final_time = System.currentTimeMillis();
+		timings.endAll();
 
 		/* produce a summary if desired */
 		factories.emit_summary(ps, did_output, emitter, errorManager, options,

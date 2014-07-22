@@ -52,7 +52,7 @@ public class Factories {
 
 	public void build_parser(final ProgressPrinter pp,
 			final IErrorManager errorManager, final Emitter emitter,
-			final Options options, final Timings timings) throws internal_error {
+			final Options options, final ITimings timings) throws internal_error {
 		nonTerminalFactory
 				.build_parser(pp, productionFactory, options, timings);
 
@@ -61,8 +61,7 @@ public class Factories {
 
 		start_state = lalrStateFactory.build_machine(errorManager,
 				terminalFactory, emitter.start_production());
-
-		timings.machine_end = System.currentTimeMillis();
+		timings.endStateMachine();
 
 		/* build the LR parser action and reduce-goto tables */
 		pp.printProgress("  Filling in tables...");
@@ -78,7 +77,7 @@ public class Factories {
 					action_table, reduce_table);
 		}
 
-		timings.table_end = System.currentTimeMillis();
+		timings.endTables();
 
 		/* check and warn for non-reduced productions */
 		pp.printProgress("  Checking for non-reduced productions...");
@@ -86,7 +85,7 @@ public class Factories {
 		action_table.check_reductions(errorManager, terminalFactory,
 				productionFactory, emitter);
 
-		timings.reduce_check_end = System.currentTimeMillis();
+		timings.endReducedChecking();
 
 		/*
 		 * if we have more conflicts than we expected issue a message and die
@@ -99,7 +98,7 @@ public class Factories {
 			// we'll die on return, after clean up.
 		}
 
-		timings.build_end = System.currentTimeMillis();
+		timings.endBuild();
 	}
 
 	public void check_unused(final IErrorManager errorManager,
@@ -252,7 +251,7 @@ public class Factories {
 	public void emit_summary(final PrintStream ps,
 			final boolean output_produced, final Emitter emitter,
 			final IErrorManager errorManager, final Options options,
-			final Timings timings) {
+			final ITimings timings) {
 
 		if (!options.no_summary) {
 			ps.println("------- " + version.title_str
