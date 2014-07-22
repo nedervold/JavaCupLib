@@ -1,5 +1,6 @@
 package java_cup;
 
+import java.io.PrintStream;
 import java.util.Enumeration;
 
 import java_cup.runtime.ComplexSymbolFactory;
@@ -72,56 +73,52 @@ public class Factories {
 	public parse_action_table action_table;
 
 	/** Produce a human readable dump of the grammar. */
-	public void dump_grammar() throws internal_error {
-		TerminalFactory terminalFactory = this.terminalFactory;
-		NonTerminalFactory nonTerminalFactory = this.nonTerminalFactory;
-		ProductionFactory productionFactory = this.productionFactory;
-		System.err.println("===== Terminals =====");
+	public void dump_grammar(PrintStream ps) throws internal_error {
+		ps.println("===== Terminals =====");
 		for (int tidx = 0, cnt = 0; tidx < terminalFactory.number(); tidx++, cnt++) {
-			System.err.print("[" + tidx + "]"
+			ps.print("[" + tidx + "]"
 					+ terminalFactory.find(tidx).name() + " ");
 			if ((cnt + 1) % 5 == 0) {
-				System.err.println();
+				ps.println();
 			}
 		}
-		System.err.println();
-		System.err.println();
+		ps.println();
+		ps.println();
 
-		System.err.println("===== Non terminals =====");
+		ps.println("===== Non terminals =====");
 		for (int nidx = 0, cnt = 0; nidx < nonTerminalFactory.number(); nidx++, cnt++) {
-			System.err.print("[" + nidx + "]"
+			ps.print("[" + nidx + "]"
 					+ nonTerminalFactory.find(nidx).name() + " ");
 			if ((cnt + 1) % 5 == 0) {
-				System.err.println();
+				ps.println();
 			}
 		}
-		System.err.println();
-		System.err.println();
+		ps.println();
+		ps.println();
 
-		System.err.println("===== Productions =====");
+		ps.println("===== Productions =====");
 		for (int pidx = 0; pidx < productionFactory.number(); pidx++) {
 			final production prod = productionFactory.find(pidx);
-			System.err.print("[" + pidx + "] "
+			ps.print("[" + pidx + "] "
 					+ prod.lhs().the_symbol().name() + " ::= ");
 			for (int i = 0; i < prod.rhs_length(); i++) {
 				if (prod.rhs(i).is_action()) {
-					System.err.print("{action} ");
+					ps.print("{action} ");
 				} else {
-					System.err.print(((symbol_part) prod.rhs(i))
+					ps.print(((symbol_part) prod.rhs(i))
 							.the_symbol().name() + " ");
 				}
 			}
-			System.err.println();
+			ps.println();
 		}
-		System.err.println();
+		ps.println();
 	}
 
 	/**
 	 * Produce a (semi-) human readable dump of the complete viable prefix
 	 * recognition state machine.
 	 */
-	public void dump_machine() {
-		LalrStateFactory lalrStateFactory = this.lalrStateFactory;
+	public void dump_machine(PrintStream ps) {
 		final lalr_state ordered[] = new lalr_state[lalrStateFactory
 				.number()];
 
@@ -132,34 +129,34 @@ public class Factories {
 			ordered[st.index()] = st;
 		}
 
-		System.err.println("===== Viable Prefix Recognizer =====");
+		ps.println("===== Viable Prefix Recognizer =====");
 		for (int i = 0; i < lalrStateFactory.number(); i++) {
 			if (ordered[i] == this.start_state) {
-				System.err.print("START ");
+				ps.print("START ");
 			}
-			System.err.println(ordered[i]);
-			System.err.println("-------------------");
+			ps.println(ordered[i]);
+			ps.println("-------------------");
 		}
 	}
 
-	public  void dump(final Options options)
+	public  void dump(PrintStream ps, final Options options)
 			throws internal_error {
 		/* do requested dumps */
 		if (options.opt_dump_grammar) {
-			dump_grammar();
+			dump_grammar(ps);
 		}
 		if (options.opt_dump_states) {
-			dump_machine();
+			dump_machine(ps);
 		}
 		if (options.opt_dump_tables) {
-			dump_tables();
+			dump_tables(ps);
 		}
 	}
 
 	/** Produce a (semi-) human readable dumps of the parse tables */
-	public void dump_tables() {
-		System.err.println(this.action_table);
-		System.err.println(this.reduce_table);
+	public void dump_tables(PrintStream ps) {
+		ps.println(this.action_table);
+		ps.println(this.reduce_table);
 	}
 
 	public final LalrStateFactory lalrStateFactory;
@@ -258,62 +255,61 @@ public class Factories {
 		return result;
 	}
 
-	public void emit_summary(final boolean output_produced,
+	public void emit_summary(PrintStream ps, final boolean output_produced,
 			final Emitter emitter, final IErrorManager errorManager,
 			final Options options, final Timings timings) {
 
 		if (!options.no_summary) {
-
-			System.err.println("------- " + version.title_str
+			ps.println("------- " + version.title_str
 					+ " Parser Generation Summary -------");
 
 			/* error and warning count */
-			System.err.println("  " + errorManager.getErrorCount()
+			ps.println("  " + errorManager.getErrorCount()
 					+ " error" + plural(errorManager.getErrorCount())
 					+ " and " + errorManager.getWarningCount() + " warning"
 					+ plural(errorManager.getWarningCount()));
 
 			/* basic stats */
-			System.err.print("  " + terminalFactory.number() + " terminal"
+			ps.print("  " + terminalFactory.number() + " terminal"
 					+ plural(terminalFactory.number()) + ", ");
-			System.err.print(nonTerminalFactory.number() + " non-terminal"
+			ps.print(nonTerminalFactory.number() + " non-terminal"
 					+ plural(nonTerminalFactory.number()) + ", and ");
-			System.err.println(productionFactory.number() + " production"
+			ps.println(productionFactory.number() + " production"
 					+ plural(productionFactory.number()) + " declared, ");
-			System.err.println("  producing " + lalrStateFactory.number()
+			ps.println("  producing " + lalrStateFactory.number()
 					+ " unique parse states.");
 
 			/* unused symbols */
-			System.err.println("  " + emitter.unused_term() + " terminal"
+			ps.println("  " + emitter.unused_term() + " terminal"
 					+ plural(emitter.unused_term())
 					+ " declared but not used.");
-			System.err.println("  " + emitter.unused_non_term()
+			ps.println("  " + emitter.unused_non_term()
 					+ " non-terminal" + plural(emitter.unused_term())
 					+ " declared but not used.");
 
 			/* productions that didn't reduce */
-			System.err.println("  " + emitter.not_reduced() + " production"
+			ps.println("  " + emitter.not_reduced() + " production"
 					+ plural(emitter.not_reduced()) + " never reduced.");
 
 			/* conflicts */
-			System.err.println("  " + emitter.num_conflicts() + " conflict"
+			ps.println("  " + emitter.num_conflicts() + " conflict"
 					+ plural(emitter.num_conflicts()) + " detected" + " ("
 					+ options.expect_conflicts + " expected).");
 
 			/* code location */
 			if (output_produced) {
-				System.err.println("  Code written to \""
+				ps.println("  Code written to \""
 						+ emitter.parser_class_name() + ".java\", and \""
 						+ emitter.symbol_const_class_name() + ".java\".");
 			} else {
-				System.err.println("  No code produced.");
+				ps.println("  No code produced.");
 			}
 
 			if (options.opt_show_timing) {
-				timings.show_times(emitter);
+				timings.show_times(ps, emitter);
 			}
 
-			System.err
+			ps
 					.println("---------------------------------------------------- ("
 							+ version.title_str + ")");
 		}

@@ -1,10 +1,11 @@
 package java_cup;
 
+import java.io.PrintStream;
 import java.util.Stack;
 
 public interface Emitter {
 
-	public void show_times(long total_time);
+	public void show_times(PrintStream ps, long total_time);
 	
 	public abstract String action_code();
 

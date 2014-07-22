@@ -1,6 +1,7 @@
 package java_cup;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 /**
  * This class serves as the main driver for the JavaCup system. It accepts user
@@ -111,6 +112,7 @@ public class Main extends Timings {
 	 */
 	public Main(final String argv[]) throws internal_error,
 			java.io.IOException, java.lang.Exception {
+		final PrintStream ps = System.err;
 		boolean did_output = false;
 
 		start_time = System.currentTimeMillis();
@@ -126,15 +128,16 @@ public class Main extends Timings {
 		emitter.set_xmlactions(options.xmlactions);
 		emitter.set_genericlabels(options.genericlabels);
 		/* open output set_xmlactionsfiles */
+
 		if (options.print_progress) {
-			System.err.println("Opening files...");
+			ps.println("Opening files...");
 		}
 
 		prelim_end = System.currentTimeMillis();
 
 		/* parse spec into internal data structures */
 		if (options.print_progress) {
-			System.err.println("Parsing specification from standard input...");
+			ps.println("Parsing specification from standard input...");
 		}
 
 		final Factories factories = new Factories(errorManager, emitter);
@@ -147,7 +150,7 @@ public class Main extends Timings {
 		if (errorManager.getErrorCount() == 0) {
 			/* check for unused bits */
 			if (options.print_progress) {
-				System.err.println("Checking specification...");
+				ps.println("Checking specification...");
 			}
 			factories.check_unused(errorManager, emitter);
 
@@ -155,7 +158,7 @@ public class Main extends Timings {
 
 			/* build the state machine and parse tables */
 			if (options.print_progress) {
-				System.err.println("Building parse tables...");
+				ps.println("Building parse tables...");
 			}
 
 			factories.build_parser(errorManager, emitter, options, this);
@@ -165,19 +168,19 @@ public class Main extends Timings {
 		/* fix up the times to make the summary easier */
 		emit_end = System.currentTimeMillis();
 
-		factories.dump(options);
+		factories.dump(ps, options);
 
 		dump_end = System.currentTimeMillis();
 
 		/* close input/output files */
 		if (options.print_progress) {
-			System.err.println("Closing files...");
+			ps.println("Closing files...");
 		}
 
 		/* produce a summary if desired */
 		if (!options.no_summary) {
 			final_time = System.currentTimeMillis();
-			factories.emit_summary(did_output, emitter, errorManager, options,
+			factories.emit_summary(ps, did_output, emitter, errorManager, options,
 					this);
 		}
 
