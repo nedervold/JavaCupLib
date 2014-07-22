@@ -27,6 +27,6 @@ public interface IErrorManager {
 
 	public abstract void emit_error(String message, Symbol sym);
 
-	public abstract void exit_on_errors(int status);
+	public abstract void exitIfErrors(int status);
 
 }

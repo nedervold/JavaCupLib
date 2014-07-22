@@ -109,13 +109,16 @@ public class Main {
 	 */
 	public Main(final String argv[]) throws internal_error,
 			java.io.IOException, java.lang.Exception {
+		/* process user options and arguments */
+		options = new Options(argv, emitter);
+		run();
+	}
+
+	private void run() throws Exception, internal_error {
 		final PrintStream ps = System.err;
 		boolean did_output = false;
 		Timings timings = new Timings();
 		timings.start_time = System.currentTimeMillis();
-
-		/* process user options and arguments */
-		options = new Options(argv, emitter);
 
 		ProgressPrinter pp = options.print_progress ? new PrintStreamProgressPrinter(
 				ps) : new NullProgressPrinter();
@@ -179,7 +182,7 @@ public class Main {
 		 * If there were errors during the run, exit with non-zero status
 		 * (makefile-friendliness). --CSA
 		 */
-		errorManager.exit_on_errors(100);
+		errorManager.exitIfErrors(100);
 	}
 
 	static class NullProgressPrinter implements ProgressPrinter {
@@ -194,7 +197,7 @@ public class Main {
 			this.ps = ps;
 		}
 
-		final PrintStream ps;
+		private final PrintStream ps;
 
 		public void printProgress(String msg) {
 			ps.println(msg);
