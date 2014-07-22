@@ -28,7 +28,7 @@ public class Factories {
 			throws internal_error {
 		try {
 			/* don't proceed unless we are error free */
-			if (errorManager.getErrorCount() == 0) {
+			if (!errorManager.areErrors()) {
 				/* check for unused bits */
 				check_unused(progressStream, errorManager, emitter, timings);
 
@@ -49,7 +49,7 @@ public class Factories {
 	public boolean emit_parser(PrintStream progressStream,
 			final Options options, final Emitter emitter,
 			final IErrorManager errorManager) throws internal_error {
-		if (errorManager.getErrorCount() != 0) {
+		if (errorManager.areErrors()) {
 			// conflicts! don't emit code, don't dump tables.
 			options.opt_dump_tables = false;
 			return false;

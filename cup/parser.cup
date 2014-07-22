@@ -574,7 +574,7 @@ production ::=
           /* if it wasn't declared, emit a message */
 	  if (lhs_nt == null)
 	    {
-	      if (parser.errorManager.getErrorCount() == 0)
+	      if (!parser.errorManager.areErrors())
 	      parser.errorManager.emit_warning("LHS non terminal \"" + lhs_id + 
 			       "\" has not been declared");
 	    }
@@ -701,7 +701,7 @@ prod_part ::=
 	  /* if that fails, symbol is undeclared */
 	  if (symb == null)
 	    {
-	      if (parser.errorManager.getErrorCount() == 0)
+	      if (!parser.errorManager.areErrors())
 	        parser.errorManager.emit_error("java_cup.runtime.Symbol \"" + symid + 
 			       "\" has not been declared");
 	    }

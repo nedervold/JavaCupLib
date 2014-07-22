@@ -105,9 +105,13 @@ public class ErrorManager implements IErrorManager {
 	}
 
 	public void exitIfErrors(int status) {
-		if (getErrorCount() != 0) {
+		if (areErrors()) {
 			System.exit(status);
 		}
+	}
+
+	public boolean areErrors() {
+		return getErrorCount() != 0;
 	}
 
 }

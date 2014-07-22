@@ -8,6 +8,8 @@ public interface IErrorManager {
 
 	public abstract int getErrorCount();
 
+	public abstract boolean areErrors();
+
 	public abstract int getWarningCount();
 
 	// TODO: migrate to java.util.logging
