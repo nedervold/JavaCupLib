@@ -4,6 +4,8 @@ import java.util.Stack;
 
 public interface Emitter {
 
+	public void show_times(long total_time);
+	
 	public abstract String action_code();
 
 	public abstract long action_code_time();

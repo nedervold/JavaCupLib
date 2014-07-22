@@ -4,6 +4,33 @@ import java.util.Stack;
 
 public abstract class AbstractEmitter implements Emitter {
 
+	public void show_times(long total_time){
+		if (symbols_time() != 0) {
+			System.err.println("        Symbols      "
+					+ Main.timestr(symbols_time(), total_time));
+		}
+		if (parser_time() != 0) {
+			System.err.println("        Parser class "
+					+ Main.timestr(parser_time(), total_time));
+		}
+		if (action_code_time() != 0) {
+			System.err.println("          Actions    "
+					+ Main.timestr(action_code_time(), total_time));
+		}
+		if (production_table_time() != 0) {
+			System.err.println("          Prod table "
+					+ Main.timestr(production_table_time(), total_time));
+		}
+		if (action_table_time() != 0) {
+			System.err.println("          Action tab "
+					+ Main.timestr(action_table_time(), total_time));
+		}
+		if (goto_table_time() != 0) {
+			System.err.println("          Reduce tab "
+					+ Main.timestr(goto_table_time(), total_time));
+		}
+	}
+
 	protected boolean _locations;
 
 	protected boolean _lr_values;

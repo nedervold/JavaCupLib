@@ -2,7 +2,65 @@ package java_cup;
 
 public class Timings {
 
-	/**
+	public  void show_times(Emitter emitter) {
+		final long total_time = final_time - start_time;
+		
+		System.err
+				.println(". . . . . . . . . . . . . . . . . . . . . . . . . ");
+		System.err.println("  Timing Summary");
+		System.err.println("    Total time       "
+				+ Main.timestr(final_time - start_time, total_time));
+		System.err.println("      Startup        "
+				+ Main.timestr(prelim_end - start_time, total_time));
+		System.err.println("      Parse          "
+				+ Main.timestr(parse_end - prelim_end, total_time));
+		if (check_end != 0) {
+			System.err
+					.println("      Checking       "
+							+ Main.timestr(check_end - parse_end,
+									total_time));
+		}
+		if (check_end != 0 && build_end != 0) {
+			System.err
+					.println("      Parser Build   "
+							+ Main.timestr(build_end - check_end,
+									total_time));
+		}
+		if (nullability_end != 0 && check_end != 0) {
+			System.err.println("        Nullability  "
+					+ Main.timestr(nullability_end - check_end,
+							total_time));
+		}
+		if (first_end != 0 && nullability_end != 0) {
+			System.err.println("        First sets   "
+					+ Main.timestr(first_end - nullability_end,
+							total_time));
+		}
+		if (machine_end != 0 && first_end != 0) {
+			System.err.println("        State build  "
+					+ Main.timestr(machine_end - first_end,
+							total_time));
+		}
+		if (table_end != 0 && machine_end != 0) {
+			System.err.println("        Table build  "
+					+ Main.timestr(table_end - machine_end, total_time));
+		}
+		if (reduce_check_end != 0 && table_end != 0) {
+			System.err.println("        Checking     "
+					+ Main.timestr(reduce_check_end - table_end, total_time));
+		}
+		if (emit_end != 0 && build_end != 0) {
+			System.err.println("      Code Output    "
+					+ Main.timestr(emit_end - build_end, total_time));
+		}
+		
+		emitter.show_times(total_time);
+		
+		System.err.println("      Dump Output    "
+				+ Main.timestr(dump_end - emit_end, total_time));
+	}
+
+		/**
 	 * Helper routine to format a decimal based display of seconds and
 	 * percentage of total time given counts of milliseconds. Note: this is
 	 * broken for use with some instances of negative time (since we don't use
