@@ -5,7 +5,7 @@ import java.util.Hashtable;
 
 public class NonTerminalFactory {
 
-	public void build_parser(ProductionFactory productionFactory,
+	public void build_parser(ProgressPrinter pp, ProductionFactory productionFactory,
 			Options options, Timings timings) throws internal_error {
 		/* compute nullability of all non terminals */
 		if (options.opt_do_debug || options.print_progress) {

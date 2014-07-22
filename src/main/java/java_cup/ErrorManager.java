@@ -104,4 +104,10 @@ public class ErrorManager implements IErrorManager {
 		errors++;
 	}
 
+	public void exit_on_errors(int status) {
+		if (getErrorCount() != 0) {
+			System.exit(status);
+		}
+	}
+
 }

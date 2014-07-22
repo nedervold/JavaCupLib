@@ -67,13 +67,11 @@ import java.io.PrintStream;
  * @author Frank Flannery
  */
 
-public class Main extends Timings {
-
-	
+public class Main {
 
 	/* Additional timing information is also collected in emit */
 
-	private static boolean emit(final Factories factories,
+	private static boolean emit(ProgressPrinter pp, final Factories factories,
 			final Options options, final Emitter emitter,
 			final IErrorManager errorManager) throws internal_error {
 		/* output the generated code, if # of conflicts permits */
@@ -82,9 +80,8 @@ public class Main extends Timings {
 			options.opt_dump_tables = false;
 			return false;
 		} else { // everything's okay, emit parser.
-			if (options.print_progress) {
-				System.err.println("Writing parser...");
-			}
+			pp.printProgress("Writing parser...");
+
 			emitter.emit_parser(factories, options);
 			return true;
 		}
@@ -114,11 +111,16 @@ public class Main extends Timings {
 			java.io.IOException, java.lang.Exception {
 		final PrintStream ps = System.err;
 		boolean did_output = false;
-
-		start_time = System.currentTimeMillis();
+		Timings timings = new Timings();
+		timings.start_time = System.currentTimeMillis();
 
 		/* process user options and arguments */
 		options = new Options(argv, emitter);
+
+		ProgressPrinter pp = options.print_progress ? new PrintStreamProgressPrinter(
+				ps) : new NullProgressPrinter();
+		ProgressPrinter pp2 = (options.opt_do_debug || options.print_progress) ? new PrintStreamProgressPrinter(
+				ps) : new NullProgressPrinter();
 
 		/*
 		 * frankf 6/18/96 hackish, yes, but works
@@ -129,67 +131,73 @@ public class Main extends Timings {
 		emitter.set_genericlabels(options.genericlabels);
 		/* open output set_xmlactionsfiles */
 
-		if (options.print_progress) {
-			ps.println("Opening files...");
-		}
+		pp.printProgress("Opening files...");
 
-		prelim_end = System.currentTimeMillis();
+		timings.prelim_end = System.currentTimeMillis();
 
 		/* parse spec into internal data structures */
-		if (options.print_progress) {
-			ps.println("Parsing specification from standard input...");
-		}
+		pp.printProgress("Parsing specification from standard input...");
 
 		final Factories factories = new Factories(errorManager, emitter);
 		factories.parse_grammar_spec(options.opt_do_debug, errorManager,
 				emitter);
 
-		parse_end = System.currentTimeMillis();
+		timings.parse_end = System.currentTimeMillis();
 
 		/* don't proceed unless we are error free */
 		if (errorManager.getErrorCount() == 0) {
 			/* check for unused bits */
-			if (options.print_progress) {
-				ps.println("Checking specification...");
-			}
+			pp.printProgress("Checking specification...");
 			factories.check_unused(errorManager, emitter);
 
-			check_end = System.currentTimeMillis();
+			timings.check_end = System.currentTimeMillis();
 
 			/* build the state machine and parse tables */
-			if (options.print_progress) {
-				ps.println("Building parse tables...");
-			}
+			pp.printProgress("Building parse tables...");
 
-			factories.build_parser(errorManager, emitter, options, this);
+			factories.build_parser(pp2, errorManager, emitter, options, timings);
 
-			did_output = emit(factories, options, emitter, errorManager);
+			did_output = emit(pp, factories, options, emitter, errorManager);
 		}
 		/* fix up the times to make the summary easier */
-		emit_end = System.currentTimeMillis();
+		timings.emit_end = System.currentTimeMillis();
 
 		factories.dump(ps, options);
 
-		dump_end = System.currentTimeMillis();
+		timings.dump_end = System.currentTimeMillis();
 
 		/* close input/output files */
-		if (options.print_progress) {
-			ps.println("Closing files...");
-		}
+		pp.printProgress("Closing files...");
+
+		timings.final_time = System.currentTimeMillis();
 
 		/* produce a summary if desired */
-		if (!options.no_summary) {
-			final_time = System.currentTimeMillis();
-			factories.emit_summary(ps, did_output, emitter, errorManager, options,
-					this);
-		}
+		factories.emit_summary(ps, did_output, emitter, errorManager, options,
+				timings);
 
 		/*
 		 * If there were errors during the run, exit with non-zero status
 		 * (makefile-friendliness). --CSA
 		 */
-		if (errorManager.getErrorCount() != 0) {
-			System.exit(100);
+		errorManager.exit_on_errors(100);
+	}
+
+	static class NullProgressPrinter implements ProgressPrinter {
+		public void printProgress(String msg) {
+			// Do nothing
+		}
+	}
+
+	static class PrintStreamProgressPrinter implements ProgressPrinter {
+		public PrintStreamProgressPrinter(PrintStream ps) {
+			super();
+			this.ps = ps;
+		}
+
+		final PrintStream ps;
+
+		public void printProgress(String msg) {
+			ps.println(msg);
 		}
 	}
 

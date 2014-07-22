@@ -10,10 +10,9 @@ public interface IErrorManager {
 
 	public abstract int getWarningCount();
 
-	//TODO: migrate to java.util.logging
+	// TODO: migrate to java.util.logging
 	/**
-	 * Error message format: 
-	 * ERRORLEVEL at (LINE/COLUMN)@SYMBOL: MESSAGE
+	 * Error message format: ERRORLEVEL at (LINE/COLUMN)@SYMBOL: MESSAGE
 	 * ERRORLEVEL : MESSAGE
 	 **/
 	public abstract void emit_fatal(String message);
@@ -27,5 +26,7 @@ public interface IErrorManager {
 	public abstract void emit_error(String message);
 
 	public abstract void emit_error(String message, Symbol sym);
+
+	public abstract void exit_on_errors(int status);
 
 }
